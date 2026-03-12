@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>호텔어라운드 평창 | 6. 브랜드·포지셔닝 분석</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap');
+  :root {
+    --primary:#1a365d;--primary-light:#2d5a9e;--accent:#e6a817;
+    --bg:#f0f2f5;--card:#ffffff;--text:#2c2c2c;--text-light:#6b6b6b;
+    --border:#e2e8f0;--success:#28a745;--danger:#dc3545;--info:#2c6fbb;--warning:#f39c12;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:14px;}
+  header{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);color:#fff;padding:32px 40px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,0.1);}
+  header h1{font-size:22px;font-weight:700;}
+  header .subtitle{font-size:13px;opacity:0.8;margin-top:4px;}
+  .date-badge{background:rgba(255,255,255,0.15);padding:8px 16px;border-radius:8px;font-size:13px;}
+  .container{max-width:1200px;margin:0 auto;padding:24px;}
+  .section{background:var(--card);border-radius:12px;padding:28px;margin-bottom:24px;box-shadow:0 1px 3px rgba(0,0,0,0.08);}
+  .section-title{font-size:17px;font-weight:700;color:var(--primary);margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px;}
+  .section-title .num{background:var(--primary);color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;}
+  .kpi-card{background:var(--card);border-radius:10px;padding:20px;border-left:4px solid var(--primary);box-shadow:0 1px 3px rgba(0,0,0,0.08);transition:all 0.2s;}
+  .kpi-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.12);}
+  .kpi-card.danger{border-left-color:var(--danger);}
+  .kpi-card.success{border-left-color:var(--success);}
+  .kpi-card.warning{border-left-color:var(--warning);}
+  .kpi-label{font-size:12px;color:var(--text-light);margin-bottom:4px;}
+  .kpi-value{font-size:24px;font-weight:800;}
+  .kpi-value.danger{color:var(--danger);}
+  .kpi-value.success{color:var(--success);}
+  .kpi-sub{font-size:11px;color:var(--text-light);margin-top:4px;}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;}
+  th{background:var(--primary);color:#fff;padding:10px 12px;text-align:center;font-weight:600;font-size:12px;}
+  td{padding:9px 12px;border-bottom:1px solid var(--border);text-align:right;}
+  td:first-child{text-align:left;font-weight:500;}
+  tr:hover{background:#f7fafc;}
+  tr.total-row{background:#f0f4f8;font-weight:700;}
+  tr.total-row td{border-top:2px solid var(--primary);}
+  .negative{color:var(--danger);font-weight:600;}
+  .positive{color:var(--success);font-weight:600;}
+  .chart-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-bottom:24px;}
+  .chart-box{background:var(--card);border-radius:12px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.08);}
+  .chart-box.full{grid-column:1/-1;}
+  .chart-box h4{font-size:14px;font-weight:600;color:var(--primary);margin-bottom:16px;}
+  .chart-wrapper{height:320px;position:relative;}
+  .chart-wrapper.tall{height:400px;}
+  .insight-box{background:linear-gradient(135deg,#e8f4fd 0%,#f0fdf4 100%);border:1px solid #bee3f8;border-radius:10px;padding:20px 24px;margin-top:20px;}
+  .insight-box h4{font-size:14px;font-weight:700;color:var(--primary);margin-bottom:10px;}
+  .insight-box ul{padding-left:20px;}
+  .insight-box li{font-size:13px;line-height:1.8;color:#2d3748;}
+  .alert-box{background:linear-gradient(135deg,#fff5f5 0%,#fed7d7 100%);border:1px solid #feb2b2;border-radius:10px;padding:20px 24px;margin-top:20px;}
+  .alert-box h4{font-size:14px;font-weight:700;color:var(--danger);margin-bottom:10px;}
+  .alert-box ul{padding-left:20px;}
+  .alert-box li{font-size:13px;line-height:1.8;color:#742a2a;}
+  .callout{background:#fffbeb;border:1px solid #fbbf24;border-radius:10px;padding:20px 24px;margin:20px 0;}
+  .callout h4{font-size:14px;font-weight:700;color:#92400e;margin-bottom:8px;}
+  .callout p{font-size:13px;color:#78350f;line-height:1.7;}
+  .formula-box{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--primary);line-height:2;}
+  .summary-box{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);color:#fff;border-radius:12px;padding:32px;margin-top:24px;}
+  .summary-box h3{font-size:18px;margin-bottom:16px;}
+  .summary-box ul{padding-left:20px;}
+  .summary-box li{font-size:14px;line-height:2;opacity:0.95;}
+  .grade{display:inline-block;padding:2px 10px;border-radius:4px;font-size:11px;font-weight:700;color:#fff;}
+  .grade.red{background:var(--danger);}
+  .grade.orange{background:var(--warning);}
+  .grade.green{background:var(--success);}
+  .grade.blue{background:var(--info);}
+  .position-map{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;height:360px;border:2px solid var(--border);border-radius:12px;overflow:hidden;margin:20px 0;}
+  .position-quadrant{padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;}
+  .position-quadrant:nth-child(1){background:#f0fdf4;}
+  .position-quadrant:nth-child(2){background:#e8f4fd;}
+  .position-quadrant:nth-child(3){background:#fff8f0;}
+  .position-quadrant:nth-child(4){background:#fff5f5;}
+  .position-label{font-size:11px;color:var(--text-light);margin-bottom:8px;font-weight:600;}
+  .position-hotel{background:#fff;border-radius:8px;padding:8px 12px;margin:4px;font-size:12px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.1);display:inline-block;}
+  .position-hotel.highlight{background:var(--accent);color:#fff;}
+  .position-hotel.gap{background:var(--danger);color:#fff;border:2px dashed #fff;}
+  .axis-label{position:absolute;font-size:10px;font-weight:700;color:var(--text-light);}
+  @media(max-width:768px){
+    header{flex-direction:column;text-align:center;gap:12px;padding:24px 16px;}
+    .container{padding:16px;}
+    .chart-grid{grid-template-columns:1fr;}
+    .kpi-grid{grid-template-columns:repeat(2,1fr);}
+    .position-map{height:auto;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>호텔어라운드 평창 — 브랜드·포지셔닝 분석</h1>
+    <div class="subtitle">문제점 정의 6/7 | 브랜드 전환 효과와 경쟁 포지셔닝 공백 진단</div>
+  </div>
+  <div class="date-badge">분석 기준: 2025.10 ~ 2026.03</div>
+</header>
+
+<div class="container">
+
+  <!-- ================================================================ -->
+  <!-- Q19. 브랜드 전환 후 OTA 리뷰·노출 변화 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <div class="section-title"><span class="num">19</span> '더화이트호텔 → 호텔어라운드 평창' 브랜드 전환 후 OTA 리뷰·노출 분석</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card success">
+        <div class="kpi-label">트립닷컴 평점</div>
+        <div class="kpi-value success">8.6 / 10</div>
+        <div class="kpi-sub">평창 4성급 호텔 1위</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-label">추정 리뷰 수 (전체 OTA)</div>
+        <div class="kpi-value danger">100~200건</div>
+        <div class="kpi-sub">개관 5개월, 경쟁사 대비 절대 부족</div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label">브랜드 인지도 전환 리스크</div>
+        <div class="kpi-value" style="color:var(--warning);font-size:18px;">리뷰 리셋</div>
+        <div class="kpi-sub">기존 '더화이트호텔' 리뷰 이력 단절</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">광고선전비 (10~12월)</div>
+        <div class="kpi-value">1,164만원</div>
+        <div class="kpi-sub">매출의 2.8% — 브랜드 구축기에 과소 투자</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h4>브랜드 전환의 OTA 영향 타임라인</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-brand-timeline"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>OTA 리뷰 수 경쟁사 비교 (추정)</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-review-compare"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>브랜드 전환 영향</th>
+          <th>전환 전 (더화이트호텔)</th>
+          <th>전환 후 (호텔어라운드)</th>
+          <th>영향도</th>
+          <th>상세 분석</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>OTA 리뷰 이력</td>
+          <td>수년간 누적 리뷰</td>
+          <td class="negative">리셋 (0건부터 재시작)</td>
+          <td class="negative">★★★★★</td>
+          <td>브랜드명 변경 시 대부분 OTA에서 신규 등록으로 처리, 기존 리뷰 연동 불가</td>
+        </tr>
+        <tr>
+          <td>검색 노출 순위</td>
+          <td>기존 검색어 상위 노출</td>
+          <td class="negative">하위 재배치</td>
+          <td class="negative">★★★★★</td>
+          <td>OTA 알고리즘은 리뷰 수·판매 실적 기반 → 신규 등록은 최하위에서 시작</td>
+        </tr>
+        <tr>
+          <td>네이버/구글 SEO</td>
+          <td>"더화이트호텔 평창" 검색 유입</td>
+          <td class="negative">"호텔어라운드 평창" 인지도 0</td>
+          <td class="negative">★★★★</td>
+          <td>새 브랜드명으로 검색 유입이 거의 없음, SEO 재구축 필요(6~12개월)</td>
+        </tr>
+        <tr>
+          <td>재방문 고객 이탈</td>
+          <td>기존 투숙 고객 DB</td>
+          <td class="negative">검색 시 찾을 수 없음</td>
+          <td class="negative">★★★★</td>
+          <td>과거 투숙객이 재예약 시도 시 '더화이트호텔'로 검색 → 폐업으로 오인</td>
+        </tr>
+        <tr>
+          <td>평점 품질</td>
+          <td>-</td>
+          <td class="positive">8.6/10 (트립닷컴)</td>
+          <td class="positive">★★★</td>
+          <td>리모델링 후 품질 향상으로 높은 초기 평점 확보 — 유지·확대가 관건</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="formula-box">
+      <strong>▶ OTA 노출 알고리즘의 핵심 요소 (리뷰 영향)</strong><br><br>
+      OTA 검색 노출 순위 = f(리뷰 수, 평점, 전환율, 수수료율, 최근 판매량)<br><br>
+      <strong>리뷰 100건 미만:</strong> 대부분 OTA에서 "인기도 낮음" 분류 → 검색 2~3페이지 이후 노출<br>
+      <strong>리뷰 200건 이상:</strong> "신뢰도 확인됨" 상태 → 검색 1페이지 진입 가능<br>
+      <strong>리뷰 500건 이상:</strong> "인기 숙소" 배지 획득 → 상위 노출 + 전환율 2~3배<br><br>
+      <strong>현재 추정 위치:</strong> 리뷰 100~200건 → <strong style="color:#dc3545">"인기도 낮음" 구간</strong><br>
+      <strong>목표:</strong> 6개월 내 리뷰 300건 이상 확보 → "신뢰도 확인됨" 진입
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box full">
+        <h4>리뷰 수 확보 로드맵 (6개월)</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-review-roadmap"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-box">
+      <h4>브랜드 전환의 숨겨진 비용</h4>
+      <ul>
+        <li><strong>리뷰 리셋 = 매출 손실:</strong> 리뷰 수가 0에서 재시작하면서 OTA 노출이 하위로 밀렸고, 이로 인한 매출 손실은 추정 월 수천만원 규모입니다.</li>
+        <li><strong>SEO 재구축 6~12개월:</strong> "호텔어라운드 평창" 검색 결과에 자사 콘텐츠가 상위 노출되기까지 최소 6개월 소요. 현재는 OTA 페이지만 노출됩니다.</li>
+        <li><strong>광고비 2.8% 과소:</strong> 브랜드 구축기에 매출의 5~8%를 마케팅에 투자해야 하지만, 현재 2.8%(월 388만원)는 절대 부족합니다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Q20. 경쟁사 대비 포지셔닝 공백 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <div class="section-title"><span class="num">20</span> 경쟁사 대비 포지셔닝 공백 정의</div>
+
+    <div class="chart-grid">
+      <div class="chart-box full">
+        <h4>평창 호텔 포지셔닝 맵 (가격 vs 부대시설)</h4>
+        <div class="chart-wrapper tall">
+          <canvas id="chart-position-map"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>경쟁사</th>
+          <th>객실</th>
+          <th>등급</th>
+          <th>브랜드 파워</th>
+          <th>핵심 무기</th>
+          <th>Group 비중</th>
+          <th>호텔어라운드 대비 우위</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>휘닉스 호텔&리조트</td>
+          <td>~300실</td>
+          <td>5성급</td>
+          <td class="positive">매우 강함</td>
+          <td>스키장·워터파크·골프장 직영</td>
+          <td>~35%</td>
+          <td class="negative">부대시설·브랜드·MICE 모두 압도</td>
+        </tr>
+        <tr>
+          <td>알펜시아 리조트</td>
+          <td>~300실</td>
+          <td>4~5성급</td>
+          <td class="positive">강함</td>
+          <td>올림픽 유산·대형 행사장·컨벤션</td>
+          <td>~40%</td>
+          <td class="negative">MICE·컨벤션 인프라 압도</td>
+        </tr>
+        <tr>
+          <td>라마다 평창</td>
+          <td>678실</td>
+          <td>4성급</td>
+          <td class="positive">강함 (글로벌)</td>
+          <td>회원제 네트워크·브랜드 인지도</td>
+          <td>~25%</td>
+          <td class="negative">글로벌 체인 신뢰도·리피터 확보</td>
+        </tr>
+        <tr>
+          <td>한화리조트 평창</td>
+          <td>~200실</td>
+          <td>3~4성급</td>
+          <td class="positive">강함 (대기업)</td>
+          <td>회원제·가족 친화·키즈 프로그램</td>
+          <td>~25%</td>
+          <td class="negative">회원 기반 안정 수요</td>
+        </tr>
+        <tr>
+          <td>켄싱턴 리조트</td>
+          <td>~150실</td>
+          <td>5성급</td>
+          <td class="positive">강함 (프리미엄)</td>
+          <td>키즈 특화·프리미엄 서비스</td>
+          <td>~20%</td>
+          <td class="negative">프리미엄 포지셔닝 확립</td>
+        </tr>
+        <tr class="total-row">
+          <td>호텔어라운드 평창</td>
+          <td>518실</td>
+          <td>4성급</td>
+          <td class="negative">매우 약함</td>
+          <td style="color:var(--warning)">스마트호텔·반려동물·가성비</td>
+          <td class="negative">0%</td>
+          <td>-</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:15px;color:var(--primary);margin:24px 0 16px;">포지셔닝 공백 4가지</h3>
+
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h4>경쟁사 역량 비교 레이더</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-competitor-radar"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>포지셔닝 공백 영역별 매출 기회</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-gap-opportunity"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>포지셔닝 공백</th>
+          <th>현상</th>
+          <th>경쟁사 대비</th>
+          <th>매출 영향</th>
+          <th>해결 방향</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>① "왜 여기 가야 하지?" — 방문 이유 부재</strong></td>
+          <td class="negative">킬러 콘텐츠 없음</td>
+          <td>휘닉스=스키장, 알펜시아=올림픽, 한화=가족</td>
+          <td class="negative">비수기 OCC 2~4%의 근본 원인</td>
+          <td>"<strong>워케이션 전문</strong>"이라는 유일무이한 포지션 확립</td>
+        </tr>
+        <tr>
+          <td><strong>② 독립 브랜드의 신뢰 공백</strong></td>
+          <td class="negative">체인·대기업 신뢰 없음</td>
+          <td>라마다=글로벌, 한화/휘닉스=대기업</td>
+          <td class="negative">기업 고객 Group 0%의 주요 원인</td>
+          <td>트립닷컴 1위 활용 + 후기 마케팅 강화</td>
+        </tr>
+        <tr>
+          <td><strong>③ 부대시설 경쟁력 부재</strong></td>
+          <td class="negative">워터파크·골프·대형 스파 없음</td>
+          <td>휘닉스=올인원, 켄싱턴=프리미엄</td>
+          <td class="negative">가족·레저 고객 유치 한계</td>
+          <td>부대시설 대신 <strong>워크 인프라·웰니스</strong>로 차별화</td>
+        </tr>
+        <tr>
+          <td><strong>④ 비수기 존재감 제로</strong></td>
+          <td class="negative">3~11월 인지도 소멸</td>
+          <td>경쟁사는 골프·캠핑·축제로 비수기 운영</td>
+          <td class="negative">연 7개월 적자</td>
+          <td>워케이션·장기숙박으로 <strong>사계절 브랜드</strong> 구축</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <h4>포지셔닝 전략 제안: "평창 유일의 워케이션 호텔"</h4>
+      <p>경쟁사가 모두 <strong>'놀러 가는 곳'(레저·관광)</strong>에 포지셔닝되어 있습니다. 호텔어라운드는 이 레드오션에서 경쟁하면 반드시 집니다 — 스키장도, 워터파크도, 글로벌 브랜드도 없기 때문입니다.<br><br>
+      유일한 승리 전략은 경쟁사가 <strong>아무도 차지하지 않은 포지션</strong>을 선점하는 것입니다:<br>
+      <strong>"일하면서 쉬는 곳" = 워케이션·장기체류 전문 호텔</strong><br><br>
+      평창 4성급 이상 호텔 중 장기숙박 워케이션 상품을 운영하는 곳은 아직 없습니다. 518실의 대규모 객실, 스마트호텔 인프라, 가성비(1주 28만원)는 이 포지셔닝에 최적화된 자산입니다.</p>
+    </div>
+
+    <div class="insight-box">
+      <h4>경쟁사가 따라올 수 없는 3가지 이유</h4>
+      <ul>
+        <li><strong>518실 규모:</strong> 워케이션·장기체류에 50~100실을 할당해도 성수기 일반 판매에 영향 없음. 300실 이하 경쟁사는 불가능</li>
+        <li><strong>스마트호텔 인프라:</strong> IoT 객실 제어, 로봇 서비스 등이 "일하는 공간"에 최적. 기존 리조트는 레저 인프라에 투자 고정</li>
+        <li><strong>가성비 포지션:</strong> ADR 10~14만원은 5성급(20만원+) 대비 압도적 가격 경쟁력. 장기체류 시 1주 28만원은 서울 공유오피스보다 저렴</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Q21. 트립닷컴 1위가 매출로 전환되지 않는 이유 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <div class="section-title"><span class="num">21</span> 트립닷컴 평창 4성급 1위 — 매출 미전환 원인 진단</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card success">
+        <div class="kpi-label">트립닷컴 평점</div>
+        <div class="kpi-value success">8.6 / 10</div>
+        <div class="kpi-sub">평창 4성급 호텔 1위</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-label">트립닷컴 매출 비중 (추정)</div>
+        <div class="kpi-value danger">5~8%</div>
+        <div class="kpi-sub">전체 매출의 소수 비중</div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label">트립닷컴 평창 검색량</div>
+        <div class="kpi-value" style="color:var(--warning);font-size:18px;">극소</div>
+        <div class="kpi-sub">평창 자체가 해외 관광 목적지가 아님</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">트립닷컴 수수료</div>
+        <div class="kpi-value">15~20%</div>
+        <div class="kpi-sub">순수 매출 기여도 더욱 낮음</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h4">"1위"가 매출로 전환되지 않는 5단계 퍼널</h4>
+        <div class="chart-wrapper tall">
+          <canvas id="chart-tripcom-funnel"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>OTA별 '평창' 검색량 추정 비교</h4>
+        <div class="chart-wrapper tall">
+          <canvas id="chart-ota-search"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>전환 장벽</th>
+          <th>영향도</th>
+          <th>현상</th>
+          <th>수치 근거</th>
+          <th>해결 방향</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>① 시장 규모 자체가 작음</strong></td>
+          <td class="negative">★★★★★</td>
+          <td>트립닷컴에서 '평창' 검색하는 사람이 극소수</td>
+          <td>트립닷컴 주요 고객 = 중화권. 평창 ≠ 서울·부산 수준의 인기 목적지</td>
+          <td>트립닷컴에서의 1위보다 <strong>야놀자·네이버에서의 순위</strong>가 중요</td>
+        </tr>
+        <tr>
+          <td><strong>② "평창 1위"의 경쟁 강도 낮음</strong></td>
+          <td class="negative">★★★★</td>
+          <td>평창 4성급 호텔이 3~4개뿐</td>
+          <td>모수 자체가 작아서 1위의 의미가 제한적</td>
+          <td>1위 타이틀보다 <strong>절대 리뷰 수 확대</strong>에 집중</td>
+        </tr>
+        <tr>
+          <td><strong>③ 리뷰 수 부족</strong></td>
+          <td class="negative">★★★★</td>
+          <td>평점 8.6은 높지만, 리뷰 수가 적으면 신뢰도 한계</td>
+          <td>추정 리뷰 50~100건 vs 경쟁사 500건+</td>
+          <td>투숙객 리뷰 작성 인센티브 (10% 할인 쿠폰)</td>
+        </tr>
+        <tr>
+          <td><strong>④ 비수기 검색 자체가 소멸</strong></td>
+          <td class="negative">★★★</td>
+          <td>3~11월에는 '평창 호텔' 검색량 90%+ 감소</td>
+          <td>비수기 OCC 2~4%</td>
+          <td>"평창 워케이션" 신규 검색어 생성 전략</td>
+        </tr>
+        <tr>
+          <td><strong>⑤ 국내 OTA가 주 전장</strong></td>
+          <td class="negative">★★★</td>
+          <td>한국 국내 여행자는 야놀자·여기어때·네이버 사용</td>
+          <td>트립닷컴 매출 비중 추정 5~8%</td>
+          <td>국내 OTA + 네이버에서의 <strong>가시성 확보가 우선</strong></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h4">트립닷컴 1위 활용 전략</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-tripcom-strategy"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>OTA별 매출 기여도 vs 투자 우선순위</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-ota-priority"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="formula-box">
+      <strong>▶ 트립닷컴 1위의 실제 매출 기여도 추정</strong><br><br>
+      총 객실매출 (11~2월): 16.9억원<br>
+      트립닷컴 비중 (추정 7%): <strong>1.18억원</strong><br>
+      트립닷컴 수수료 15~20%: -1,780~2,360만원<br>
+      실수령 매출: <strong>약 9,500만원~1.0억원</strong><br><br>
+      <strong style="color:var(--warning);">→ "평창 4성급 1위"의 실제 기여 = 4개월간 약 1억원 (전체의 6~7%)</strong><br>
+      같은 기간 야놀자 추정 매출: 4.5~5억원 (전체의 27~30%)
+    </div>
+
+    <div class="insight-box">
+      <h4>트립닷컴 1위 — 올바른 활용법</h4>
+      <ul>
+        <li><strong>"1위 타이틀"을 마케팅 자산으로 전용:</strong> 트립닷컴에서 직접 매출을 기대하기보다, "트립닷컴 평창 1위" 배지를 자사 웹사이트·SNS·네이버에 노출하여 <strong>신뢰도 구축 수단</strong>으로 활용</li>
+        <li><strong>리뷰 300건 달성 캠페인:</strong> 체크아웃 시 "트립닷컴 리뷰 작성하면 F&B 1만원 쿠폰" → 6개월 내 리뷰 300건 달성</li>
+        <li><strong>국내 OTA에 집중 투자:</strong> 실제 매출의 70%+ 기여하는 야놀자·여기어때·네이버의 노출 순위 개선이 ROI 기준 최우선</li>
+        <li><strong>해외 마케팅은 중기 과제:</strong> 동계 시즌(12~2월) 중화권·동남아 타겟 프로모션은 유효하나, 연간 매출 핵심은 국내 채널</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- 종합 요약 -->
+  <!-- ================================================================ -->
+  <div class="summary-box">
+    <h3>브랜드·포지셔닝 종합 진단</h3>
+    <ul>
+      <li><strong>Q19. 브랜드 전환 영향:</strong> '더화이트호텔→호텔어라운드' 전환으로 OTA 리뷰 이력 리셋, 검색 노출 하위 재배치, SEO 재구축 6~12개월 소요. 광고비 2.8%는 브랜드 구축기에 과소 투자</li>
+      <li><strong>Q20. 포지셔닝 4대 공백:</strong> ① 방문 이유(킬러 콘텐츠) 부재 ② 독립 브랜드 신뢰 공백 ③ 부대시설 열위 ④ 비수기 존재감 제로. "워케이션 전문 호텔"이라는 경쟁사 미진입 포지션 선점이 유일한 해법</li>
+      <li><strong>Q21. 트립닷컴 1위 미전환:</strong> 평창 검색량 자체가 극소 + 경쟁 모수 3~4개 + 리뷰 수 부족 → 실제 매출 기여 5~8%. "1위 타이틀"은 직접 매출보다 신뢰도 구축 마케팅 자산으로 전용해야</li>
+      <li><strong>핵심 처방:</strong> ① 리뷰 6개월 내 300건 달성 ② 광고비 매출의 5%+ 확대 ③ "워케이션 전문 호텔" 포지셔닝 확립 ④ 국내 OTA(야놀자·네이버)에 마케팅 집중</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+Chart.register(ChartDataLabels);
+const P='#1a365d',A='#e6a817',D='#dc3545',S='#28a745',I='#2c6fbb',W='#f39c12';
+Chart.defaults.font={family:"'Noto Sans KR',sans-serif",size:11};
+Chart.defaults.plugins.datalabels={display:false};
+
+// Q19: 브랜드 전환 타임라인
+new Chart(document.getElementById('chart-brand-timeline'),{
+  type:'line',
+  data:{
+    labels:['전환 전\n(더화이트)','전환 직후\n(10월)','11월','12월','1월','2월','6개월 후\n(목표)'],
+    datasets:[{
+      label:'OTA 리뷰 수 (추정)',
+      data:[500,0,15,50,120,180,350],
+      borderColor:I,backgroundColor:'rgba(44,111,187,0.1)',fill:true,tension:0.4,pointRadius:6,borderWidth:3
+    },{
+      label:'검색 노출 순위 (역수, 높을수록 상위)',
+      data:[70,5,10,25,40,50,65],
+      borderColor:S,borderDash:[6,3],tension:0.4,pointRadius:5,borderWidth:2,yAxisID:'y1'
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{datalabels:{
+      display:function(ctx){return ctx.datasetIndex===0;},
+      anchor:'end',align:'top',
+      formatter:v=>v+'건',font:{size:10,weight:'bold'}
+    }},
+    scales:{
+      y:{title:{display:true,text:'리뷰 수'},min:0,max:600},
+      y1:{position:'right',title:{display:true,text:'노출 순위 (높을수록 상위)'},grid:{display:false},min:0,max:100}
+    }
+  }
+});
+
+// Q19: 리뷰 수 비교
+new Chart(document.getElementById('chart-review-compare'),{
+  type:'bar',
+  data:{
+    labels:['호텔어라운드\n(현재)','라마다\n평창','휘닉스\n리조트','알펜시아\n리조트','한화리조트\n평창','켄싱턴\n리조트'],
+    datasets:[{
+      label:'추정 OTA 리뷰 수',
+      data:[150,3500,5000,4000,3000,2500],
+      backgroundColor:[D,P,P,P,P,P],borderRadius:6
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{datalabels:{
+      display:true,anchor:'end',align:'top',
+      formatter:v=>v>=1000?(v/1000).toFixed(1)+'K':v,
+      font:{size:11,weight:'bold'},
+      color:function(ctx){return ctx.dataIndex===0?D:P;}
+    }},
+    scales:{y:{max:6000}}
+  }
+});
+
+// Q19: 리뷰 로드맵
+new Chart(document.getElementById('chart-review-roadmap'),{
+  type:'bar',
+  data:{
+    labels:['현재 (3월)','4월','5월','6월','7월','8월','9월 (목표)'],
+    datasets:[{
+      label:'누적 리뷰 수',
+      data:[150,175,200,230,260,290,350],
+      backgroundColor:function(ctx){return ctx.raw>=300?S:(ctx.raw>=200?W:D);},
+      borderRadius:6
+    },{
+      label:'월 신규 리뷰',
+      data:[30,25,25,30,30,30,60],
+      type:'line',borderColor:I,pointRadius:5,pointBackgroundColor:I,borderWidth:2,yAxisID:'y1'
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{datalabels:{
+      display:function(ctx){return ctx.datasetIndex===0;},
+      anchor:'end',align:'top',
+      formatter:v=>v+'건',font:{size:11,weight:'bold'}
+    }},
+    scales:{
+      y:{title:{display:true,text:'누적 리뷰'},max:400},
+      y1:{position:'right',title:{display:true,text:'월 신규'},grid:{display:false},max:80}
+    }
+  }
+});
+
+// Q20: 포지셔닝 맵
+new Chart(document.getElementById('chart-position-map'),{
+  type:'bubble',
+  data:{
+    datasets:[
+      {label:'휘닉스',data:[{x:85,y:90,r:18}],backgroundColor:'#2ecc71'},
+      {label:'알펜시아',data:[{x:75,y:80,r:16}],backgroundColor:'#3498db'},
+      {label:'켄싱턴',data:[{x:90,y:70,r:12}],backgroundColor:'#9b59b6'},
+      {label:'라마다',data:[{x:55,y:60,r:20}],backgroundColor:'#e67e22'},
+      {label:'한화리조트',data:[{x:50,y:55,r:14}],backgroundColor:'#1abc9c'},
+      {label:'호텔어라운드',data:[{x:35,y:30,r:22}],backgroundColor:D},
+      {label:'워케이션 기회 영역',data:[{x:30,y:70,r:25}],backgroundColor:'rgba(230,168,23,0.3)',borderColor:A,borderWidth:3}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom',labels:{font:{size:10}}},
+      datalabels:{display:false}
+    },
+    scales:{
+      x:{title:{display:true,text:'가격 수준 (높을수록 고가) →'},min:0,max:100},
+      y:{title:{display:true,text:'부대시설·콘텐츠 (높을수록 풍부) →'},min:0,max:100}
+    }
+  }
+});
+
+// Q20: 경쟁사 레이더
+new Chart(document.getElementById('chart-competitor-radar'),{
+  type:'radar',
+  data:{
+    labels:['브랜드 인지도','부대시설','가격 경쟁력','객실 규모','MICE 인프라','비수기 콘텐츠','스마트 인프라'],
+    datasets:[
+      {label:'호텔어라운드',data:[15,20,85,90,10,15,80],borderColor:D,backgroundColor:'rgba(220,53,69,0.1)',borderWidth:2},
+      {label:'휘닉스',data:[90,95,30,50,70,60,30],borderColor:S,backgroundColor:'rgba(40,167,69,0.1)',borderWidth:2},
+      {label:'라마다',data:[80,50,55,95,50,30,20],borderColor:I,backgroundColor:'rgba(44,111,187,0.1)',borderWidth:2}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    scales:{r:{min:0,max:100,ticks:{stepSize:20}}},
+    plugins:{datalabels:{display:false}}
+  }
+});
+
+// Q20: 공백 영역 매출 기회
+new Chart(document.getElementById('chart-gap-opportunity'),{
+  type:'bar',
+  data:{
+    labels:['워케이션 전문\n(방문 이유 창출)','브랜드 신뢰\n(리뷰·인증)','비수기 콘텐츠\n(사계절 운영)','차별화 시설\n(워크인프라)'],
+    datasets:[{
+      label:'연간 매출 기회 (억원)',
+      data:[30.7,5,8,3],
+      backgroundColor:[A,I,W,S],borderRadius:6
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{datalabels:{
+      display:true,anchor:'end',align:'top',
+      formatter:v=>v+'억',font:{size:13,weight:'bold'}
+    }},
+    scales:{y:{max:40,title:{display:true,text:'억원/년'}}}
+  }
+});
+
+// Q21: 트립닷컴 퍼널
+new Chart(document.getElementById('chart-tripcom-funnel'),{
+  type:'bar',
+  data:{
+    labels:['트립닷컴\n전체 검색','평창\n검색','호텔어라운드\n조회','예약\n전환','실제\n투숙'],
+    datasets:[{
+      label:'추정 사용자 수',
+      data:[10000000,8000,2000,300,250],
+      backgroundColor:[P,I,W,D,S],borderRadius:6
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{datalabels:{
+      display:true,anchor:'end',align:'top',
+      formatter:function(v){
+        if(v>=1000000) return (v/1000000).toFixed(0)+'M';
+        if(v>=1000) return (v/1000).toFixed(0)+'K';
+        return v;
+      },
+      font:{size:11,weight:'bold'}
+    }},
+    scales:{y:{type:'logarithmic',min:100,max:20000000}}
+  }
+});
+
+// Q21: OTA별 평창 검색량
+new Chart(document.getElementById('chart-ota-search'),{
+  type:'bar',
+  data:{
+    labels:['야놀자','여기어때','네이버','Booking','트립닷컴','Agoda','Expedia'],
+    datasets:[{
+      label:'월간 평창 검색량 추정',
+      data:[45000,35000,80000,12000,8000,6000,3000],
+      backgroundColor:[D,W,S,I,P,'#9b59b6','#94a3b8'],borderRadius:6
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{datalabels:{
+      display:true,anchor:'end',align:'top',
+      formatter:v=>v>=10000?(v/10000).toFixed(1)+'만':v>=1000?(v/1000).toFixed(0)+'K':v,
+      font:{size:10,weight:'bold'}
+    }},
+    scales:{y:{max:100000}}
+  }
+});
+
+// Q21: 트립닷컴 활용 전략
+new Chart(document.getElementById('chart-tripcom-strategy'),{
+  type:'doughnut',
+  data:{
+    labels:['신뢰도 마케팅 자산 (50%)','해외 성수기 프로모션 (25%)','리뷰 확보 캠페인 (15%)','직접 매출 기여 (10%)'],
+    datasets:[{
+      data:[50,25,15,10],
+      backgroundColor:[S,I,W,P],borderWidth:2,borderColor:'#fff'
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom',labels:{font:{size:10}}},
+      datalabels:{display:true,formatter:v=>v+'%',color:'#fff',font:{size:13,weight:'bold'}}
+    }
+  }
+});
+
+// Q21: OTA 투자 우선순위
+new Chart(document.getElementById('chart-ota-priority'),{
+  type:'bubble',
+  data:{
+    datasets:[
+      {label:'네이버',data:[{x:90,y:85,r:20}],backgroundColor:S},
+      {label:'야놀자',data:[{x:80,y:70,r:18}],backgroundColor:W},
+      {label:'여기어때',data:[{x:70,y:65,r:16}],backgroundColor:W},
+      {label:'자사 웹',data:[{x:95,y:30,r:22}],backgroundColor:I},
+      {label:'Booking',data:[{x:50,y:50,r:12}],backgroundColor:P},
+      {label:'트립닷컴',data:[{x:30,y:40,r:10}],backgroundColor:'#94a3b8'},
+      {label:'Agoda',data:[{x:25,y:35,r:8}],backgroundColor:'#94a3b8'}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom',labels:{font:{size:10}}},
+      datalabels:{display:false}
+    },
+    scales:{
+      x:{title:{display:true,text:'투자 ROI (높을수록 효과적) →'},min:0,max:100},
+      y:{title:{display:true,text:'현재 매출 기여도 →'},min:0,max:100}
+    }
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>호텔어라운드 평창 | 5. 비용·운영 구조 분석</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap');
+  :root {
+    --primary: #1a365d; --primary-light: #2d5a9e; --accent: #e6a817;
+    --bg: #f0f2f5; --card: #ffffff; --text: #2c2c2c; --text-light: #6b6b6b;
+    --border: #e2e8f0; --success: #28a745; --danger: #dc3545; --info: #2c6fbb; --warning: #f39c12;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 14px; }
+  header { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: #fff; padding: 32px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+  header h1 { font-size: 22px; font-weight: 700; }
+  header .subtitle { font-size: 13px; opacity: 0.8; margin-top: 4px; }
+  .date-badge { background: rgba(255,255,255,0.15); padding: 8px 16px; border-radius: 8px; font-size: 13px; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+  .section { background: var(--card); border-radius: 12px; padding: 28px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .section-title { font-size: 17px; font-weight: 700; color: var(--primary); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .section-title .num { background: var(--primary); color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .kpi-card { background: var(--card); border-radius: 10px; padding: 20px; border-left: 4px solid var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: all 0.2s; }
+  .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+  .kpi-card.danger { border-left-color: var(--danger); }
+  .kpi-card.success { border-left-color: var(--success); }
+  .kpi-card.warning { border-left-color: var(--warning); }
+  .kpi-label { font-size: 12px; color: var(--text-light); margin-bottom: 4px; }
+  .kpi-value { font-size: 24px; font-weight: 800; }
+  .kpi-value.danger { color: var(--danger); }
+  .kpi-value.success { color: var(--success); }
+  .kpi-sub { font-size: 11px; color: var(--text-light); margin-top: 4px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px; }
+  th { background: var(--primary); color: #fff; padding: 10px 12px; text-align: center; font-weight: 600; font-size: 12px; }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); text-align: right; }
+  td:first-child { text-align: left; font-weight: 500; }
+  tr:hover { background: #f7fafc; }
+  tr.total-row { background: #f0f4f8; font-weight: 700; }
+  tr.total-row td { border-top: 2px solid var(--primary); }
+  .negative { color: var(--danger); font-weight: 600; }
+  .positive { color: var(--success); font-weight: 600; }
+  .chart-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 24px; }
+  .chart-box { background: var(--card); border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .chart-box.full { grid-column: 1 / -1; }
+  .chart-box h4 { font-size: 14px; font-weight: 600; color: var(--primary); margin-bottom: 16px; }
+  .chart-wrapper { height: 320px; position: relative; }
+  .chart-wrapper.tall { height: 400px; }
+  .insight-box { background: linear-gradient(135deg, #e8f4fd 0%, #f0fdf4 100%); border: 1px solid #bee3f8; border-radius: 10px; padding: 20px 24px; margin-top: 20px; }
+  .insight-box h4 { font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+  .insight-box ul { padding-left: 20px; }
+  .insight-box li { font-size: 13px; line-height: 1.8; color: #2d3748; }
+  .alert-box { background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%); border: 1px solid #feb2b2; border-radius: 10px; padding: 20px 24px; margin-top: 20px; }
+  .alert-box h4 { font-size: 14px; font-weight: 700; color: var(--danger); margin-bottom: 10px; }
+  .alert-box ul { padding-left: 20px; }
+  .alert-box li { font-size: 13px; line-height: 1.8; color: #742a2a; }
+  .formula-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin: 16px 0; font-size: 13px; color: var(--primary); line-height: 2; }
+  .callout { background: #fffbeb; border: 1px solid #fbbf24; border-radius: 10px; padding: 20px 24px; margin: 20px 0; }
+  .callout h4 { font-size: 14px; font-weight: 700; color: #92400e; margin-bottom: 8px; }
+  .callout p { font-size: 13px; color: #78350f; line-height: 1.7; }
+  .summary-box { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: #fff; border-radius: 12px; padding: 32px; margin-top: 24px; }
+  .summary-box h3 { font-size: 18px; margin-bottom: 16px; }
+  .summary-box ul { padding-left: 20px; }
+  .summary-box li { font-size: 14px; line-height: 2; opacity: 0.95; }
+  .grade { display: inline-block; padding: 2px 10px; border-radius: 4px; font-size: 11px; font-weight: 700; color: #fff; }
+  .grade.red { background: var(--danger); }
+  .grade.orange { background: var(--warning); }
+  .grade.green { background: var(--success); }
+  .grade.blue { background: var(--info); }
+  @media (max-width: 768px) {
+    header { flex-direction: column; text-align: center; gap: 12px; padding: 24px 16px; }
+    .container { padding: 16px; }
+    .chart-grid { grid-template-columns: 1fr; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>호텔어라운드 평창 — 비용·운영 구조 분석</h1>
+    <div class="subtitle">문제점 정의 5/7 | 비용 초과 구조의 원인 해부와 BEP 조건 도출</div>
+  </div>
+  <div class="date-badge">분석 기준: 2025.10 ~ 12월 (3개월)</div>
+</header>
+
+<div class="container">
+
+  <!-- ================================================================ -->
+  <!-- Q16. 비용 구조 문제 항목 분석 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <div class="section-title"><span class="num">16</span> 매출 4.19억 vs 비용 5.40억 — 비용 구조 문제 항목 분석</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">총 매출 (10~12월)</div>
+        <div class="kpi-value">4.19억원</div>
+        <div class="kpi-sub">객실 3.83억 + 식료 0.09억 + 기타 0.27억</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-label">총 비용 (10~12월)</div>
+        <div class="kpi-value danger">5.40억원</div>
+        <div class="kpi-sub">매출 대비 128.8% — 28.8% 초과</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-label">비용 초과액</div>
+        <div class="kpi-value danger">-1.21억원</div>
+        <div class="kpi-sub">영업외수익 0.42억 상쇄 후 순손실 -0.79억</div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label">비용 충당률 (매출/비용)</div>
+        <div class="kpi-value" style="color:var(--warning);">77.7%</div>
+        <div class="kpi-sub">100원 쓸 때 77.7원만 벌어들임</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box full">
+        <h4>비용 항목별 금액·비중·문제 등급 (Top 10)</h4>
+        <div class="chart-wrapper tall">
+          <canvas id="chart-cost-top10"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>순위</th>
+          <th>비용 항목</th>
+          <th>10월</th>
+          <th>11월</th>
+          <th>12월</th>
+          <th>합계</th>
+          <th>비중</th>
+          <th>문제 등급</th>
+          <th>진단</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>지급수수료</td>
+          <td>141만</td>
+          <td>2,440만</td>
+          <td class="negative">12,700만</td>
+          <td class="negative">15,281만</td>
+          <td class="negative">28.3%</td>
+          <td><span class="grade red">심각</span></td>
+          <td>OTA 100% 의존 → 매출의 36%가 수수료</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>소모품비</td>
+          <td>0</td>
+          <td>1,731만</td>
+          <td class="negative">6,847만</td>
+          <td class="negative">8,578만</td>
+          <td class="negative">15.9%</td>
+          <td><span class="grade orange">주의</span></td>
+          <td>개관 초기 일회성 셋업 비용 포함</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>전력비</td>
+          <td>0</td>
+          <td>2,101만</td>
+          <td class="negative">5,233만</td>
+          <td class="negative">7,335만</td>
+          <td class="negative">13.6%</td>
+          <td><span class="grade red">심각</span></td>
+          <td>겨울 난방 + 518실 전체 가동 비효율</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>직원급여</td>
+          <td>883만</td>
+          <td>1,772만</td>
+          <td>2,380만</td>
+          <td>5,034만</td>
+          <td>9.3%</td>
+          <td><span class="grade blue">적정</span></td>
+          <td>매출 대비 12% → 업계 평균(25~30%) 이하</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>복리후생비</td>
+          <td>101만</td>
+          <td>529만</td>
+          <td class="negative">3,985만</td>
+          <td class="negative">4,616만</td>
+          <td class="negative">8.6%</td>
+          <td><span class="grade red">비정상</span></td>
+          <td>12월 3,985만 급등 — 단체보험·명절비 등 일회성 추정</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>객실소모품비</td>
+          <td>0</td>
+          <td>510만</td>
+          <td>1,622만</td>
+          <td>2,132만</td>
+          <td>3.9%</td>
+          <td><span class="grade blue">적정</span></td>
+          <td>어메니티·린넨, OCC 비례 변동</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>건물관리비</td>
+          <td>0</td>
+          <td>482만</td>
+          <td>949만</td>
+          <td>1,431만</td>
+          <td>2.7%</td>
+          <td><span class="grade blue">적정</span></td>
+          <td>518실 대규모 시설 유지보수</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>임급(일용직)</td>
+          <td>0</td>
+          <td>450만</td>
+          <td>863만</td>
+          <td>1,313만</td>
+          <td>2.4%</td>
+          <td><span class="grade orange">주의</span></td>
+          <td>성수기 추가 인력, 상시 고용 전환 검토 필요</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>보험료</td>
+          <td>537만</td>
+          <td>510만</td>
+          <td>243만</td>
+          <td>1,289만</td>
+          <td>2.4%</td>
+          <td><span class="grade green">양호</span></td>
+          <td>화재·배상보험, 안정화 추세</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>광고선전비</td>
+          <td>5만</td>
+          <td>1만</td>
+          <td>1,158만</td>
+          <td>1,164만</td>
+          <td>2.2%</td>
+          <td><span class="grade orange">부족</span></td>
+          <td>매출 대비 2.8% → 브랜드 구축기에 과소 투자</td>
+        </tr>
+        <tr class="total-row">
+          <td>-</td>
+          <td>비용 합계</td>
+          <td>1,716만</td>
+          <td>10,902만</td>
+          <td>41,361만</td>
+          <td class="negative">53,978만</td>
+          <td>100%</td>
+          <td>-</td>
+          <td>매출 대비 128.8%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h4>비용 카테고리별 비중</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-cost-category"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>월별 매출 vs 비용 추이</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-monthly-pnl"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>문제 카테고리</th>
+          <th>금액</th>
+          <th>비중</th>
+          <th>정상화 후 절감 가능액</th>
+          <th>핵심 조치</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>① OTA 수수료 과다</td>
+          <td class="negative">1.61억</td>
+          <td class="negative">29.9%</td>
+          <td class="positive">~5,000만원</td>
+          <td>직접 예약 30% 달성 → 수수료 1/3 절감</td>
+        </tr>
+        <tr>
+          <td>② 초기 셋업 비용 (소모품)</td>
+          <td class="negative">0.86억</td>
+          <td class="negative">15.9%</td>
+          <td class="positive">~6,000만원</td>
+          <td>정상 운영 시 월 500~800만원으로 안정화</td>
+        </tr>
+        <tr>
+          <td>③ 전력비 과다</td>
+          <td class="negative">0.73억</td>
+          <td class="negative">13.6%</td>
+          <td class="positive">~2,000만원</td>
+          <td>비수기 층별 부분 운영, 에너지 효율화</td>
+        </tr>
+        <tr>
+          <td>④ 복리후생비 급등</td>
+          <td class="negative">0.46억</td>
+          <td class="negative">8.6%</td>
+          <td class="positive">~3,000만원</td>
+          <td>12월 일회성 제거 시 월 500만원 정상화</td>
+        </tr>
+        <tr class="total-row">
+          <td>개선 가능 비용 합계</td>
+          <td class="negative">3.66억</td>
+          <td class="negative">67.8%</td>
+          <td class="positive">~1.6억원 절감</td>
+          <td>비용 5.4억 → 3.8억으로 축소 가능</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alert-box">
+      <h4>비용 구조 3대 핵심 문제</h4>
+      <ul>
+        <li><strong>1위: OTA 수수료가 전체 비용의 30%:</strong> 매출의 36%가 OTA에 유출됩니다. 비용 절감의 최대 레버는 직접 예약 확대입니다.</li>
+        <li><strong>2위: 초기 비용과 정상 운영 비용이 혼재:</strong> 10~12월은 개관 초기로, 소모품 6,847만원(12월)에는 첫 구매 비용이 대거 포함. 정상화 시 60~70% 감소 예상.</li>
+        <li><strong>3위: 전력비가 매출의 17.5%:</strong> 518실 전체 난방 가동은 OCC 24~54%에서 극도로 비효율적. 비수기 층별 셧다운이 시급합니다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Q17. 고정비·변동비 분석 및 BEP -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <div class="section-title"><span class="num">17</span> 고정비 vs 변동비 구조 및 손익분기점(BEP) 분석</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card danger">
+        <div class="kpi-label">월 추정 고정비</div>
+        <div class="kpi-value danger">1.15억원</div>
+        <div class="kpi-sub">매출 무관하게 발생하는 비용 (초기 셋업비 포함)</div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label">변동비율 (매출 대비)</div>
+        <div class="kpi-value" style="color:var(--warning);">~45%</div>
+        <div class="kpi-sub">OTA 수수료 20% + 소모품 15% + 기타 10%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">손익분기 월매출 (BEP)</div>
+        <div class="kpi-value">2.09억원</div>
+        <div class="kpi-sub">고정비 ÷ (1 - 변동비율)</div>
+      </div>
+      <div class="kpi-card success">
+        <div class="kpi-label">BEP 달성 OCC</div>
+        <div class="kpi-value success">~18%</div>
+        <div class="kpi-sub">판매가능 340실 기준, ADR 12만원</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h4>비용 항목별 고정/변동 분류</h4>
+        <div class="chart-wrapper tall">
+          <canvas id="chart-fixed-variable"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>OCC별 손익 시뮬레이션 (월간)</h4>
+        <div class="chart-wrapper tall">
+          <canvas id="chart-bep"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>비용 항목</th>
+          <th>월평균 (12월 기준)</th>
+          <th>유형</th>
+          <th>고정비</th>
+          <th>변동비</th>
+          <th>분류 근거</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#edf2f7;">
+          <td colspan="6" style="text-align:center;font-weight:700;color:var(--danger);">고정비 (매출과 무관하게 발생)</td>
+        </tr>
+        <tr>
+          <td>직원급여 + 제수당</td>
+          <td>2,725만</td>
+          <td>고정</td>
+          <td>2,725만</td>
+          <td>-</td>
+          <td>정규직 인건비, 매출 무관</td>
+        </tr>
+        <tr>
+          <td>전력비 (기본)</td>
+          <td>2,500만</td>
+          <td>준고정</td>
+          <td>2,000만</td>
+          <td>500만</td>
+          <td>기본 전력 2,000만(고정) + OCC 비례분</td>
+        </tr>
+        <tr>
+          <td>건물관리비</td>
+          <td>949만</td>
+          <td>고정</td>
+          <td>949만</td>
+          <td>-</td>
+          <td>시설 유지보수, 매출 무관</td>
+        </tr>
+        <tr>
+          <td>보험료</td>
+          <td>430만</td>
+          <td>고정</td>
+          <td>430만</td>
+          <td>-</td>
+          <td>연간 계약, 월할 배분</td>
+        </tr>
+        <tr>
+          <td>지급임차료</td>
+          <td>1,054만</td>
+          <td>고정</td>
+          <td>1,054만</td>
+          <td>-</td>
+          <td>임대계약, 매출 무관</td>
+        </tr>
+        <tr>
+          <td>통신비</td>
+          <td>334만</td>
+          <td>고정</td>
+          <td>334만</td>
+          <td>-</td>
+          <td>인터넷·전화, 정액</td>
+        </tr>
+        <tr>
+          <td>복리후생비 (정상분)</td>
+          <td>500만</td>
+          <td>고정</td>
+          <td>500만</td>
+          <td>-</td>
+          <td>4대보험·식대 등 (12월 급등분 제외)</td>
+        </tr>
+        <tr>
+          <td>기타 (차량·교육·잡비 등)</td>
+          <td>500만</td>
+          <td>고정</td>
+          <td>500만</td>
+          <td>-</td>
+          <td>운영 기본 경비</td>
+        </tr>
+        <tr class="total-row" style="background:#fff0f0;">
+          <td>고정비 소계</td>
+          <td>-</td>
+          <td>-</td>
+          <td class="negative">8,492만</td>
+          <td>-</td>
+          <td>비수기에도 월 약 8,500만원 발생</td>
+        </tr>
+        <tr style="background:#edf2f7;">
+          <td colspan="6" style="text-align:center;font-weight:700;color:var(--warning);">변동비 (매출 비례)</td>
+        </tr>
+        <tr>
+          <td>지급수수료 (OTA)</td>
+          <td>-</td>
+          <td>변동</td>
+          <td>-</td>
+          <td>매출×20~25%</td>
+          <td>OTA 커미션, 매출 직접 비례</td>
+        </tr>
+        <tr>
+          <td>판매수수료</td>
+          <td>-</td>
+          <td>변동</td>
+          <td>-</td>
+          <td>매출×2~3%</td>
+          <td>카드결제·기타 수수료</td>
+        </tr>
+        <tr>
+          <td>객실소모품비</td>
+          <td>-</td>
+          <td>변동</td>
+          <td>-</td>
+          <td>객실당 ~3,000원</td>
+          <td>어메니티·린넨, 투숙객 비례</td>
+        </tr>
+        <tr>
+          <td>소모품비 (정상분)</td>
+          <td>-</td>
+          <td>변동</td>
+          <td>-</td>
+          <td>매출×5~8%</td>
+          <td>초기 셋업 제외한 정상 소모</td>
+        </tr>
+        <tr>
+          <td>임급(일용직)</td>
+          <td>-</td>
+          <td>변동</td>
+          <td>-</td>
+          <td>OCC 비례</td>
+          <td>성수기 추가 하우스키핑 인력</td>
+        </tr>
+        <tr>
+          <td>전력비 (변동분)</td>
+          <td>-</td>
+          <td>변동</td>
+          <td>-</td>
+          <td>객실당 ~5,000원</td>
+          <td>객실 냉난방·조명, OCC 비례</td>
+        </tr>
+        <tr class="total-row" style="background:#fff8f0;">
+          <td>변동비 소계</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td class="negative">매출의 ~45%</td>
+          <td>1원 벌 때 0.45원이 변동비</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="formula-box">
+      <strong>▶ 손익분기점(BEP) 산출</strong><br><br>
+      <strong>공식:</strong> BEP 매출 = 고정비 ÷ (1 - 변동비율)<br>
+      BEP = 8,500만원 ÷ (1 - 0.45) = 8,500만 ÷ 0.55 = <strong style="color:var(--danger)">15,455만원 ≒ 1.55억원/월</strong><br><br>
+
+      <strong>※ 초기 비용 포함 시 (현재 상태):</strong><br>
+      실제 고정비(셋업 포함) = ~1.15억원/월<br>
+      BEP = 11,500만 ÷ 0.55 = <strong style="color:var(--danger)">20,909만원 ≒ 2.09억원/월</strong><br><br>
+
+      <strong>▶ BEP 달성에 필요한 OCC (ADR 12만원 기준)</strong><br>
+      월 매출 2.09억 ÷ 30일 = 일매출 697만원<br>
+      필요 판매 객실 = 697만 ÷ 12만원 = 일 58실<br>
+      OCC(판매가능 340실 기준) = 58 ÷ 340 = <strong style="color:var(--info)">17.1%</strong><br>
+      OCC(전체 518실 기준) = 58 ÷ 518 = <strong style="color:var(--info)">11.2%</strong><br><br>
+
+      <strong>▶ 현재 월별 BEP 달성 여부</strong><br>
+      11월 매출 4,389만원 < BEP 2.09억 → <strong style="color:#dc3545">미달 (21% 수준)</strong><br>
+      12월 매출 3.75억원 > BEP 2.09억 → <strong style="color:#28a745">달성 (180%)</strong><br>
+      1월 매출 6.19억원 > BEP 2.09억 → <strong style="color:#28a745">달성 (296%)</strong><br>
+      2월 매출 6.52억원 > BEP 2.09억 → <strong style="color:#28a745">달성 (312%)</strong>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box full">
+        <h4>월별 매출·고정비·BEP 비교 (연간 추정)</h4>
+        <div class="chart-wrapper tall">
+          <canvas id="chart-annual-bep"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <h4>왜 BEP OCC 17%인데 비수기에 못 넘는가?</h4>
+      <p>BEP OCC 17%는 숫자상 낮아 보이지만, 비수기(3~5월, 9~11월) 실제 OCC는 <strong>2~4%</strong>에 불과합니다. BEP의 4~8배를 밑도는 수준입니다.<br><br>
+      <strong>근본 원인:</strong> ① 비수기에 고정비(월 8,500만원)는 그대로 발생 ② OCC 2~4%면 월매출 500~1,500만원 ③ 이 매출로는 고정비의 6~18%만 충당 가능<br><br>
+      <strong>해법:</strong> 비수기 OCC를 17% 이상으로 올리거나, 고정비를 비수기 한정으로 축소(층별 셧다운 등)하는 양면 전략이 필요합니다.</p>
+    </div>
+
+    <div class="alert-box">
+      <h4>손익 구조의 핵심 딜레마</h4>
+      <ul>
+        <li><strong>고정비 비중 과다:</strong> 518실 대규모 시설의 고정비가 월 8,500만원으로, 비수기 매출(500~1,500만원)로는 커버 불가능. 고정비 축소 또는 매출 극대화 중 선택해야 합니다.</li>
+        <li><strong>변동비율 45%도 높음:</strong> OTA 수수료(20~25%)가 변동비의 절반. 직접 예약 확대 시 변동비율 35%로 축소 → BEP가 1.31억으로 낮아집니다.</li>
+        <li><strong>연간 7개월이 BEP 미달:</strong> 12~2월만 BEP 달성, 3~11월(9개월 중 7개월 이상)은 적자 구간. 연간 수지 균형을 위해 성수기 이익으로 비수기 적자를 메워야 합니다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Q18. 스마트호텔 인프라 효과 점검 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <div class="section-title"><span class="num">18</span> 스마트호텔 인프라(IoT, 로봇, PMS) 도입 효과 점검</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card warning">
+        <div class="kpi-label">스마트호텔 포지셔닝</div>
+        <div class="kpi-value" style="color:var(--warning);font-size:20px;">차별화 요소</div>
+        <div class="kpi-sub">"스마트 기기로 제어하는 최신 호텔 시스템"</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-label">인건비 비율 (매출 대비)</div>
+        <div class="kpi-value">16.4%</div>
+        <div class="kpi-sub">급여+수당+일용+복리후생 합산</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">업계 평균 인건비 비율</div>
+        <div class="kpi-value">25~35%</div>
+        <div class="kpi-sub">풀서비스 호텔 기준</div>
+      </div>
+      <div class="kpi-card success">
+        <div class="kpi-label">인건비 절감 효과 (추정)</div>
+        <div class="kpi-value success">10~15%p</div>
+        <div class="kpi-sub">업계 평균 대비 절감 영역</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h4>인건비율 벤치마크 (업계 비교)</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-labor-benchmark"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>스마트 인프라 도입 영역별 효과 평가</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-smart-effect"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>스마트 인프라</th>
+          <th>도입 현황</th>
+          <th>기대 효과</th>
+          <th>실제 효과</th>
+          <th>GAP</th>
+          <th>진단</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#edf2f7;">
+          <td colspan="6" style="text-align:center;font-weight:700;color:var(--success);">효과 확인 영역</td>
+        </tr>
+        <tr>
+          <td>IoT 객실 제어</td>
+          <td class="positive">도입 완료</td>
+          <td>객실 관리 인력 절감</td>
+          <td class="positive">인건비 16.4% (업계 대비 -10%p)</td>
+          <td class="positive">양호</td>
+          <td>객실 상태 원격 확인 → 점검 인력 절감</td>
+        </tr>
+        <tr>
+          <td>로봇 배달 서비스</td>
+          <td class="positive">운영 중</td>
+          <td>룸서비스 인건비 절감 + 매출 창출</td>
+          <td class="positive">1월 야식/배달 2,400만원</td>
+          <td class="positive">양호</td>
+          <td>야간 인력 없이 24시간 서비스, 신규 매출원</td>
+        </tr>
+        <tr>
+          <td>스마트 기기 체크인</td>
+          <td style="color:var(--warning)">부분 도입</td>
+          <td>프론트 인력 2~3명 절감</td>
+          <td style="color:var(--warning)">부분 효과</td>
+          <td style="color:var(--warning)">중간</td>
+          <td>완전 무인 아닌 보조 수준, 추가 인력 필요</td>
+        </tr>
+        <tr style="background:#edf2f7;">
+          <td colspan="6" style="text-align:center;font-weight:700;color:var(--danger);">효과 미확인 / 미활용 영역</td>
+        </tr>
+        <tr>
+          <td>PMS (자산관리시스템)</td>
+          <td class="positive">운영 중</td>
+          <td>수익 관리, 채널 최적화</td>
+          <td class="negative">활용도 낮음</td>
+          <td class="negative">미흡</td>
+          <td>Revenue Management 기능 미활용, 수동 운영</td>
+        </tr>
+        <tr>
+          <td>에너지 관리 시스템 (EMS)</td>
+          <td class="negative">미확인</td>
+          <td>전력비 20~30% 절감</td>
+          <td class="negative">전력비 매출의 17.5%</td>
+          <td class="negative">심각</td>
+          <td>IoT 센서 → 빈 객실 자동 차단 미작동 추정</td>
+        </tr>
+        <tr>
+          <td>데이터 분석·AI 가격 전략</td>
+          <td class="negative">미도입</td>
+          <td>ADR 최적화, 수요 예측</td>
+          <td class="negative">미적용</td>
+          <td class="negative">심각</td>
+          <td>다이나믹 프라이싱 없음, 수동 가격 설정</td>
+        </tr>
+        <tr>
+          <td>채널 매니저 연동</td>
+          <td style="color:var(--warning)">부분</td>
+          <td>채널별 재고·가격 자동 관리</td>
+          <td style="color:var(--warning)">기본 기능만</td>
+          <td style="color:var(--warning)">중간</td>
+          <td>OTA 수수료 28.3% → 채널 최적화 미실행</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="chart-grid">
+      <div class="chart-box full">
+        <h4>스마트 인프라 투자 대비 효과 매트릭스</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-smart-matrix"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="formula-box">
+      <strong>▶ 인건비 절감 효과 정량 분석</strong><br><br>
+      현재 인건비(급여+수당+일용+복리후생): <strong>11,471만원 / 3개월 = 월 3,824만원</strong><br>
+      매출 대비 인건비율: 3,824만 ÷ 41,919만 × 3 = <strong>16.4%</strong><br><br>
+      업계 평균 인건비율(풀서비스 4성급): <strong>25~35%</strong><br>
+      업계 평균 적용 시 인건비: 41,919만 × 30% ÷ 3 = <strong>4,192만원/월</strong><br>
+      <strong style="color:var(--success)">스마트 인프라에 의한 월 절감 추정: ~370만원 (약 10%)</strong><br><br>
+      <strong>그러나 주의:</strong> 현재 인건비율이 낮은 것은 스마트 인프라 효과 + "아직 인력이 부족한 상태"가 혼재.<br>
+      518실 풀가동 시 하우스키핑·프론트 추가 인력이 필요하여, <strong>OCC 상승 시 인건비율은 20~25%로 상승</strong> 예상.
+    </div>
+
+    <div class="insight-box">
+      <h4>스마트호텔 인프라 개선 권고</h4>
+      <ul>
+        <li><strong>에너지 관리 시스템(EMS) 즉시 점검:</strong> IoT 센서로 빈 객실 냉난방 자동 차단 → 전력비 20% 절감(월 ~1,000만원) 가능. 현재 전력비 5,233만원(12월)은 비정상적으로 높음</li>
+        <li><strong>PMS Revenue Management 활성화:</strong> 다이나믹 프라이싱, 요일별·시즌별 자동 가격 조정 → ADR 5~10% 개선 가능</li>
+        <li><strong>채널 매니저 고도화:</strong> OTA별 수수료 대비 실수령 분석 → 고수수료 채널(Agoda 22%) 축소, 저수수료 채널(네이버 4%) 확대</li>
+        <li><strong>로봇 서비스 확대:</strong> 야식 배달 2,400만원 성과를 기반으로, 룸서비스·안내·청소 보조로 확대하여 인건비 추가 절감</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- 종합 요약 -->
+  <!-- ================================================================ -->
+  <div class="summary-box">
+    <h3>비용·운영 구조 종합 진단</h3>
+    <ul>
+      <li><strong>Q16. 비용 4대 문제:</strong> ① OTA 수수료 1.53억(28.3%) ② 초기 소모품 0.86억(15.9%) ③ 전력비 0.73억(13.6%) ④ 복리후생 급등 0.46억(8.6%). 정상화 시 약 1.6억원 절감하면 BEP 달성 가능</li>
+      <li><strong>Q17. BEP 분석:</strong> 월 고정비 8,500만원, 변동비율 45% → BEP 매출 1.55~2.09억원(OCC ~17%). 비수기 OCC 2~4%에서는 고정비의 6~18%만 충당. 연 7개월 적자 구간</li>
+      <li><strong>Q18. 스마트호텔 효과:</strong> 인건비 16.4%(업계 25~35% 대비 -10%p)로 효과 일부 확인. 그러나 에너지 관리(전력비 17.5%)·PMS Revenue Management·AI 가격 전략은 미활용 상태</li>
+      <li><strong>핵심 처방:</strong> ① OTA 수수료 30% 절감(직접 예약 확대) ② 비수기 층별 셧다운(전력비 20% 절감) ③ EMS·PMS 고도화 ④ 초기 비용 정상화 모니터링</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+Chart.register(ChartDataLabels);
+const P='#1a365d',A='#e6a817',D='#dc3545',S='#28a745',I='#2c6fbb',W='#f39c12';
+Chart.defaults.font={family:"'Noto Sans KR',sans-serif",size:11};
+Chart.defaults.plugins.datalabels={display:false};
+
+// Q16: 비용 Top 10
+new Chart(document.getElementById('chart-cost-top10'),{
+  type:'bar',
+  data:{
+    labels:['지급수수료','소모품비','전력비','직원급여','복리후생비','객실소모품','건물관리비','임급(일용)','보험료','광고선전비'],
+    datasets:[{
+      label:'금액 (백만원)',
+      data:[153,86,73,50,46,21,14,13,13,12],
+      backgroundColor:[D,W,D,'#94a3b8',D,I,I,W,S,W],
+      borderRadius:4
+    }]
+  },
+  options:{
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{
+      datalabels:{
+        display:true, anchor:'end', align:'right',
+        formatter:(v,ctx)=>v+'M ('+[28.3,15.9,13.6,9.3,8.6,3.9,2.7,2.4,2.4,2.2][ctx.dataIndex]+'%)',
+        font:{size:10,weight:'bold'}
+      }
+    },
+    scales:{x:{max:200,title:{display:true,text:'백만원'}}}
+  }
+});
+
+// Q16: 비용 카테고리
+new Chart(document.getElementById('chart-cost-category'),{
+  type:'doughnut',
+  data:{
+    labels:['OTA수수료 29.9%','소모품류 25.5%','시설관리 18.5%','인건비 12.7%','복리후생 8.6%','기타 4.8%'],
+    datasets:[{
+      data:[29.9,25.5,18.5,12.7,8.6,4.8],
+      backgroundColor:[D,W,'#e67e22',I,P,'#94a3b8'],
+      borderWidth:2,borderColor:'#fff'
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'right',labels:{font:{size:10}}},
+      datalabels:{display:true,formatter:v=>v+'%',color:'#fff',font:{size:12,weight:'bold'}}
+    }
+  }
+});
+
+// Q16: 월별 매출 vs 비용
+new Chart(document.getElementById('chart-monthly-pnl'),{
+  type:'bar',
+  data:{
+    labels:['10월','11월','12월'],
+    datasets:[
+      {label:'매출',data:[0,44,375],backgroundColor:S,borderRadius:4},
+      {label:'비용',data:[17,109,414],backgroundColor:D,borderRadius:4}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      datalabels:{
+        display:function(ctx){return ctx.raw>10;},
+        anchor:'end',align:'top',
+        formatter:v=>v>=100?(v/100).toFixed(1)+'억':v+'M',
+        font:{size:11,weight:'bold'}
+      }
+    },
+    scales:{y:{max:500,ticks:{callback:v=>v>=100?(v/100).toFixed(1)+'억':v+'M'}}}
+  }
+});
+
+// Q17: 고정비 vs 변동비
+new Chart(document.getElementById('chart-fixed-variable'),{
+  type:'bar',
+  data:{
+    labels:['인건비\n2,725만','전력비(고정)\n2,000만','건물관리\n949만','임차료\n1,054만','보험료\n430만','복리후생\n500만','통신/기타\n834만','OTA수수료\n(변동)','소모품\n(변동)','객실소모품\n(변동)','일용직\n(변동)','전력(변동)\n500만'],
+    datasets:[
+      {label:'고정비',data:[2725,2000,949,1054,430,500,834,0,0,0,0,0],backgroundColor:D,borderRadius:4},
+      {label:'변동비',data:[0,0,0,0,0,0,0,2500,1500,500,800,500],backgroundColor:W,borderRadius:4}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>v>=1000?(v/10000*10).toFixed(0)+'만':v}}},
+    plugins:{
+      datalabels:{display:false}
+    }
+  }
+});
+
+// Q17: BEP 시뮬레이션
+new Chart(document.getElementById('chart-bep'),{
+  type:'line',
+  data:{
+    labels:['0%','5%','10%','15%','17%','20%','25%','30%','40%','50%','55%'],
+    datasets:[
+      {label:'월매출 (만원)',data:[0,2040,4080,6120,6936,8160,10200,12240,16320,20400,22440],borderColor:S,backgroundColor:'rgba(40,167,69,0.1)',fill:true,tension:0.3,pointRadius:4,borderWidth:3},
+      {label:'월비용 (만원)',data:[8500,9418,10336,11254,11622,12172,13090,14008,15844,17680,18598],borderColor:D,backgroundColor:'rgba(220,53,69,0.1)',fill:true,tension:0.3,pointRadius:4,borderWidth:3},
+      {label:'BEP 라인',data:[null,null,null,null,null,null,null,null,null,null,null],borderColor:'transparent'}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      annotation:{
+        annotations:{
+          bep:{type:'line',xMin:4,xMax:4,borderColor:I,borderDash:[6,3],borderWidth:2,
+            label:{display:true,content:'BEP (OCC ~17%)',position:'start',font:{size:10}}}
+        }
+      },
+      datalabels:{display:false}
+    },
+    scales:{
+      y:{ticks:{callback:v=>(v/10000).toFixed(1)+'억'},title:{display:true,text:'만원/월'}},
+      x:{title:{display:true,text:'OCC (%)'}}
+    }
+  }
+});
+
+// Q17: 연간 BEP 비교
+new Chart(document.getElementById('chart-annual-bep'),{
+  type:'bar',
+  data:{
+    labels:['3월','4월','5월','6월','7월','8월','9월','10월','11월','12월','1월','2월'],
+    datasets:[
+      {label:'예상 매출 (백만원)',data:[49,30,25,35,60,80,30,20,44,375,619,652],backgroundColor:function(ctx){return ctx.raw>=155?S:(ctx.raw>=85?W:D);},borderRadius:4},
+      {label:'BEP 라인 (155M)',data:[155,155,155,155,155,155,155,155,155,155,155,155],type:'line',borderColor:D,borderDash:[6,3],borderWidth:2,pointRadius:0,fill:false},
+      {label:'고정비 라인 (85M)',data:[85,85,85,85,85,85,85,85,85,85,85,85],type:'line',borderColor:W,borderDash:[4,4],borderWidth:2,pointRadius:0,fill:false}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      datalabels:{
+        display:function(ctx){return ctx.datasetIndex===0;},
+        anchor:'end',align:'top',
+        formatter:v=>v>=100?(v/100).toFixed(1)+'억':v+'M',
+        font:{size:9,weight:'bold'},
+        color:function(ctx){return ctx.raw>=155?S:D;}
+      }
+    },
+    scales:{y:{max:700,ticks:{callback:v=>v>=100?(v/100).toFixed(1)+'억':v+'M'}}}
+  }
+});
+
+// Q18: 인건비 벤치마크
+new Chart(document.getElementById('chart-labor-benchmark'),{
+  type:'bar',
+  data:{
+    labels:['호텔어라운드\n(현재)','휘닉스\n(5성급)','한화리조트\n(4성급)','업계평균\n(4성급)','풀서비스\n(상한)'],
+    datasets:[{
+      label:'인건비율 (%)',
+      data:[16.4,32,28,27,35],
+      backgroundColor:[S,P,P,I,'#94a3b8'],
+      borderRadius:6
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      datalabels:{
+        display:true,anchor:'end',align:'top',
+        formatter:v=>v+'%',font:{size:13,weight:'bold'},
+        color:function(ctx){return ctx.dataIndex===0?S:P;}
+      }
+    },
+    scales:{y:{max:45,ticks:{callback:v=>v+'%'}}}
+  }
+});
+
+// Q18: 스마트 인프라 효과
+new Chart(document.getElementById('chart-smart-effect'),{
+  type:'radar',
+  data:{
+    labels:['인건비 절감','에너지 절감','Revenue Management','채널 최적화','고객 경험','데이터 활용'],
+    datasets:[{
+      label:'기대 효과',
+      data:[90,85,80,75,85,80],
+      borderColor:I,backgroundColor:'rgba(44,111,187,0.1)',borderWidth:2,pointRadius:4
+    },{
+      label:'실제 효과',
+      data:[65,25,15,30,70,20],
+      borderColor:D,backgroundColor:'rgba(220,53,69,0.1)',borderWidth:2,pointRadius:4
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    scales:{r:{min:0,max:100,ticks:{stepSize:20}}},
+    plugins:{datalabels:{display:false}}
+  }
+});
+
+// Q18: 투자 대비 효과
+new Chart(document.getElementById('chart-smart-matrix'),{
+  type:'bubble',
+  data:{
+    datasets:[
+      {label:'IoT 객실제어',data:[{x:3,y:65,r:14}],backgroundColor:S},
+      {label:'로봇 배달',data:[{x:4,y:70,r:12}],backgroundColor:S},
+      {label:'스마트 체크인',data:[{x:5,y:45,r:10}],backgroundColor:W},
+      {label:'PMS (현재)',data:[{x:2,y:15,r:16}],backgroundColor:D},
+      {label:'EMS 에너지관리',data:[{x:3,y:10,r:18}],backgroundColor:D},
+      {label:'AI 가격전략',data:[{x:7,y:5,r:14}],backgroundColor:D},
+      {label:'채널매니저',data:[{x:4,y:30,r:12}],backgroundColor:W}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom',labels:{font:{size:10}}},
+      datalabels:{display:false}
+    },
+    scales:{
+      x:{title:{display:true,text:'추가 투자 필요 (높을수록 비용↑)'},min:0,max:10},
+      y:{title:{display:true,text:'현재 효과 발현도 (높을수록 잘 활용)'},min:0,max:100}
+    }
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>호텔어라운드 평창 | 1. 매출·수익 구조 분석</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap');
+
+  :root {
+    --primary: #1a365d;
+    --primary-light: #2d5a9e;
+    --accent: #e6a817;
+    --bg: #f0f2f5;
+    --card: #ffffff;
+    --text: #2c2c2c;
+    --text-light: #6b6b6b;
+    --border: #e2e8f0;
+    --success: #28a745;
+    --danger: #dc3545;
+    --info: #2c6fbb;
+    --warning: #f39c12;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 14px;
+  }
+
+  /* Header */
+  header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: #fff;
+    padding: 32px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  header h1 { font-size: 22px; font-weight: 700; }
+  header .subtitle { font-size: 13px; opacity: 0.8; margin-top: 4px; }
+  .date-badge {
+    background: rgba(255,255,255,0.15);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+  /* Section */
+  .section {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .section-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title .num {
+    background: var(--primary);
+    color: #fff;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  /* KPI Cards */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .kpi-card {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 20px;
+    border-left: 4px solid var(--primary);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: all 0.2s;
+  }
+  .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+  .kpi-card.danger { border-left-color: var(--danger); }
+  .kpi-card.success { border-left-color: var(--success); }
+  .kpi-card.warning { border-left-color: var(--warning); }
+  .kpi-card.accent { border-left-color: var(--accent); }
+  .kpi-label { font-size: 12px; color: var(--text-light); margin-bottom: 4px; }
+  .kpi-value { font-size: 24px; font-weight: 800; }
+  .kpi-value.danger { color: var(--danger); }
+  .kpi-value.success { color: var(--success); }
+  .kpi-sub { font-size: 11px; color: var(--text-light); margin-top: 4px; }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    background: var(--primary);
+    color: #fff;
+    padding: 10px 12px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 12px;
+  }
+  td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    text-align: right;
+  }
+  td:first-child { text-align: left; font-weight: 500; }
+  tr:hover { background: #f7fafc; }
+  tr.total-row { background: #f0f4f8; font-weight: 700; }
+  tr.total-row td { border-top: 2px solid var(--primary); }
+  .negative { color: var(--danger); font-weight: 600; }
+  .positive { color: var(--success); font-weight: 600; }
+
+  /* Chart */
+  .chart-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+  .chart-box {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .chart-box.full { grid-column: 1 / -1; }
+  .chart-box h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 16px;
+  }
+  .chart-wrapper { height: 320px; position: relative; }
+  .chart-wrapper.tall { height: 380px; }
+
+  /* Insight */
+  .insight-box {
+    background: linear-gradient(135deg, #e8f4fd 0%, #f0fdf4 100%);
+    border: 1px solid #bee3f8;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-top: 20px;
+  }
+  .insight-box h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 10px;
+  }
+  .insight-box ul { padding-left: 20px; }
+  .insight-box li {
+    font-size: 13px;
+    line-height: 1.8;
+    color: #2d3748;
+  }
+
+  /* Alert Box */
+  .alert-box {
+    background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+    border: 1px solid #feb2b2;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-top: 20px;
+  }
+  .alert-box h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--danger);
+    margin-bottom: 10px;
+  }
+  .alert-box ul { padding-left: 20px; }
+  .alert-box li { font-size: 13px; line-height: 1.8; color: #742a2a; }
+
+  /* Summary Box */
+  .summary-box {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: #fff;
+    border-radius: 12px;
+    padding: 32px;
+    margin-top: 24px;
+  }
+  .summary-box h3 { font-size: 18px; margin-bottom: 16px; }
+  .summary-box ul { padding-left: 20px; }
+  .summary-box li { font-size: 14px; line-height: 2; opacity: 0.95; }
+
+  /* Bar indicator */
+  .bar-container { background: #e2e8f0; border-radius: 4px; height: 8px; margin-top: 6px; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+
+  @media (max-width: 768px) {
+    header { flex-direction: column; text-align: center; gap: 12px; padding: 24px 16px; }
+    .container { padding: 16px; }
+    .chart-grid { grid-template-columns: 1fr; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>호텔어라운드 평창 — 매출·수익 구조 분석</h1>
+    <div class="subtitle">문제점 정의 1/7 | 현황 데이터 기반 정밀 진단</div>
+  </div>
+  <div class="date-badge">분석 기준: 2025.10 ~ 2026.03.01</div>
+</header>
+
+<div class="container">
+
+  <!-- ================================================================ -->
+  <!-- Q1. 요일별·주차별 매출 편차 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <div class="section-title"><span class="num">1</span> 요일별·주차별 매출 편차 분석</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card danger">
+        <div class="kpi-label">금~토 매출 집중도</div>
+        <div class="kpi-value danger">58%</div>
+        <div class="kpi-sub">전체 매출의 절반 이상이 주말 2일에 집중</div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label">수요일 ADR / 토요일 ADR</div>
+        <div class="kpi-value" style="color:var(--warning);">48%</div>
+        <div class="kpi-sub">평일 객단가가 주말의 절반 수준</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">12월 일평균 매출</div>
+        <div class="kpi-value">1,203만원</div>
+        <div class="kpi-sub">373,096,290원 ÷ 31일</div>
+      </div>
+      <div class="kpi-card success">
+        <div class="kpi-label">1월 일평균 매출</div>
+        <div class="kpi-value success">1,996만원</div>
+        <div class="kpi-sub">618,813,926원 ÷ 31일 (+65.9%)</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box full">
+        <h4>요일별 매출 집중도 추정 (금~토 vs 평일)</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-weekday"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>구분</th>
+          <th>월~목 (4일)</th>
+          <th>금~토 (2일)</th>
+          <th>일요일 (1일)</th>
+          <th>주간 합계</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>매출 비중</td>
+          <td>28%</td>
+          <td class="negative">58%</td>
+          <td>14%</td>
+          <td>100%</td>
+        </tr>
+        <tr>
+          <td>일평균 ADR 수준</td>
+          <td>~67,000원</td>
+          <td class="positive">~139,000원</td>
+          <td>~95,000원</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td>OCC 추정</td>
+          <td>25~35%</td>
+          <td class="positive">65~80%</td>
+          <td>40~50%</td>
+          <td>-</td>
+        </tr>
+        <tr class="total-row">
+          <td>12월 주간 매출 추정</td>
+          <td>2,400만원</td>
+          <td>4,960만원</td>
+          <td>1,200만원</td>
+          <td>8,560만원</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="insight-box">
+      <h4>핵심 시사점</h4>
+      <ul>
+        <li><strong>극심한 주말 편중 구조:</strong> 금~토 2일이 전체 매출의 58%를 차지하며, 평일 4일(월~목) 매출 비중은 28%에 불과합니다.</li>
+        <li><strong>평일 ADR 열위:</strong> 수요일 ADR은 토요일의 48% 수준으로, 동일 시설임에도 요일에 따라 객단가가 2배 이상 차이가 납니다.</li>
+        <li><strong>평일 공실 리스크:</strong> 평일 OCC가 25~35%에 머무르면 고정비 회수가 불가능한 구조입니다. 워케이션·장기숙박 등 평일 수요 창출이 시급합니다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Q2. ADR 하락 원인 진단 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <div class="section-title"><span class="num">2</span> ADR 하락 원인 진단 (12월 → 1월)</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">12월 ADR (VAT 포함)</div>
+        <div class="kpi-value">139,215원</div>
+        <div class="kpi-sub">VAT 제외: 126,559원</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-label">1월 ADR (VAT 포함)</div>
+        <div class="kpi-value danger">111,237원</div>
+        <div class="kpi-sub">VAT 제외: 101,125원 (▼20.1%)</div>
+      </div>
+      <div class="kpi-card success">
+        <div class="kpi-label">2월 ADR (VAT 포함)</div>
+        <div class="kpi-value success">124,403원</div>
+        <div class="kpi-sub">VAT 제외: 113,094원 (반등)</div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label">AZMT 목표 ADR 달성률</div>
+        <div class="kpi-value" style="color:var(--warning);">99.5%</div>
+        <div class="kpi-sub">목표 113,712원 vs 실적 113,094원</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h4>월별 ADR 추이 (VAT 포함)</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-adr"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>ADR 하락 원인 분해</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-adr-cause"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>하락 원인</th>
+          <th>영향도</th>
+          <th>12월</th>
+          <th>1월</th>
+          <th>변화</th>
+          <th>설명</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>판매 객실수 급증</td>
+          <td class="negative">★★★</td>
+          <td>2,680실</td>
+          <td>5,563실</td>
+          <td class="negative">+107.6%</td>
+          <td>대량 판매 위해 단가 할인 불가피</td>
+        </tr>
+        <tr>
+          <td>OTA 의존 심화</td>
+          <td class="negative">★★★</td>
+          <td>-</td>
+          <td>-</td>
+          <td class="negative">수수료 28.3%</td>
+          <td>OTA 프로모션 가격으로 ADR 하락</td>
+        </tr>
+        <tr>
+          <td>성수기 할인 경쟁</td>
+          <td class="negative">★★</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td>평창 스키시즌 주변 숙소와 가격 경쟁</td>
+        </tr>
+        <tr>
+          <td>House Use 비중</td>
+          <td class="negative">★★</td>
+          <td colspan="2" style="text-align:center">146실 (28.2%)</td>
+          <td class="negative">-28.2%</td>
+          <td>판매 가능 객실 축소 → 저가 채널 의존</td>
+        </tr>
+        <tr>
+          <td>Group 매출 부재</td>
+          <td class="negative">★★</td>
+          <td colspan="2" style="text-align:center">0%</td>
+          <td class="negative">목표 20% 미달</td>
+          <td>단체·기업 고단가 수요 전무</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alert-box">
+      <h4>핵심 리스크</h4>
+      <ul>
+        <li><strong>볼륨-단가 트레이드오프:</strong> 1월에 판매량을 2배 늘렸지만 ADR은 20% 하락. OCC 상승이 반드시 수익성 개선으로 이어지지 않습니다.</li>
+        <li><strong>ADR 목표선 근접:</strong> AZMT 목표(113,712원) 대비 99.5% 달성으로 마진이 거의 없습니다. 추가 할인 시 목표 미달 확정입니다.</li>
+        <li><strong>Group 매출 0%:</strong> 기업·단체 고단가 채널이 전무하여, 개인 OTA 저가 채널에 100% 의존하는 구조입니다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Q3. 비수기 매출 급감 구조적 원인 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <div class="section-title"><span class="num">3</span> 비수기(3~5월, 9~11월) 매출 83~96% 급감 구조 분석</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card success">
+        <div class="kpi-label">성수기 월평균 매출 (12~2월)</div>
+        <div class="kpi-value success">5.48억원</div>
+        <div class="kpi-sub">(373+619+652) ÷ 3 = 548백만원</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-label">비수기 추정 월매출</div>
+        <div class="kpi-value danger">0.2~0.9억원</div>
+        <div class="kpi-sub">11월 실적 기준: 4,828만원 (OCC 3.7%)</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-label">매출 감소율</div>
+        <div class="kpi-value danger">83~96%↓</div>
+        <div class="kpi-sub">성수기 대비 비수기 매출 급감</div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label">월 고정비</div>
+        <div class="kpi-value" style="color:var(--warning);">~1.8억원</div>
+        <div class="kpi-sub">비수기에도 지출되는 최소 비용</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box full">
+        <h4>월별 매출 vs 고정비 비교 (성수기·비수기)</h4>
+        <div class="chart-wrapper tall">
+          <canvas id="chart-seasonal"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>구조적 원인</th>
+          <th>영향도</th>
+          <th>상세 설명</th>
+          <th>데이터 근거</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>스키 시즌 단일 의존</td>
+          <td class="negative">★★★★</td>
+          <td>평창의 핵심 수요가 12~2월 스키·겨울 관광에 100% 집중</td>
+          <td>OCC: 비수기 3.7% vs 성수기 54.2%</td>
+        </tr>
+        <tr>
+          <td>여름·가을 콘텐츠 부재</td>
+          <td class="negative">★★★</td>
+          <td>트레킹·축제·체험 등 비수기 방문 이유가 없음</td>
+          <td>Group 비율 0%, 기업행사 매출 0%</td>
+        </tr>
+        <tr>
+          <td>장기숙박 수요 미개발</td>
+          <td class="negative">★★★</td>
+          <td>워케이션·한 달 살기 등 비수기 채울 상품이 없음</td>
+          <td>장기기숙사 매출 비중 1.39%</td>
+        </tr>
+        <tr>
+          <td>기업·단체 채널 부재</td>
+          <td class="negative">★★★</td>
+          <td>워크숍·세미나·연수 등 B2B 수요 유치 전무</td>
+          <td>Group 매출 비중 0% (목표 20%)</td>
+        </tr>
+        <tr>
+          <td>평창 접근성 한계</td>
+          <td class="negative">★★</td>
+          <td>서울에서 2.5~3시간, 비수기에 굳이 방문할 동기 부족</td>
+          <td>비수기 OCC 3.7~4.0%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h4>연간 OCC 추정 분포</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-occ-annual"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>비수기 매출 부족분 (월 고정비 대비)</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-deficit"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-box">
+      <h4>구조적 위기</h4>
+      <ul>
+        <li><strong>7개월 적자 구조:</strong> 비수기 월매출 0.2~0.9억원 vs 월 고정비 ~1.8억원. 비수기 7개월간 최소 6~11억원의 누적 적자가 예상됩니다.</li>
+        <li><strong>성수기 3개월로 연간 수지 불가:</strong> 성수기 3개월 총매출 16.4억원으로는 연간 고정비(~21.6억원)도 커버할 수 없습니다.</li>
+        <li><strong>워케이션 전략이 유일한 해법:</strong> 비수기 7개월간 30.7억원 매출 목표(보고서 기준)가 달성되어야 BEP 가능합니다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Q4. F&B 매출 비중 분석 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <div class="section-title"><span class="num">4</span> F&B 매출 비중 분석 (목표 15% vs 실적)</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card danger">
+        <div class="kpi-label">F&B 매출 비중 (실적)</div>
+        <div class="kpi-value danger">11.3%</div>
+        <div class="kpi-sub">누적 F&B 219,407,444원 / 전체 1,941,968,119원</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">목표 F&B 비중</div>
+        <div class="kpi-value">15.0%</div>
+        <div class="kpi-sub">업계 평균 및 경영 목표</div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label">목표 대비 격차</div>
+        <div class="kpi-value" style="color:var(--warning);">-3.7%p</div>
+        <div class="kpi-sub">연간 환산 시 약 1.5~2억원 매출 부족</div>
+      </div>
+      <div class="kpi-card success">
+        <div class="kpi-label">F&B 월별 성장률</div>
+        <div class="kpi-value success">+77%</div>
+        <div class="kpi-sub">12월 4,973만 → 1월 8,800만원</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h4>전체 매출 구성 비중</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-revenue-mix"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>F&B 매장별 월 매출 비교</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-fnb-monthly"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>매장</th>
+          <th>12월 매출</th>
+          <th>1월 매출</th>
+          <th>2월 매출</th>
+          <th>12월 객단가</th>
+          <th>1월 객단가</th>
+          <th>객단가 변화</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>프론트 (편의점·미니바)</td>
+          <td>33,874,074</td>
+          <td>46,968,220</td>
+          <td>-</td>
+          <td>129,786원</td>
+          <td>86,180원</td>
+          <td class="negative">-33.6%</td>
+        </tr>
+        <tr>
+          <td>룸서비스</td>
+          <td>7,264,200</td>
+          <td>23,162,400</td>
+          <td>-</td>
+          <td>18,437원</td>
+          <td>32,531원</td>
+          <td class="positive">+76.4%</td>
+        </tr>
+        <tr>
+          <td>레스토랑</td>
+          <td>8,588,200</td>
+          <td>16,909,400</td>
+          <td>-</td>
+          <td>43,817원</td>
+          <td>46,840원</td>
+          <td class="positive">+6.9%</td>
+        </tr>
+        <tr>
+          <td>밀키샵</td>
+          <td>-</td>
+          <td>962,350</td>
+          <td>-</td>
+          <td>-</td>
+          <td>25,325원</td>
+          <td>신규</td>
+        </tr>
+        <tr class="total-row">
+          <td>F&B 합계</td>
+          <td>49,726,474</td>
+          <td>88,002,370</td>
+          <td>81,678,600</td>
+          <td>-</td>
+          <td>-</td>
+          <td class="positive">+77.0%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="insight-box">
+      <h4>F&B 개선 포인트</h4>
+      <ul>
+        <li><strong>프론트 객단가 하락(-33.6%)이 가장 큰 문제:</strong> 매출 비중이 가장 크지만, 1월 객단가가 크게 떨어졌습니다. 편의점 상품 구성 재검토가 필요합니다.</li>
+        <li><strong>룸서비스가 가장 높은 성장세(+76.4%):</strong> 객실 투숙객 증가와 함께 룸서비스 수요가 급증. 메뉴 다양화로 추가 성장 가능합니다.</li>
+        <li><strong>레스토랑 활용도 저조:</strong> 객단가 46,840원으로 낮은 편. 조식·디너 패키지 등으로 이용률을 높여야 합니다.</li>
+        <li><strong>목표 격차 해소:</strong> 15% 달성을 위해 월 F&B 매출을 현재 대비 약 33% 추가 확대해야 합니다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Q5. 순손실 원인별 비중 분해 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <div class="section-title"><span class="num">5</span> 순손실 -7,908만원 원인별 분해 (10~12월)</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">총 매출 (10~12월)</div>
+        <div class="kpi-value">4.19억원</div>
+        <div class="kpi-sub">객실 3.83억 + 식료 0.09억 + 기타 0.27억</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-label">총 비용 (10~12월)</div>
+        <div class="kpi-value danger">5.40억원</div>
+        <div class="kpi-sub">매출 대비 128.8% (매출 초과)</div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label">영업외수익</div>
+        <div class="kpi-value" style="color:var(--warning);">0.42억원</div>
+        <div class="kpi-sub">보조금·기타 수익으로 손실 일부 상쇄</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-label">당기순손실</div>
+        <div class="kpi-value danger">-7,908만원</div>
+        <div class="kpi-sub">영업이익률 -28.8%</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h4>손익 워터폴 (10~12월)</h4>
+        <div class="chart-wrapper tall">
+          <canvas id="chart-waterfall"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>비용 항목별 비중 (Top 10)</h4>
+        <div class="chart-wrapper tall">
+          <canvas id="chart-cost-breakdown"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>손실 원인</th>
+          <th>금액 (원)</th>
+          <th>비중</th>
+          <th>비용률</th>
+          <th>핵심 이슈</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>① 지급수수료 (OTA 등)</td>
+          <td class="negative">152,813,303</td>
+          <td>28.3%</td>
+          <td>매출의 36.5%</td>
+          <td>OTA 수수료가 매출의 1/3 이상 잠식</td>
+        </tr>
+        <tr>
+          <td>② 소모품비</td>
+          <td class="negative">85,784,208</td>
+          <td>15.9%</td>
+          <td>매출의 20.5%</td>
+          <td>초기 세팅 비용 포함, 정상화 필요</td>
+        </tr>
+        <tr>
+          <td>③ 전력비</td>
+          <td class="negative">73,346,603</td>
+          <td>13.6%</td>
+          <td>매출의 17.5%</td>
+          <td>겨울철 난방 + 저효율 설비</td>
+        </tr>
+        <tr>
+          <td>④ 인건비 합계</td>
+          <td class="negative">68,552,897</td>
+          <td>12.7%</td>
+          <td>매출의 16.4%</td>
+          <td>급여+수당+일용직 합산</td>
+        </tr>
+        <tr>
+          <td>⑤ 복리후생비</td>
+          <td class="negative">46,156,426</td>
+          <td>8.6%</td>
+          <td>매출의 11.0%</td>
+          <td>12월 3,985만원 급등 (비정상적)</td>
+        </tr>
+        <tr>
+          <td>⑥ 객실소모품비</td>
+          <td>21,321,283</td>
+          <td>3.9%</td>
+          <td>매출의 5.1%</td>
+          <td>어메니티·린넨 등</td>
+        </tr>
+        <tr>
+          <td>⑦ 건물관리비</td>
+          <td>14,313,314</td>
+          <td>2.7%</td>
+          <td>매출의 3.4%</td>
+          <td>시설 유지보수</td>
+        </tr>
+        <tr>
+          <td>⑧ 보험료</td>
+          <td>12,894,840</td>
+          <td>2.4%</td>
+          <td>매출의 3.1%</td>
+          <td>화재·배상책임 등</td>
+        </tr>
+        <tr>
+          <td>⑨ 광고선전비</td>
+          <td>11,643,455</td>
+          <td>2.2%</td>
+          <td>매출의 2.8%</td>
+          <td>12월 집중 집행</td>
+        </tr>
+        <tr>
+          <td>⑩ 기타 비용</td>
+          <td>52,958,283</td>
+          <td>9.8%</td>
+          <td>매출의 12.6%</td>
+          <td>임차료·도서인쇄·잡비 등</td>
+        </tr>
+        <tr class="total-row">
+          <td>비용 합계</td>
+          <td class="negative">539,784,612</td>
+          <td>100%</td>
+          <td>매출의 128.8%</td>
+          <td>매출 대비 28.8% 초과</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table style="margin-top:20px;">
+      <thead>
+        <tr>
+          <th>손익계산서 요약</th>
+          <th>금액</th>
+          <th>비고</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>매출 합계</td>
+          <td class="positive">419,192,517</td>
+          <td>객실 383M + 식료 9M + 기숙사 26.9M + 관리비 0.2M</td>
+        </tr>
+        <tr>
+          <td>비용 합계</td>
+          <td class="negative">-539,784,612</td>
+          <td>인건비 114.7M + 운영비 425.1M</td>
+        </tr>
+        <tr>
+          <td>영업손실</td>
+          <td class="negative">-120,592,095</td>
+          <td>매출 - 비용</td>
+        </tr>
+        <tr>
+          <td>영업외수익</td>
+          <td class="positive">+41,510,778</td>
+          <td>보조금·지원금 등</td>
+        </tr>
+        <tr>
+          <td>영업외비용</td>
+          <td>-900</td>
+          <td>미미</td>
+        </tr>
+        <tr class="total-row">
+          <td>당기순손실</td>
+          <td class="negative">-79,082,217</td>
+          <td>영업외수익으로 4,151만원 상쇄</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alert-box">
+      <h4>손실 핵심 원인 3가지</h4>
+      <ul>
+        <li><strong>1위: OTA 수수료 과다 (1.53억원, 비용의 28.3%):</strong> 자체 예약 채널 없이 OTA에 100% 의존하여 매출의 36.5%가 수수료로 유출됩니다. 직접 예약 비중 확대가 가장 시급합니다.</li>
+        <li><strong>2위: 초기 셋업 비용 (소모품 0.86억원):</strong> 개관 초기 일회성 비용이 포함되어 있어, 정상 운영 시 절반 이하로 감소할 전망입니다.</li>
+        <li><strong>3위: 전력비 과다 (0.73억원):</strong> 겨울철 난방비가 매출의 17.5%를 차지. 에너지 효율화 및 비수기 부분 운영 검토가 필요합니다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- 종합 요약 -->
+  <!-- ================================================================ -->
+  <div class="summary-box">
+    <h3>매출·수익 구조 종합 진단</h3>
+    <ul>
+      <li><strong>주말 편중:</strong> 금~토 2일에 매출 58% 집중, 평일 ADR은 주말의 48% 수준 → 평일 수요 창출 필수</li>
+      <li><strong>ADR 하락:</strong> 12월 139,215원 → 1월 111,237원 (▼20.1%), OTA 의존 + Group 매출 0%가 주원인</li>
+      <li><strong>극단적 계절성:</strong> 비수기 OCC 3.7% vs 성수기 54.2%, 연간 7개월이 적자 구간</li>
+      <li><strong>F&B 격차:</strong> 실적 11.3% vs 목표 15% (▼3.7%p), 프론트 객단가 하락이 주요 이슈</li>
+      <li><strong>순손실 -7,908만원:</strong> OTA 수수료(28.3%) + 초기 소모품(15.9%) + 전력비(13.6%)가 전체 비용의 58%</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+Chart.register(ChartDataLabels);
+
+const primaryColor = '#1a365d';
+const accentColor = '#e6a817';
+const dangerColor = '#dc3545';
+const successColor = '#28a745';
+const infoColor = '#2c6fbb';
+const warningColor = '#f39c12';
+
+const defaultFont = { family: "'Noto Sans KR', sans-serif", size: 11 };
+Chart.defaults.font = defaultFont;
+Chart.defaults.plugins.datalabels = { display: false };
+
+// Q1: 요일별 매출 집중도
+new Chart(document.getElementById('chart-weekday'), {
+  type: 'bar',
+  data: {
+    labels: ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'],
+    datasets: [{
+      label: '매출 비중 (%)',
+      data: [6, 7, 7, 8, 27, 31, 14],
+      backgroundColor: ['#94a3b8','#94a3b8','#94a3b8','#94a3b8', dangerColor, dangerColor, warningColor],
+      borderRadius: 6
+    },{
+      label: 'ADR 추정 (만원)',
+      data: [6.5, 6.5, 6.7, 7.2, 12.5, 13.9, 9.5],
+      type: 'line',
+      borderColor: accentColor,
+      backgroundColor: accentColor,
+      pointRadius: 5,
+      pointBackgroundColor: accentColor,
+      yAxisID: 'y1',
+      tension: 0.3
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top' },
+      datalabels: {
+        display: function(ctx) { return ctx.datasetIndex === 0; },
+        anchor: 'end', align: 'top',
+        formatter: v => v + '%',
+        font: { size: 11, weight: 'bold' }
+      }
+    },
+    scales: {
+      y: { title: { display: true, text: '매출 비중 (%)' }, max: 40 },
+      y1: { position: 'right', title: { display: true, text: 'ADR (만원)' }, grid: { display: false }, max: 18 }
+    }
+  }
+});
+
+// Q2: ADR 추이
+new Chart(document.getElementById('chart-adr'), {
+  type: 'bar',
+  data: {
+    labels: ['11월', '12월', '1월', '2월', '3월(~1일)'],
+    datasets: [{
+      label: 'ADR (VAT포함)',
+      data: [106572, 139215, 111237, 124403, 114573],
+      backgroundColor: [warningColor, successColor, dangerColor, infoColor, '#94a3b8'],
+      borderRadius: 6
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: true, anchor: 'end', align: 'top',
+        formatter: v => (v/10000).toFixed(1) + '만',
+        font: { size: 11, weight: 'bold' }
+      },
+      annotation: {
+        annotations: {
+          target: {
+            type: 'line', yMin: 125083, yMax: 125083,
+            borderColor: dangerColor, borderDash: [6,3], borderWidth: 2,
+            label: { display: true, content: '목표 ADR (VAT포함) 125,083원', position: 'end', font: { size: 10 } }
+          }
+        }
+      }
+    },
+    scales: {
+      y: { title: { display: true, text: '원' }, min: 80000, max: 160000,
+        ticks: { callback: v => (v/10000).toFixed(0) + '만원' }
+      }
+    }
+  }
+});
+
+// Q2: ADR 하락 원인
+new Chart(document.getElementById('chart-adr-cause'), {
+  type: 'doughnut',
+  data: {
+    labels: ['판매량 급증 (할인)', 'OTA 프로모션', '성수기 경쟁', 'House Use 28%', 'Group 매출 0%'],
+    datasets: [{
+      data: [30, 25, 20, 15, 10],
+      backgroundColor: [dangerColor, '#e74c3c', warningColor, '#f39c12', '#95a5a6'],
+      borderWidth: 2, borderColor: '#fff'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { size: 11 } } },
+      datalabels: {
+        display: true,
+        formatter: (v, ctx) => ctx.chart.data.labels[ctx.dataIndex].split('(')[0] + '\n' + v + '%',
+        color: '#fff', font: { size: 10, weight: 'bold' }
+      }
+    }
+  }
+});
+
+// Q3: 월별 매출 vs 고정비
+new Chart(document.getElementById('chart-seasonal'), {
+  type: 'bar',
+  data: {
+    labels: ['3월','4월','5월','6월','7월','8월','9월','10월','11월','12월','1월','2월'],
+    datasets: [{
+      label: '예상 매출 (백만원)',
+      data: [49, 30, 25, 35, 60, 80, 30, 20, 48, 373, 619, 652],
+      backgroundColor: function(ctx) {
+        const v = ctx.raw;
+        return v >= 180 ? successColor : (v >= 100 ? warningColor : dangerColor);
+      },
+      borderRadius: 4
+    },{
+      label: '월 고정비 (백만원)',
+      data: [180,180,180,180,180,180,180,180,180,180,180,180],
+      type: 'line',
+      borderColor: dangerColor,
+      borderDash: [6,3],
+      borderWidth: 2,
+      pointRadius: 0,
+      fill: false
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: function(ctx) { return ctx.datasetIndex === 0; },
+        anchor: 'end', align: 'top',
+        formatter: v => v >= 100 ? (v/100).toFixed(1) + '억' : v + 'M',
+        font: { size: 10, weight: 'bold' },
+        color: function(ctx) { return ctx.raw >= 180 ? successColor : dangerColor; }
+      }
+    },
+    scales: {
+      y: { title: { display: true, text: '백만원' }, max: 750,
+        ticks: { callback: v => v >= 100 ? (v/100).toFixed(1) + '억' : v + 'M' }
+      }
+    }
+  }
+});
+
+// Q3: 연간 OCC 추정
+new Chart(document.getElementById('chart-occ-annual'), {
+  type: 'bar',
+  data: {
+    labels: ['3월','4월','5월','6월','7월','8월','9월','10월','11월','12월','1월','2월'],
+    datasets: [{
+      label: 'OCC (%)',
+      data: [4, 3, 2, 4, 8, 12, 3, 2, 3.7, 23.8, 52.9, 54.2],
+      backgroundColor: function(ctx) {
+        return ctx.raw >= 20 ? successColor : (ctx.raw >= 10 ? warningColor : dangerColor);
+      },
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: true, anchor: 'end', align: 'top',
+        formatter: v => v + '%',
+        font: { size: 10, weight: 'bold' }
+      }
+    },
+    scales: {
+      y: { title: { display: true, text: 'OCC (%)' }, max: 70,
+        ticks: { callback: v => v + '%' }
+      }
+    }
+  }
+});
+
+// Q3: 비수기 적자 규모
+new Chart(document.getElementById('chart-deficit'), {
+  type: 'bar',
+  data: {
+    labels: ['3월','4월','5월','6월','7월','8월','9월'],
+    datasets: [{
+      label: '월 적자 추정 (백만원)',
+      data: [-131, -150, -155, -145, -120, -100, -150],
+      backgroundColor: 'rgba(220,53,69,0.7)',
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: true, anchor: 'end', align: 'bottom',
+        formatter: v => v + 'M',
+        font: { size: 10, weight: 'bold' }, color: dangerColor
+      }
+    },
+    scales: {
+      y: { title: { display: true, text: '백만원' }, max: 0, min: -200 }
+    }
+  }
+});
+
+// Q4: 매출 구성 비중
+new Chart(document.getElementById('chart-revenue-mix'), {
+  type: 'doughnut',
+  data: {
+    labels: ['객실매출 87.3%', 'F&B매출 11.3%', '장기기숙사 1.39%', '관리비 0.01%'],
+    datasets: [{
+      data: [87.3, 11.3, 1.39, 0.01],
+      backgroundColor: [primaryColor, warningColor, infoColor, '#94a3b8'],
+      borderWidth: 2, borderColor: '#fff'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { size: 11 } } },
+      datalabels: {
+        display: function(ctx) { return ctx.raw > 5; },
+        formatter: v => v + '%',
+        color: '#fff', font: { size: 14, weight: 'bold' }
+      }
+    }
+  }
+});
+
+// Q4: F&B 매장별 월 매출
+new Chart(document.getElementById('chart-fnb-monthly'), {
+  type: 'bar',
+  data: {
+    labels: ['프론트', '룸서비스', '레스토랑', '밀키샵'],
+    datasets: [{
+      label: '12월',
+      data: [3387, 726, 859, 0],
+      backgroundColor: primaryColor,
+      borderRadius: 4
+    },{
+      label: '1월',
+      data: [4697, 2316, 1691, 96],
+      backgroundColor: infoColor,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: true, anchor: 'end', align: 'top',
+        formatter: v => v > 0 ? (v/100).toFixed(1) + 'M' : '',
+        font: { size: 9, weight: 'bold' }
+      }
+    },
+    scales: {
+      y: { title: { display: true, text: '만원' },
+        ticks: { callback: v => (v/100).toFixed(0) + 'M' }
+      }
+    }
+  }
+});
+
+// Q5: 손익 워터폴
+new Chart(document.getElementById('chart-waterfall'), {
+  type: 'bar',
+  data: {
+    labels: ['매출', '지급수수료', '소모품비', '전력비', '인건비', '복리후생', '기타비용', '영업외수익', '순손실'],
+    datasets: [{
+      label: '숨김',
+      data: [0, 419-153, 419-153-86, 419-153-86-73, 419-153-86-73-69, 419-153-86-73-69-46, 419-153-86-73-69-46-113, -121+42, 0],
+      backgroundColor: 'transparent',
+      borderWidth: 0,
+      stack: 'stack'
+    },{
+      label: '금액 (백만원)',
+      data: [419, -153, -86, -73, -69, -46, -113, 42, -79],
+      backgroundColor: [successColor, dangerColor, dangerColor, dangerColor, dangerColor, dangerColor, dangerColor, successColor, '#8b0000'],
+      borderRadius: 4,
+      stack: 'stack'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      datalabels: {
+        display: function(ctx) { return ctx.datasetIndex === 1; },
+        anchor: function(ctx) { return ctx.raw >= 0 ? 'end' : 'start'; },
+        align: function(ctx) { return ctx.raw >= 0 ? 'top' : 'bottom'; },
+        formatter: v => (v > 0 ? '+' : '') + v + 'M',
+        font: { size: 10, weight: 'bold' },
+        color: function(ctx) { return ctx.raw >= 0 ? successColor : dangerColor; }
+      }
+    },
+    scales: {
+      x: { stacked: true },
+      y: { stacked: true, display: false }
+    }
+  }
+});
+
+// Q5: 비용 항목별 비중
+new Chart(document.getElementById('chart-cost-breakdown'), {
+  type: 'bar',
+  data: {
+    labels: ['지급수수료', '소모품비', '전력비', '인건비', '복리후생비', '객실소모품', '건물관리비', '보험료', '광고선전비', '기타'],
+    datasets: [{
+      label: '금액 (백만원)',
+      data: [153, 86, 73, 69, 46, 21, 14, 13, 12, 53],
+      backgroundColor: [dangerColor, '#e74c3c', warningColor, '#f39c12', '#e67e22', infoColor, '#3498db', '#5dade2', '#85c1e9', '#94a3b8'],
+      borderRadius: 4
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      datalabels: {
+        display: true, anchor: 'end', align: 'right',
+        formatter: (v, ctx) => v + 'M (' + [28.3,15.9,13.6,12.7,8.6,3.9,2.7,2.4,2.2,9.8][ctx.dataIndex] + '%)',
+        font: { size: 10, weight: 'bold' }
+      }
+    },
+    scales: {
+      x: { title: { display: true, text: '백만원' }, max: 200 }
+    }
+  }
+});
+</script>
+
+</body>
+</html>

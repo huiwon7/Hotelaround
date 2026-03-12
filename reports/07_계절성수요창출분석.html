@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>호텔어라운드 평창 | 7. 계절성·수요 창출 분석</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap');
+  :root{--primary:#1a365d;--primary-light:#2d5a9e;--accent:#e6a817;--bg:#f0f2f5;--card:#ffffff;--text:#2c2c2c;--text-light:#6b6b6b;--border:#e2e8f0;--success:#28a745;--danger:#dc3545;--info:#2c6fbb;--warning:#f39c12;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:14px;}
+  header{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);color:#fff;padding:32px 40px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 10px rgba(0,0,0,0.1);}
+  header h1{font-size:22px;font-weight:700;}
+  header .subtitle{font-size:13px;opacity:0.8;margin-top:4px;}
+  .date-badge{background:rgba(255,255,255,0.15);padding:8px 16px;border-radius:8px;font-size:13px;}
+  .container{max-width:1200px;margin:0 auto;padding:24px;}
+  .section{background:var(--card);border-radius:12px;padding:28px;margin-bottom:24px;box-shadow:0 1px 3px rgba(0,0,0,0.08);}
+  .section-title{font-size:17px;font-weight:700;color:var(--primary);margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px;}
+  .section-title .num{background:var(--primary);color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;}
+  .kpi-card{background:var(--card);border-radius:10px;padding:20px;border-left:4px solid var(--primary);box-shadow:0 1px 3px rgba(0,0,0,0.08);transition:all 0.2s;}
+  .kpi-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.12);}
+  .kpi-card.danger{border-left-color:var(--danger);}
+  .kpi-card.success{border-left-color:var(--success);}
+  .kpi-card.warning{border-left-color:var(--warning);}
+  .kpi-label{font-size:12px;color:var(--text-light);margin-bottom:4px;}
+  .kpi-value{font-size:24px;font-weight:800;}
+  .kpi-value.danger{color:var(--danger);}
+  .kpi-value.success{color:var(--success);}
+  .kpi-sub{font-size:11px;color:var(--text-light);margin-top:4px;}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;}
+  th{background:var(--primary);color:#fff;padding:10px 12px;text-align:center;font-weight:600;font-size:12px;}
+  td{padding:9px 12px;border-bottom:1px solid var(--border);text-align:right;}
+  td:first-child{text-align:left;font-weight:500;}
+  tr:hover{background:#f7fafc;}
+  tr.total-row{background:#f0f4f8;font-weight:700;}
+  tr.total-row td{border-top:2px solid var(--primary);}
+  .negative{color:var(--danger);font-weight:600;}
+  .positive{color:var(--success);font-weight:600;}
+  .chart-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-bottom:24px;}
+  .chart-box{background:var(--card);border-radius:12px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.08);}
+  .chart-box.full{grid-column:1/-1;}
+  .chart-box h4{font-size:14px;font-weight:600;color:var(--primary);margin-bottom:16px;}
+  .chart-wrapper{height:320px;position:relative;}
+  .chart-wrapper.tall{height:400px;}
+  .insight-box{background:linear-gradient(135deg,#e8f4fd 0%,#f0fdf4 100%);border:1px solid #bee3f8;border-radius:10px;padding:20px 24px;margin-top:20px;}
+  .insight-box h4{font-size:14px;font-weight:700;color:var(--primary);margin-bottom:10px;}
+  .insight-box ul{padding-left:20px;}
+  .insight-box li{font-size:13px;line-height:1.8;color:#2d3748;}
+  .alert-box{background:linear-gradient(135deg,#fff5f5 0%,#fed7d7 100%);border:1px solid #feb2b2;border-radius:10px;padding:20px 24px;margin-top:20px;}
+  .alert-box h4{font-size:14px;font-weight:700;color:var(--danger);margin-bottom:10px;}
+  .alert-box ul{padding-left:20px;}
+  .alert-box li{font-size:13px;line-height:1.8;color:#742a2a;}
+  .callout{background:#fffbeb;border:1px solid #fbbf24;border-radius:10px;padding:20px 24px;margin:20px 0;}
+  .callout h4{font-size:14px;font-weight:700;color:#92400e;margin-bottom:8px;}
+  .callout p{font-size:13px;color:#78350f;line-height:1.7;}
+  .formula-box{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin:16px 0;font-size:13px;color:var(--primary);line-height:2;}
+  .summary-box{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);color:#fff;border-radius:12px;padding:32px;margin-top:24px;}
+  .summary-box h3{font-size:18px;margin-bottom:16px;}
+  .summary-box ul{padding-left:20px;}
+  .summary-box li{font-size:14px;line-height:2;opacity:0.95;}
+  .grade{display:inline-block;padding:2px 10px;border-radius:4px;font-size:11px;font-weight:700;color:#fff;}
+  .grade.red{background:var(--danger);}
+  .grade.orange{background:var(--warning);}
+  .grade.green{background:var(--success);}
+  .grade.blue{background:var(--info);}
+  .status-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0;}
+  .status-card{border-radius:10px;padding:20px;border:2px solid var(--border);}
+  .status-card.active{border-color:var(--success);background:#f0fff4;}
+  .status-card.inactive{border-color:var(--danger);background:#fff5f5;}
+  .status-card h5{font-size:13px;font-weight:700;margin-bottom:8px;}
+  .status-card.active h5{color:var(--success);}
+  .status-card.inactive h5{color:var(--danger);}
+  .status-card ul{padding-left:16px;font-size:12px;line-height:1.8;}
+  .timeline{display:flex;gap:0;margin:24px 0;overflow-x:auto;}
+  .timeline-item{flex:1;min-width:120px;text-align:center;padding:12px 8px;position:relative;border-top:3px solid var(--border);}
+  .timeline-item.done{border-top-color:var(--success);}
+  .timeline-item.current{border-top-color:var(--warning);}
+  .timeline-item.todo{border-top-color:var(--danger);}
+  .timeline-dot{width:14px;height:14px;border-radius:50%;position:absolute;top:-9px;left:50%;transform:translateX(-50%);}
+  .timeline-item.done .timeline-dot{background:var(--success);}
+  .timeline-item.current .timeline-dot{background:var(--warning);}
+  .timeline-item.todo .timeline-dot{background:var(--danger);}
+  .timeline-month{font-size:11px;font-weight:700;margin-top:4px;}
+  .timeline-desc{font-size:10px;color:var(--text-light);margin-top:4px;}
+  @media(max-width:768px){
+    header{flex-direction:column;text-align:center;gap:12px;padding:24px 16px;}
+    .container{padding:16px;}
+    .chart-grid,.status-grid{grid-template-columns:1fr;}
+    .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>호텔어라운드 평창 — 계절성·수요 창출 분석</h1>
+    <div class="subtitle">문제점 정의 7/7 | 비수기 방어 전략 실행 현황과 수요 창출 공백 진단</div>
+  </div>
+  <div class="date-badge">분석 기준: 2026.03.09 (비수기 진입 시점)</div>
+</header>
+
+<div class="container">
+
+  <!-- ================================================================ -->
+  <!-- Q22. 워케이션·웰니스 프로그램 실행 현황 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <div class="section-title"><span class="num">22</span> 워케이션·웰니스 프로그램 실행 현황 및 공백 점검</div>
+
+    <div class="callout">
+      <h4>현재 시점의 위기</h4>
+      <p>3월 9일 현재, 성수기(12~2월)가 끝나고 <strong>비수기에 완전 진입</strong>했습니다. 3월 2일(일) 예상 OCC는 5.3%(18실)로, 성수기 OCC 54%에서 <strong>하루 만에 90% 급락</strong>했습니다. 전략 보고서에 설계된 워케이션 상품 4종과 마케팅 전략이 <strong>지금 당장 가동되어야</strong> 합니다.</p>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card danger">
+        <div class="kpi-label">3월 OCC (8일간)</div>
+        <div class="kpi-value danger">2.1%</div>
+        <div class="kpi-sub">243실 판매 / 518실×8일, 일평균 30실</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-label">3월 일평균 매출</div>
+        <div class="kpi-value danger">288만원</div>
+        <div class="kpi-sub">0.23억 ÷ 8일 (1월 대비 -86%)</div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label">워케이션 상품 판매 현황</div>
+        <div class="kpi-value" style="color:var(--warning);font-size:18px;">미출시</div>
+        <div class="kpi-sub">4종 상품 모두 아직 판매 시작 안 됨</div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label">웰니스 프로그램 가동</div>
+        <div class="kpi-value" style="color:var(--warning);font-size:18px;">미가동</div>
+        <div class="kpi-sub">트레킹·요가·명상 프로그램 미실행</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:15px;color:var(--primary);margin:20px 0 16px;">전략 보고서 계획 vs 실행 현황 GAP 분석</h3>
+
+    <div class="status-grid">
+      <div class="status-card active">
+        <h5>✓ 실행 중 (가동 항목)</h5>
+        <ul>
+          <li><strong>스마트호텔 인프라:</strong> IoT 객실 제어, 로봇 배달 서비스 운영 중</li>
+          <li><strong>반려동물 전 객실:</strong> 펫 프렌들리 정책 시행 중</li>
+          <li><strong>OTA 채널 운영:</strong> 야놀자·트립닷컴 등 기본 판매 채널</li>
+          <li><strong>기본 F&B:</strong> 프론트·레스토랑·룸서비스 운영</li>
+          <li><strong>로봇 야식 배달:</strong> 월 2,400만원 신규 매출 창출</li>
+        </ul>
+      </div>
+      <div class="status-card inactive">
+        <h5>✗ 미실행 (미가동 항목)</h5>
+        <ul>
+          <li><strong>워케이션 4종 상품:</strong> 7박/14박/30박/90박 패키지 미출시</li>
+          <li><strong>업무 인프라:</strong> 높낮이 책상·방음부스·공용오피스 미설치</li>
+          <li><strong>웰니스 프로그램:</strong> 산악 트레킹·요가·명상·온열치료 미실행</li>
+          <li><strong>기업 복지몰 입점:</strong> 베네피아·Ezwell 미등록</li>
+          <li><strong>커뮤니티 마케팅:</strong> 프리랜서 커뮤니티·SNS 연계 미착수</li>
+          <li><strong>자사 예약 시스템:</strong> 직접 예약 엔진 미구축</li>
+          <li><strong>B2B 영업:</strong> 기업 워크숍·연수 패키지 미제안</li>
+          <li><strong>오픈 기념 특가:</strong> 29~30% 할인 프로모션 미집행</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h4>전략 실행률 (항목별)</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-execution-rate"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>미실행에 따른 월별 매출 손실 추정</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-lost-revenue"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>전략 항목</th>
+          <th>보고서 계획</th>
+          <th>실행 현황</th>
+          <th>실행률</th>
+          <th>월 매출 영향</th>
+          <th>비수기 미실행 시 손실</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>워케이션 상품 4종</td>
+          <td>7/14/30/90박 패키지 출시</td>
+          <td class="negative">미출시</td>
+          <td class="negative">0%</td>
+          <td>월 3.62억 (목표)</td>
+          <td class="negative">7개월 × 3.62억 = 25.3억 손실</td>
+        </tr>
+        <tr>
+          <td>업무 인프라 구축</td>
+          <td>높낮이 책상·방음부스·Wi-Fi</td>
+          <td class="negative">Wi-Fi만 가동</td>
+          <td style="color:var(--warning)">20%</td>
+          <td>워케이션 전환의 전제 조건</td>
+          <td class="negative">상품 출시 자체 불가</td>
+        </tr>
+        <tr>
+          <td>웰니스 프로그램</td>
+          <td>트레킹·요가·명상·온열치료</td>
+          <td class="negative">미가동</td>
+          <td class="negative">0%</td>
+          <td>상품 차별화 + F&B 연계</td>
+          <td class="negative">"왜 여기 가야 하지?" 답변 불가</td>
+        </tr>
+        <tr>
+          <td>오픈 기념 특가</td>
+          <td>7박 19.8만원 (29% 할인)</td>
+          <td class="negative">미집행</td>
+          <td class="negative">0%</td>
+          <td>초기 고객 유치·리뷰 확보</td>
+          <td class="negative">비수기 첫 고객 확보 실패</td>
+        </tr>
+        <tr>
+          <td>커뮤니티 마케팅</td>
+          <td>노마드리스트·Facebook·Slack</td>
+          <td class="negative">미착수</td>
+          <td class="negative">0%</td>
+          <td>타겟 고객 직접 도달</td>
+          <td class="negative">인지도 제로 지속</td>
+        </tr>
+        <tr>
+          <td>기업 복지몰 입점</td>
+          <td>베네피아·야놀자 비즈니스</td>
+          <td class="negative">미등록</td>
+          <td class="negative">0%</td>
+          <td>벌크 선판매 매출</td>
+          <td class="negative">비수기 확정 매출 확보 실패</td>
+        </tr>
+        <tr>
+          <td>친구 추천 혜택</td>
+          <td>추천인 15%·피추천인 10% 할인</td>
+          <td class="negative">미시작</td>
+          <td class="negative">0%</td>
+          <td>입소문 바이럴</td>
+          <td class="negative">자연 확산 기회 상실</td>
+        </tr>
+        <tr class="total-row">
+          <td>종합 실행률</td>
+          <td>-</td>
+          <td>-</td>
+          <td class="negative">~10%</td>
+          <td>-</td>
+          <td class="negative">비수기 7개월 예상 손실: 6~11억원</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alert-box">
+      <h4>긴급 경고: 전략은 있으나 실행이 없다</h4>
+      <ul>
+        <li><strong>종합 실행률 약 10%:</strong> 전략 보고서에 수립된 계획 중 실제 가동 중인 항목은 기본 인프라(스마트호텔·F&B)뿐. 핵심 전략인 워케이션 상품·웰니스·마케팅은 전혀 실행되지 않고 있습니다.</li>
+        <li><strong>비수기 시작 D-Day:</strong> 3월 9일 현재 이미 비수기에 진입했습니다. OCC 2.1%인 상태에서 <strong>상품 출시까지 최소 1~2개월</strong>이 더 소요되면, 3~4월 매출은 사실상 포기해야 합니다.</li>
+        <li><strong>비수기 매출 목표 30.7억원의 현실:</strong> 목표 달성을 위해서는 지금 당장 모든 전략을 병행 실행해야 하지만, 실행 주체(인력·예산·시스템)가 부재합니다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Q23. 봄 비수기 방어 전략 (가동 vs 미가동) -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <div class="section-title"><span class="num">23</span> 3~5월 봄 비수기 방어 전략 — 가동 vs 미가동 구분</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card danger">
+        <div class="kpi-label">3~5월 예상 매출 (현재 추세)</div>
+        <div class="kpi-value danger">0.8~1.0억원</div>
+        <div class="kpi-sub">OCC 2~4% 지속 시 3개월 합산</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-label">3~5월 예상 비용</div>
+        <div class="kpi-value danger">2.5~3.0억원</div>
+        <div class="kpi-sub">고정비 월 8,500만원 × 3개월</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-label">3~5월 예상 적자</div>
+        <div class="kpi-value danger">-1.7~2.0억원</div>
+        <div class="kpi-sub">전략 미실행 시 3개월 누적 손실</div>
+      </div>
+      <div class="kpi-card success">
+        <div class="kpi-label">전략 실행 시 목표 매출</div>
+        <div class="kpi-value success">3.0~4.5억원</div>
+        <div class="kpi-sub">워케이션+복지몰+기업연수 병행 시</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box full">
+        <h4>3~5월 봄 비수기 전략 항목별 가동/미가동 현황</h4>
+        <div class="chart-wrapper tall">
+          <canvas id="chart-spring-status"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>구분</th>
+          <th>전략 항목</th>
+          <th>상태</th>
+          <th>상세 현황</th>
+          <th>봄 매출 기여 (3개월)</th>
+          <th>즉시 실행 시 효과</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#f0fff4;">
+          <td colspan="6" style="text-align:center;font-weight:700;color:var(--success);">가동 중 (5개 항목)</td>
+        </tr>
+        <tr>
+          <td>①</td>
+          <td>OTA 기본 판매</td>
+          <td><span class="grade green">가동</span></td>
+          <td>야놀자·여기어때·트립닷컴 등 기본 노출</td>
+          <td>~5,000만원</td>
+          <td>비수기 할인 프로모션 추가 집행</td>
+        </tr>
+        <tr>
+          <td>②</td>
+          <td>반려동물 전 객실</td>
+          <td><span class="grade green">가동</span></td>
+          <td>펫 프렌들리 USP 운영 중</td>
+          <td>~1,000만원</td>
+          <td>"반려동물 봄 여행" 패키지로 특화</td>
+        </tr>
+        <tr>
+          <td>③</td>
+          <td>로봇 배달 서비스</td>
+          <td><span class="grade green">가동</span></td>
+          <td>야식/음료 24시간 서비스</td>
+          <td>~500만원</td>
+          <td>비수기에도 F&B 매출 기여</td>
+        </tr>
+        <tr>
+          <td>④</td>
+          <td>장기기숙사</td>
+          <td><span class="grade green">가동</span></td>
+          <td>월 2,688만원 수입 (비중 1.4%)</td>
+          <td>~8,000만원</td>
+          <td>안정적 고정 매출, 확대 여지</td>
+        </tr>
+        <tr>
+          <td>⑤</td>
+          <td>스마트호텔 인프라</td>
+          <td><span class="grade green">가동</span></td>
+          <td>IoT 객실 제어 운영</td>
+          <td>간접 (비용 절감)</td>
+          <td>비수기 부분 운영 시 에너지 절감</td>
+        </tr>
+        <tr style="background:#fff5f5;">
+          <td colspan="6" style="text-align:center;font-weight:700;color:var(--danger);">미가동 (12개 항목)</td>
+        </tr>
+        <tr>
+          <td>⑥</td>
+          <td>워케이션 상품 출시</td>
+          <td><span class="grade red">미가동</span></td>
+          <td>4종 패키지 설계만 완료, 판매 미시작</td>
+          <td class="negative">미실행 시 0원</td>
+          <td class="positive">즉시 출시 시 3개월 3~5억 잠재</td>
+        </tr>
+        <tr>
+          <td>⑦</td>
+          <td>업무 공간 인프라</td>
+          <td><span class="grade red">미가동</span></td>
+          <td>높낮이 책상·방음부스·공용오피스 미설치</td>
+          <td class="negative">워케이션 판매 전제조건</td>
+          <td>1개월 내 최소 투자로 설치 가능</td>
+        </tr>
+        <tr>
+          <td>⑧</td>
+          <td>웰니스 프로그램</td>
+          <td><span class="grade red">미가동</span></td>
+          <td>트레킹·요가·명상 기획만, 강사 미확보</td>
+          <td class="negative">봄 시즌 최적의 콘텐츠</td>
+          <td>외부 강사 계약 2~3주면 가능</td>
+        </tr>
+        <tr>
+          <td>⑨</td>
+          <td>벚꽃·봄꽃 패키지</td>
+          <td><span class="grade red">미가동</span></td>
+          <td>평창 봄 자연 활용 상품 없음</td>
+          <td class="negative">계절 콘텐츠 부재</td>
+          <td>"봄 워케이션" 한정 상품 기획</td>
+        </tr>
+        <tr>
+          <td>⑩</td>
+          <td>오픈 기념 특가</td>
+          <td><span class="grade red">미가동</span></td>
+          <td>7박 19.8만원 특가 미집행</td>
+          <td class="negative">초기 고객 유치 실패</td>
+          <td>OTA + 자사 채널에서 즉시 집행</td>
+        </tr>
+        <tr>
+          <td>⑪</td>
+          <td>기업 복지몰 입점</td>
+          <td><span class="grade red">미가동</span></td>
+          <td>베네피아·Ezwell 미등록</td>
+          <td class="negative">선판매 매출 0</td>
+          <td>입점 심사 2~4주 → 5월 판매 가능</td>
+        </tr>
+        <tr>
+          <td>⑫</td>
+          <td>B2B 기업 영업</td>
+          <td><span class="grade red">미가동</span></td>
+          <td>쿠쿠·SESCO 등 제안서 미발송</td>
+          <td class="negative">Group 매출 0</td>
+          <td>봄 워크숍·연수 제안 (4~5월 타겟)</td>
+        </tr>
+        <tr>
+          <td>⑬</td>
+          <td>커뮤니티 마케팅</td>
+          <td><span class="grade red">미가동</span></td>
+          <td>프리랜서 커뮤니티 접근 안 됨</td>
+          <td class="negative">타겟 도달 0</td>
+          <td>노마드리스트·FB그룹 즉시 게시</td>
+        </tr>
+        <tr>
+          <td>⑭</td>
+          <td>자사 예약 시스템</td>
+          <td><span class="grade red">미가동</span></td>
+          <td>예약 엔진 미도입</td>
+          <td class="negative">직접 예약 0</td>
+          <td>월 30~50만원으로 즉시 구축</td>
+        </tr>
+        <tr>
+          <td>⑮</td>
+          <td>네이버 플레이스 최적화</td>
+          <td><span class="grade orange">부분</span></td>
+          <td>기본 등록만, 콘텐츠·리뷰 관리 미흡</td>
+          <td class="negative">검색 유입 저조</td>
+          <td>사진·정보·리뷰 관리 즉시 가능</td>
+        </tr>
+        <tr>
+          <td>⑯</td>
+          <td>다이나믹 프라이싱</td>
+          <td><span class="grade red">미가동</span></td>
+          <td>비수기 가격 차별화 없음</td>
+          <td class="negative">ADR 하락만, 수요 창출 못함</td>
+          <td>비수기 평일 50% 할인 즉시 적용</td>
+        </tr>
+        <tr>
+          <td>⑰</td>
+          <td>비수기 층별 부분 운영</td>
+          <td><span class="grade red">미가동</span></td>
+          <td>518실 전체 유지 관리 중</td>
+          <td>간접 (비용 절감)</td>
+          <td>3~4개 층만 운영 → 전력비 40% 절감</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h4>봄 비수기 방어: 현재 vs 전략 실행 시 매출</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-spring-scenario"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>전략별 실행 난이도 vs 매출 영향</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-priority-matrix"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <h4>봄 비수기 긴급 실행 계획 (3월 중 착수)</h4>
+      <ul>
+        <li><strong>즉시 (이번 주):</strong> ① OTA에 비수기 특가 등록 (평일 1박 5.9만원) ② 네이버 플레이스 콘텐츠 업데이트 ③ "봄 워케이션 체험단" SNS 모집</li>
+        <li><strong>2주 내:</strong> ④ 워케이션 7박 상품 OTA 출시 (19.8만원 특가) ⑤ 업무용 책상·Wi-Fi 부스터 최소 투자 설치 ⑥ 쿠쿠·SESCO에 봄 워크숍 제안서 발송</li>
+        <li><strong>1개월 내:</strong> ⑦ 웰니스 프로그램(봄 트레킹·요가) 외부 강사 계약 ⑧ 자사 예약 엔진 도입 ⑨ 베네피아 입점 심사 신청 ⑩ 층별 부분 운영으로 전력비 절감</li>
+        <li><strong>목표:</strong> 4~5월 OCC 2% → 8~12%로 개선, 월매출 0.3억 → 1.2~1.5억으로 4~5배 증가</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Q24. 모바일 숙박권 시스템 미기여 원인 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <div class="section-title"><span class="num">24</span> 모바일 숙박권 시스템 — 실 매출 미기여 원인 및 실행 장애물 분석</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card danger">
+        <div class="kpi-label">모바일 숙박권 매출 기여</div>
+        <div class="kpi-value danger">0원</div>
+        <div class="kpi-sub">시스템 미구축, 판매 실적 없음</div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label">복지몰·바우처 입점</div>
+        <div class="kpi-value" style="color:var(--warning);font-size:18px;">미착수</div>
+        <div class="kpi-sub">베네피아·Ezwell·카카오선물 모두 미등록</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">모바일 숙박권 시장 규모 (국내)</div>
+        <div class="kpi-value">2.5조원+</div>
+        <div class="kpi-sub">선물하기·복지몰·기프티콘 합산</div>
+      </div>
+      <div class="kpi-card success">
+        <div class="kpi-label">도입 시 연간 잠재 매출</div>
+        <div class="kpi-value success">2~5억원</div>
+        <div class="kpi-sub">바우처 1,000~2,500매 × 평균 20만원</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h4>모바일 숙박권 유통 채널별 잠재력</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-voucher-channels"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>실행 장애물 심각도 분석</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-barriers"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-size:15px;color:var(--danger);margin:20px 0 16px;">모바일 숙박권 미기여 6대 장애물</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>순서</th>
+          <th>장애물</th>
+          <th>심각도</th>
+          <th>현황</th>
+          <th>해소 방법</th>
+          <th>소요 기간</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>①</td>
+          <td><strong>상품 표준화 미완료</strong></td>
+          <td class="negative">★★★★★</td>
+          <td>모바일 숙박권에 담을 정형화된 상품(가격·조건·유효기간)이 없음</td>
+          <td>"평일 1박 99,000원 / 주말 1박 139,000원" 바우처 설계</td>
+          <td>1~2주</td>
+        </tr>
+        <tr>
+          <td>②</td>
+          <td><strong>PMS-바우처 연동 미구축</strong></td>
+          <td class="negative">★★★★★</td>
+          <td>바우처 코드 → PMS 예약 자동 변환이 안 되면, 수동 전화 예약 필요</td>
+          <td>PMS 업체와 바우처 연동 개발 또는 수동 프로세스 확립</td>
+          <td>1~2개월</td>
+        </tr>
+        <tr>
+          <td>③</td>
+          <td><strong>유통 플랫폼 미입점</strong></td>
+          <td class="negative">★★★★</td>
+          <td>카카오 선물하기·네이버 스마트스토어·복지몰 모두 미등록</td>
+          <td>카카오 비즈니스 입점 신청(3~4주) + 네이버 스마트스토어 개설(1주)</td>
+          <td>2~4주</td>
+        </tr>
+        <tr>
+          <td>④</td>
+          <td><strong>재고 관리(Inventory) 정책 부재</strong></td>
+          <td class="negative">★★★★</td>
+          <td>바우처 고객이 성수기에 몰릴 경우 일반 고가 예약 잠식 우려</td>
+          <td>성수기(12~2월) 블랙아웃 + 평일 한정 조건 + 사전 예약 필수</td>
+          <td>상품 설계 시 반영</td>
+        </tr>
+        <tr>
+          <td>⑤</td>
+          <td><strong>할인율 수용 부담</strong></td>
+          <td style="color:var(--warning)">★★★</td>
+          <td>모바일 숙박권은 정가 대비 30~40% 할인 필요 + 플랫폼 수수료 10~15%</td>
+          <td>비수기 한계이익률 ~100%이므로, 할인해도 순이익. 경영진 인식 전환 필요</td>
+          <td>의사결정</td>
+        </tr>
+        <tr>
+          <td>⑥</td>
+          <td><strong>실행 담당자 부재</strong></td>
+          <td style="color:var(--warning)">★★★</td>
+          <td>바우처 상품 기획·플랫폼 입점·판매 관리를 전담할 인력 없음</td>
+          <td>마케팅/세일즈 담당 1명 배치 또는 외부 대행</td>
+          <td>즉시</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="formula-box">
+      <strong>▶ 모바일 숙박권 수익성 시뮬레이션</strong><br><br>
+      <strong>채널 A: 카카오 선물하기</strong><br>
+      상품가: 99,000원 (평일 1박) | 수수료: 20% = 19,800원 | 실수령: <strong>79,200원</strong><br>
+      월 판매 100매 × 79,200원 = <strong>792만원/월</strong><br><br>
+
+      <strong>채널 B: 기업 복지몰 (베네피아)</strong><br>
+      상품가: 99,000원 | 수수료: 12% = 11,880원 | 실수령: <strong>87,120원</strong><br>
+      월 판매 150매 × 87,120원 = <strong>1,307만원/월</strong><br><br>
+
+      <strong>채널 C: 네이버 스마트스토어</strong><br>
+      상품가: 109,000원 | 수수료: 5% = 5,450원 | 실수령: <strong>103,550원</strong><br>
+      월 판매 80매 × 103,550원 = <strong>828만원/월</strong><br><br>
+
+      <strong style="color:var(--success);">3개 채널 합산: 월 ~2,927만원 → 연 ~3.5억원</strong><br>
+      <strong>비수기 7개월 집중 시: ~2.0억원 확정 매출</strong> (빈 방 원가 0원이므로 한계이익 ≒ 80~100%)
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box full">
+        <h4>모바일 숙박권 도입 로드맵 (12주)</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-voucher-roadmap"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <h4>모바일 숙박권 도입 실행 계획</h4>
+      <ul>
+        <li><strong>1~2주차:</strong> 바우처 상품 3종 설계 (평일 1박 / 주말 1박 / 1박+조식 패키지), 블랙아웃 날짜·유효기간·환불 정책 확정</li>
+        <li><strong>3~4주차:</strong> 네이버 스마트스토어 개설 (가장 빠름), 카카오 선물하기 입점 신청, PMS 연동 또는 수동 관리 프로세스 확립</li>
+        <li><strong>5~8주차:</strong> 베네피아·야놀자 비즈니스 입점 심사, 초기 500매 한정 판매 시작, 판매 데이터 모니터링</li>
+        <li><strong>9~12주차:</strong> 1차 판매 분석 → 가격·채널 최적화, 기업 벌크 직접 판매(50매 이상 추가 할인) 병행, 2차 1,000매 추가</li>
+        <li><strong>핵심:</strong> 네이버 스마트스토어는 <strong>1주 내 개설 가능</strong>. 완벽한 시스템 없어도 수동 예약 관리로 즉시 시작할 수 있습니다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- 종합 요약 -->
+  <!-- ================================================================ -->
+  <div class="summary-box">
+    <h3>계절성·수요 창출 종합 진단 (최종)</h3>
+    <ul>
+      <li><strong>Q22. 워케이션·웰니스 실행 현황:</strong> 종합 실행률 약 10%. 워케이션 4종 상품·웰니스·오픈 특가·커뮤니티 마케팅·복지몰 입점 모두 미실행. "전략은 있으나 실행이 없는" 상태</li>
+      <li><strong>Q23. 봄 비수기 방어:</strong> 가동 5개 vs 미가동 12개. 현재 추세대로면 3~5월 적자 -1.7~2.0억원. 워케이션 출시+복지몰+기업영업 병행 시 매출 4~5배 개선 가능</li>
+      <li><strong>Q24. 모바일 숙박권:</strong> 6대 장애물(상품 미설계·PMS 미연동·플랫폼 미입점·재고정책 부재·할인 부담·담당자 부재)로 매출 기여 0원. 네이버 스마트스토어는 1주 내 시작 가능</li>
+      <li><strong>최종 권고:</strong> <span style="color:var(--accent);font-weight:700;">지금이 골든타임입니다.</span> 3월 중 워케이션 상품 출시 + 모바일 숙박권 판매 시작 + 기업 제안서 발송 — 이 3가지를 병행해야 비수기 7개월을 버틸 수 있습니다.</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+Chart.register(ChartDataLabels);
+const P='#1a365d',A='#e6a817',D='#dc3545',S='#28a745',I='#2c6fbb',W='#f39c12';
+Chart.defaults.font={family:"'Noto Sans KR',sans-serif",size:11};
+Chart.defaults.plugins.datalabels={display:false};
+
+// Q22: 전략 실행률
+new Chart(document.getElementById('chart-execution-rate'),{
+  type:'bar',
+  data:{
+    labels:['스마트호텔\n인프라','OTA\n기본판매','반려동물\n정책','로봇\n서비스','워케이션\n상품','업무\n인프라','웰니스\n프로그램','복지몰\n입점','B2B\n영업','마케팅'],
+    datasets:[{
+      label:'실행률 (%)',
+      data:[90,80,100,85,0,20,0,0,0,10],
+      backgroundColor:function(ctx){return ctx.raw>=70?S:(ctx.raw>=30?W:D);},
+      borderRadius:4
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{datalabels:{
+      display:true,anchor:'end',align:'top',
+      formatter:v=>v+'%',font:{size:10,weight:'bold'},
+      color:function(ctx){return ctx.raw>=70?S:D;}
+    }},
+    scales:{y:{max:120,ticks:{callback:v=>v+'%'}}}
+  }
+});
+
+// Q22: 미실행 매출 손실
+new Chart(document.getElementById('chart-lost-revenue'),{
+  type:'bar',
+  data:{
+    labels:['3월','4월','5월','6월','7월','8월','9월'],
+    datasets:[
+      {label:'현재 추세 매출 (백만원)',data:[23,15,12,18,30,50,15],backgroundColor:D,borderRadius:4},
+      {label:'전략 실행 시 목표 (백만원)',data:[80,120,150,140,160,200,150],backgroundColor:S,borderRadius:4}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{datalabels:{
+      display:function(ctx){return ctx.datasetIndex===1;},
+      anchor:'end',align:'top',
+      formatter:v=>v>=100?(v/100).toFixed(1)+'억':v+'M',
+      font:{size:9,weight:'bold'},color:S
+    }},
+    scales:{y:{max:250,ticks:{callback:v=>v>=100?(v/100).toFixed(1)+'억':v+'M'}}}
+  }
+});
+
+// Q23: 봄 비수기 전략 현황
+new Chart(document.getElementById('chart-spring-status'),{
+  type:'bar',
+  data:{
+    labels:['OTA 기본판매','반려동물','로봇 서비스','장기기숙사','스마트호텔','워케이션 상품','업무 인프라','웰니스','봄 패키지','오픈 특가','복지몰','B2B 영업','커뮤니티','자사 예약','네이버','다이나믹 프라이싱','부분 운영'],
+    datasets:[{
+      label:'가동 상태 (100=가동, 0=미가동)',
+      data:[100,100,100,100,100,0,20,0,0,0,0,0,0,0,30,0,0],
+      backgroundColor:function(ctx){return ctx.raw>=70?S:(ctx.raw>=20?W:D);},
+      borderRadius:4
+    }]
+  },
+  options:{
+    indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{datalabels:{
+      display:true,anchor:'end',align:'right',
+      formatter:function(v){return v>=70?'가동 ✓':(v>=20?'부분':'미가동 ✗');},
+      font:{size:10,weight:'bold'},
+      color:function(ctx){return ctx.raw>=70?S:D;}
+    }},
+    scales:{x:{max:120,display:false}}
+  }
+});
+
+// Q23: 봄 시나리오 비교
+new Chart(document.getElementById('chart-spring-scenario'),{
+  type:'bar',
+  data:{
+    labels:['3월','4월','5월','3~5월 합계'],
+    datasets:[
+      {label:'현재 추세 (백만원)',data:[23,15,12,50],backgroundColor:D,borderRadius:6},
+      {label:'긴급 실행 시 (백만원)',data:[50,100,150,300],backgroundColor:W,borderRadius:6},
+      {label:'전략 완전 실행 시 (백만원)',data:[80,150,220,450],backgroundColor:S,borderRadius:6}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{datalabels:{
+      display:function(ctx){return ctx.dataIndex===3;},
+      anchor:'end',align:'top',
+      formatter:v=>v>=100?(v/100).toFixed(1)+'억':v+'M',
+      font:{size:12,weight:'bold'}
+    }},
+    scales:{y:{max:500,ticks:{callback:v=>v>=100?(v/100).toFixed(1)+'억':v+'M'}}}
+  }
+});
+
+// Q23: 우선순위 매트릭스
+new Chart(document.getElementById('chart-priority-matrix'),{
+  type:'bubble',
+  data:{
+    datasets:[
+      {label:'비수기 OTA 특가',data:[{x:2,y:85,r:14}],backgroundColor:S},
+      {label:'워케이션 7박 출시',data:[{x:4,y:95,r:18}],backgroundColor:S},
+      {label:'네이버 최적화',data:[{x:2,y:70,r:12}],backgroundColor:S},
+      {label:'봄 체험단 모집',data:[{x:3,y:60,r:10}],backgroundColor:W},
+      {label:'업무 인프라 설치',data:[{x:5,y:90,r:14}],backgroundColor:W},
+      {label:'웰니스 프로그램',data:[{x:6,y:75,r:12}],backgroundColor:W},
+      {label:'복지몰 입점',data:[{x:5,y:65,r:14}],backgroundColor:I},
+      {label:'자사 예약 엔진',data:[{x:4,y:55,r:12}],backgroundColor:I},
+      {label:'부분 운영',data:[{x:3,y:50,r:10}],backgroundColor:I}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{font:{size:9}}},datalabels:{display:false}},
+    scales:{
+      x:{title:{display:true,text:'실행 난이도 (높을수록 어려움) →'},min:0,max:10},
+      y:{title:{display:true,text:'매출 영향 (높을수록 큼) →'},min:0,max:100}
+    }
+  }
+});
+
+// Q24: 모바일 숙박권 채널
+new Chart(document.getElementById('chart-voucher-channels'),{
+  type:'bar',
+  data:{
+    labels:['카카오\n선물하기','베네피아\n(삼성)','네이버\n스마트스토어','야놀자\n비즈니스','Ezwell\n(LG 등)','기업 벌크\n직접판매'],
+    datasets:[
+      {label:'월 잠재 매출 (만원)',data:[792,1307,828,600,450,1500],backgroundColor:[A,I,S,D,P,W],borderRadius:6}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{datalabels:{
+      display:true,anchor:'end',align:'top',
+      formatter:v=>v+'만',font:{size:11,weight:'bold'}
+    }},
+    scales:{y:{max:2000,title:{display:true,text:'만원/월'}}}
+  }
+});
+
+// Q24: 장애물 심각도
+new Chart(document.getElementById('chart-barriers'),{
+  type:'bar',
+  data:{
+    labels:['상품 표준화\n미완료','PMS-바우처\n미연동','유통 플랫폼\n미입점','재고 관리\n정책 부재','할인율\n수용 부담','실행 담당자\n부재'],
+    datasets:[{
+      label:'심각도',
+      data:[100,95,80,75,55,50],
+      backgroundColor:[D,D,D,W,W,I],borderRadius:6
+    },{
+      label:'해소 난이도 (낮을수록 쉬움)',
+      data:[15,60,30,20,10,20],
+      type:'line',borderColor:S,pointRadius:5,pointBackgroundColor:S,borderWidth:2,yAxisID:'y1'
+    }]
+  },
+  options:{
+    indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{datalabels:{
+      display:function(ctx){return ctx.datasetIndex===0;},
+      anchor:'end',align:'right',
+      formatter:function(v){return v>=80?'즉시 해결':(v>=50?'단기':'중기');},
+      font:{size:9,weight:'bold'},color:function(ctx){return ctx.raw>=80?D:W;}
+    }},
+    scales:{
+      x:{max:120},
+      y1:{position:'top',grid:{display:false},max:80,display:false}
+    }
+  }
+});
+
+// Q24: 도입 로드맵
+new Chart(document.getElementById('chart-voucher-roadmap'),{
+  type:'bar',
+  data:{
+    labels:['1~2주\n상품 설계','3~4주\n플랫폼 입점','5~6주\n초기 판매','7~8주\n데이터 분석','9~10주\n가격 최적화','11~12주\n확대 판매'],
+    datasets:[
+      {label:'누적 판매 (매)',data:[0,0,150,300,500,800],backgroundColor:I,borderRadius:4},
+      {label:'누적 매출 (만원)',data:[0,0,1300,2600,4350,7000],type:'line',borderColor:S,pointRadius:6,pointBackgroundColor:S,borderWidth:3,yAxisID:'y1'}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{datalabels:{
+      display:function(ctx){return ctx.datasetIndex===1&&ctx.raw>0;},
+      anchor:'end',align:'top',
+      formatter:v=>v>=10000?(v/10000).toFixed(1)+'억':v+'만',
+      font:{size:10,weight:'bold'},color:S
+    }},
+    scales:{
+      y:{title:{display:true,text:'판매 매수'},max:1000},
+      y1:{position:'right',title:{display:true,text:'매출 (만원)'},grid:{display:false}}
+    }
+  }
+});
+</script>
+
+</body>
+</html>

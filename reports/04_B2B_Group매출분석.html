@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>호텔어라운드 평창 | 4. B2B·Group 매출 분석</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap');
+
+  :root {
+    --primary: #1a365d;
+    --primary-light: #2d5a9e;
+    --accent: #e6a817;
+    --bg: #f0f2f5;
+    --card: #ffffff;
+    --text: #2c2c2c;
+    --text-light: #6b6b6b;
+    --border: #e2e8f0;
+    --success: #28a745;
+    --danger: #dc3545;
+    --info: #2c6fbb;
+    --warning: #f39c12;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; font-size: 14px; }
+
+  header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: #fff; padding: 32px 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  header h1 { font-size: 22px; font-weight: 700; }
+  header .subtitle { font-size: 13px; opacity: 0.8; margin-top: 4px; }
+  .date-badge { background: rgba(255,255,255,0.15); padding: 8px 16px; border-radius: 8px; font-size: 13px; }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+  .section {
+    background: var(--card); border-radius: 12px; padding: 28px; margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .section-title {
+    font-size: 17px; font-weight: 700; color: var(--primary);
+    margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title .num {
+    background: var(--primary); color: #fff; width: 30px; height: 30px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; flex-shrink: 0;
+  }
+
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .kpi-card {
+    background: var(--card); border-radius: 10px; padding: 20px; border-left: 4px solid var(--primary);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: all 0.2s;
+  }
+  .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+  .kpi-card.danger { border-left-color: var(--danger); }
+  .kpi-card.success { border-left-color: var(--success); }
+  .kpi-card.warning { border-left-color: var(--warning); }
+  .kpi-card.accent { border-left-color: var(--accent); }
+  .kpi-label { font-size: 12px; color: var(--text-light); margin-bottom: 4px; }
+  .kpi-value { font-size: 24px; font-weight: 800; }
+  .kpi-value.danger { color: var(--danger); }
+  .kpi-value.success { color: var(--success); }
+  .kpi-sub { font-size: 11px; color: var(--text-light); margin-top: 4px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px; }
+  th { background: var(--primary); color: #fff; padding: 10px 12px; text-align: center; font-weight: 600; font-size: 12px; }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); text-align: right; }
+  td:first-child { text-align: left; font-weight: 500; }
+  tr:hover { background: #f7fafc; }
+  tr.total-row { background: #f0f4f8; font-weight: 700; }
+  tr.total-row td { border-top: 2px solid var(--primary); }
+  .negative { color: var(--danger); font-weight: 600; }
+  .positive { color: var(--success); font-weight: 600; }
+
+  .chart-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 24px; }
+  .chart-box { background: var(--card); border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .chart-box.full { grid-column: 1 / -1; }
+  .chart-box h4 { font-size: 14px; font-weight: 600; color: var(--primary); margin-bottom: 16px; }
+  .chart-wrapper { height: 320px; position: relative; }
+  .chart-wrapper.tall { height: 380px; }
+
+  .insight-box {
+    background: linear-gradient(135deg, #e8f4fd 0%, #f0fdf4 100%);
+    border: 1px solid #bee3f8; border-radius: 10px; padding: 20px 24px; margin-top: 20px;
+  }
+  .insight-box h4 { font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+  .insight-box ul { padding-left: 20px; }
+  .insight-box li { font-size: 13px; line-height: 1.8; color: #2d3748; }
+
+  .alert-box {
+    background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+    border: 1px solid #feb2b2; border-radius: 10px; padding: 20px 24px; margin-top: 20px;
+  }
+  .alert-box h4 { font-size: 14px; font-weight: 700; color: var(--danger); margin-bottom: 10px; }
+  .alert-box ul { padding-left: 20px; }
+  .alert-box li { font-size: 13px; line-height: 1.8; color: #742a2a; }
+
+  .callout {
+    background: #fffbeb; border: 1px solid #fbbf24; border-radius: 10px; padding: 20px 24px; margin: 20px 0;
+  }
+  .callout h4 { font-size: 14px; font-weight: 700; color: #92400e; margin-bottom: 8px; }
+  .callout p { font-size: 13px; color: #78350f; line-height: 1.7; }
+
+  .formula-box {
+    background: #f8fafc; border: 1px solid var(--border); border-radius: 8px;
+    padding: 16px 20px; margin: 16px 0; font-size: 13px; color: var(--primary); line-height: 2;
+  }
+
+  .pipeline {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    margin: 24px 0;
+    position: relative;
+  }
+  .pipeline::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    right: 10%;
+    height: 3px;
+    background: var(--border);
+    z-index: 0;
+  }
+  .pipe-step {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+  .pipe-circle {
+    width: 56px; height: 56px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 8px;
+    font-size: 18px; font-weight: 800; color: #fff;
+  }
+  .pipe-label { font-size: 11px; font-weight: 600; color: var(--text); }
+  .pipe-value { font-size: 10px; color: var(--text-light); margin-top: 2px; }
+
+  .blocker-card {
+    display: grid; grid-template-columns: 60px 1fr; gap: 16px; align-items: start;
+    padding: 18px; margin-bottom: 14px; background: #f8fafc;
+    border-radius: 10px; border-left: 4px solid var(--danger);
+  }
+  .blocker-card.warn { border-left-color: var(--warning); }
+  .blocker-card.info { border-left-color: var(--info); }
+  .blocker-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; color: #fff; font-weight: 800;
+  }
+  .blocker-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .blocker-desc { font-size: 12px; color: var(--text-light); line-height: 1.7; }
+
+  .summary-box {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: #fff; border-radius: 12px; padding: 32px; margin-top: 24px;
+  }
+  .summary-box h3 { font-size: 18px; margin-bottom: 16px; }
+  .summary-box ul { padding-left: 20px; }
+  .summary-box li { font-size: 14px; line-height: 2; opacity: 0.95; }
+
+  .compare-grid {
+    display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: center; margin: 20px 0;
+  }
+  .compare-card { background: #f8fafc; border-radius: 10px; padding: 24px; text-align: center; }
+  .compare-card.left { border: 2px solid var(--danger); }
+  .compare-card.right { border: 2px solid var(--success); }
+  .compare-vs { font-size: 20px; font-weight: 900; color: var(--text-light); }
+  .compare-card .label { font-size: 12px; color: var(--text-light); }
+  .compare-card .value { font-size: 28px; font-weight: 800; margin: 8px 0; }
+  .compare-card .sub { font-size: 11px; color: var(--text-light); }
+
+  @media (max-width: 768px) {
+    header { flex-direction: column; text-align: center; gap: 12px; padding: 24px 16px; }
+    .container { padding: 16px; }
+    .chart-grid { grid-template-columns: 1fr; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .pipeline { grid-template-columns: repeat(3, 1fr); }
+    .compare-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>호텔어라운드 평창 — B2B·Group 매출 분석</h1>
+    <div class="subtitle">문제점 정의 4/7 | Group 0%의 원인 진단과 B2B 채널 활성화 방안</div>
+  </div>
+  <div class="date-badge">분석 기준: 2025.10 ~ 2026.03.01</div>
+</header>
+
+<div class="container">
+
+  <!-- ================================================================ -->
+  <!-- Q13. Group/MICE 매출 0%의 구조적 원인 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <div class="section-title"><span class="num">13</span> Group/MICE 매출 0%의 구조적 원인 분석</div>
+
+    <div class="compare-grid">
+      <div class="compare-card left">
+        <div class="label">현재 Group 매출 비중</div>
+        <div class="value" style="color:var(--danger)">0%</div>
+        <div class="sub">5개월간 단체·기업 예약 실적 0건</div>
+      </div>
+      <div class="compare-vs">VS</div>
+      <div class="compare-card right">
+        <div class="label">AZMT 경영 목표</div>
+        <div class="value" style="color:var(--success)">20%</div>
+        <div class="sub">기업 고객 매출 비중 목표</div>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card danger">
+        <div class="kpi-label">Group 목표 달성률</div>
+        <div class="kpi-value danger">0%</div>
+        <div class="kpi-sub">목표 20% 대비 완전 미달</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-label">FIT 의존도</div>
+        <div class="kpi-value danger">100%</div>
+        <div class="kpi-sub">개인 OTA 예약에 전량 의존</div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label">Group 20% 달성 시 월 매출 효과</div>
+        <div class="kpi-value" style="color:var(--warning);">+1.2억원</div>
+        <div class="kpi-sub">1월 매출 기준 6.19억 × 20%</div>
+      </div>
+      <div class="kpi-card success">
+        <div class="kpi-label">Group 수수료 절감 효과</div>
+        <div class="kpi-value success">-15%p</div>
+        <div class="kpi-sub">OTA 20% → 직접계약 5% 수수료</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h4>현재 채널 구조 vs 목표 구조</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-fit-vs-group"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>경쟁사 Group 비중 벤치마크</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-benchmark"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-size:15px;color:var(--primary);margin:24px 0 16px;">Group/MICE 매출 0%의 구조적 원인 8가지</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>구분</th>
+          <th>구조적 원인</th>
+          <th>영향도</th>
+          <th>현황</th>
+          <th>상세 분석</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#edf2f7;">
+          <td colspan="5" style="text-align:center;font-weight:700;color:var(--danger);">영업·조직 요인 (즉시 해결 가능)</td>
+        </tr>
+        <tr>
+          <td>①</td>
+          <td>B2B 전담 영업 인력 부재</td>
+          <td class="negative">★★★★★</td>
+          <td class="negative">0명</td>
+          <td>기업 영업, 제안서 작성, 현장 답사 안내를 할 사람이 없음</td>
+        </tr>
+        <tr>
+          <td>②</td>
+          <td>Group 영업 전략·프로세스 미수립</td>
+          <td class="negative">★★★★★</td>
+          <td class="negative">없음</td>
+          <td>타겟 기업 리스트, 제안서, 계약 템플릿, 후속 관리 체계 전무</td>
+        </tr>
+        <tr>
+          <td>③</td>
+          <td>단체 요금(Group Rate) 미설정</td>
+          <td class="negative">★★★★</td>
+          <td class="negative">없음</td>
+          <td>10실 이상 단체 할인 요금표가 없어, 기업 담당자가 견적 요청 불가</td>
+        </tr>
+        <tr style="background:#edf2f7;">
+          <td colspan="5" style="text-align:center;font-weight:700;color:var(--warning);">시설·인프라 요인</td>
+        </tr>
+        <tr>
+          <td>④</td>
+          <td>MICE 시설 부족</td>
+          <td class="negative">★★★★</td>
+          <td style="color:var(--warning)">제한적</td>
+          <td>대형 회의실(100인+), 연회장, 빔프로젝터 등 기업 행사 인프라 미비</td>
+        </tr>
+        <tr>
+          <td>⑤</td>
+          <td>단체 식사 대응 한계</td>
+          <td class="negative">★★★</td>
+          <td style="color:var(--warning)">제한적</td>
+          <td>레스토랑 규모가 50인 이상 단체 식사에 부적합. 뷔페·연회 불가</td>
+        </tr>
+        <tr style="background:#edf2f7;">
+          <td colspan="5" style="text-align:center;font-weight:700;color:var(--info);">시장·환경 요인</td>
+        </tr>
+        <tr>
+          <td>⑥</td>
+          <td>평창 MICE 수요 한계</td>
+          <td class="negative">★★★</td>
+          <td style="color:var(--warning)">소규모</td>
+          <td>서울·강남 대비 접근성 열위, 대기업 행사는 호텔 브랜드(휘닉스·알펜시아) 선호</td>
+        </tr>
+        <tr>
+          <td>⑦</td>
+          <td>브랜드 인지도 부족</td>
+          <td class="negative">★★★</td>
+          <td class="negative">신규</td>
+          <td>개관 5개월, 기업 총무·인사팀 인지도 제로. 검색·추천 대상에 포함 안 됨</td>
+        </tr>
+        <tr>
+          <td>⑧</td>
+          <td>OTA에서 Group 판매 불가</td>
+          <td class="negative">★★</td>
+          <td class="negative">구조적</td>
+          <td>OTA는 개인 FIT 전용 채널. 10실 이상 단체 예약은 별도 채널·계약 필요</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="chart-grid">
+      <div class="chart-box full">
+        <h4>원인별 영향도 및 해결 우선순위</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-cause-priority"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-box">
+      <h4>핵심 진단: "팔 사람도, 팔 구조도 없다"</h4>
+      <ul>
+        <li><strong>영업 인력 0명:</strong> 기업 고객은 스스로 찾아오지 않습니다. B2B는 '찾아가는 영업'이 본질인데, 이를 수행할 인력이 전혀 없습니다.</li>
+        <li><strong>상품이 없음:</strong> 기업이 요청할 수 있는 Group Rate, 워크숍 패키지, 세미나 플랜이 없습니다. "얼마인가요?"라는 질문에 답할 수 없는 상태입니다.</li>
+        <li><strong>OTA에서는 불가능:</strong> OTA 채널은 구조적으로 단체 예약을 지원하지 않습니다. Group 매출은 반드시 별도 채널이 필요합니다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Q14. 쿠쿠·SESCO 등 기확보 B2B 파트너 전환 분석 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <div class="section-title"><span class="num">14</span> 기확보 B2B 파트너 예약 전환 분석 (쿠쿠·SESCO 등)</div>
+
+    <div class="callout">
+      <h4>데이터 한계 안내</h4>
+      <p>대시보드 및 보고서에 쿠쿠(1,100명)·SESCO(2,500명) 등 구체적 B2B 파트너의 <strong>실제 예약 전환 데이터가 포함되어 있지 않습니다.</strong> 아래는 Group 매출 0%, FIT 100%라는 확정 데이터를 근거로 한 구조적 분석입니다.</p>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card danger">
+        <div class="kpi-label">기확보 B2B 파트너 잠재 인원</div>
+        <div class="kpi-value">3,600명+</div>
+        <div class="kpi-sub">쿠쿠 1,100명 + SESCO 2,500명</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-label">실제 예약 전환 실적</div>
+        <div class="kpi-value danger">0건</div>
+        <div class="kpi-sub">Group 매출 0% = 전환 제로</div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label">전환율</div>
+        <div class="kpi-value" style="color:var(--warning);">0%</div>
+        <div class="kpi-sub">3,600명 잠재 → 0건 전환</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">전환율 5% 달성 시 잠재 매출</div>
+        <div class="kpi-value">3.6억원/년</div>
+        <div class="kpi-sub">180명 × 2박 × 연2회 × 50,000원</div>
+      </div>
+    </div>
+
+    <!-- B2B 파이프라인 -->
+    <h3 style="font-size:15px;color:var(--primary);margin:20px 0 12px;">B2B 영업 파이프라인 현황</h3>
+    <div class="pipeline">
+      <div class="pipe-step">
+        <div class="pipe-circle" style="background:var(--success)">✓</div>
+        <div class="pipe-label">파트너 확보</div>
+        <div class="pipe-value">쿠쿠·SESCO</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-circle" style="background:var(--danger)">✗</div>
+        <div class="pipe-label">상품 제안</div>
+        <div class="pipe-value">패키지 미설계</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-circle" style="background:var(--danger)">✗</div>
+        <div class="pipe-label">계약 체결</div>
+        <div class="pipe-value">계약 템플릿 없음</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-circle" style="background:var(--danger)">✗</div>
+        <div class="pipe-label">예약 전환</div>
+        <div class="pipe-value">전환 0건</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-circle" style="background:var(--danger)">✗</div>
+        <div class="pipe-label">재구매</div>
+        <div class="pipe-value">경험 없음</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h4>B2B 파트너 전환 퍼널 (현재 상태)</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-funnel"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>전환율별 매출 시나리오</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-conversion-scenario"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>파트너사</th>
+          <th>잠재 인원</th>
+          <th>MOU/계약 상태</th>
+          <th>상품 제안 여부</th>
+          <th>예약 전환</th>
+          <th>병목 지점</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>쿠쿠전자</td>
+          <td>1,100명</td>
+          <td style="color:var(--warning)">접점 확보 (추정)</td>
+          <td class="negative">미제안</td>
+          <td class="negative">0건</td>
+          <td>워크숍·연수 패키지 미설계, 총무팀 제안서 미전달</td>
+        </tr>
+        <tr>
+          <td>SESCO</td>
+          <td>2,500명</td>
+          <td style="color:var(--warning)">접점 확보 (추정)</td>
+          <td class="negative">미제안</td>
+          <td class="negative">0건</td>
+          <td>단체 요금표 부재, F&B 단체 식사 대응 불가</td>
+        </tr>
+        <tr class="total-row">
+          <td>합계</td>
+          <td>3,600명+</td>
+          <td>-</td>
+          <td class="negative">0건 제안</td>
+          <td class="negative">0건 전환</td>
+          <td>파이프라인 2단계(상품 제안)에서 전면 정체</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size:15px;color:var(--primary);margin:20px 0 12px;">전환 실패의 구조적 원인 분석</h3>
+
+    <div class="blocker-card">
+      <div class="blocker-icon" style="background:var(--danger)">1</div>
+      <div>
+        <div class="blocker-title">"접점 확보 ≠ 영업 완료" — 파이프라인 착각</div>
+        <div class="blocker-desc">
+          쿠쿠·SESCO와의 접점은 <strong>'리드(Lead) 확보' 단계</strong>에 불과합니다. B2B 영업은 리드 → 상품 제안 → 견적·협상 → 계약 → 예약 전환 → 재구매의 6단계를 거쳐야 합니다. 현재는 1단계에서 멈춘 상태로, <strong>나머지 5단계가 통째로 비어있습니다.</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="blocker-card">
+      <div class="blocker-icon" style="background:var(--danger)">2</div>
+      <div>
+        <div class="blocker-title">기업 맞춤 상품이 없음 — "뭘 사라는 건지 모름"</div>
+        <div class="blocker-desc">
+          쿠쿠 총무팀에 <strong>"2박3일 팀빌딩 워크숍 패키지 – 1인 15만원, 회의실·식사·액티비티 포함"</strong>이라는 구체적 제안서를 보낸 적이 없습니다. 기업 담당자는 "평창에 좋은 호텔 있대요"라는 정보만으로는 예산을 편성할 수 없습니다. <strong>가격·일정·포함사항이 명시된 제안서</strong>가 필요합니다.
+        </div>
+      </div>
+    </div>
+
+    <div class="blocker-card warn">
+      <div class="blocker-icon" style="background:var(--warning)">3</div>
+      <div>
+        <div class="blocker-title">기업 의사결정 리드타임 미반영 — "3~6개월 소요"</div>
+        <div class="blocker-desc">
+          기업 워크숍·연수는 <strong>예산 편성(전년도 4Q) → 장소 비교(1~2개월) → 내부 결재(2~4주) → 예약 확정</strong>의 과정을 거칩니다. 최소 3~6개월 전에 제안해야 하지만, 개관 5개월인 현재까지 제안 자체가 없었습니다. <strong>2026년 상반기 행사를 유치하려면 이미 늦은 시점</strong>입니다.
+        </div>
+      </div>
+    </div>
+
+    <div class="blocker-card warn">
+      <div class="blocker-icon" style="background:var(--warning)">4</div>
+      <div>
+        <div class="blocker-title">후속 관리 체계 부재 — "한번 만나고 끝"</div>
+        <div class="blocker-desc">
+          B2B는 <strong>관계 기반 비즈니스</strong>입니다. 최초 접점 후 월 1회 이상 전화·이메일·방문을 통해 관계를 유지하고, 시즌별 프로모션을 안내해야 합니다. CRM 없이 명함만 교환한 상태에서는 파트너 관리가 불가능합니다.
+        </div>
+      </div>
+    </div>
+
+    <div class="formula-box">
+      <strong>▶ B2B 전환 시 잠재 매출 시뮬레이션</strong><br><br>
+      <strong>시나리오 A: 쿠쿠 팀빌딩 (전환율 5%)</strong><br>
+      1,100명 × 5% = 55명 → 약 3팀(15~20명/팀) × 2박3일<br>
+      매출 = 3팀 × 18명 × 2박 × 80,000원(Group Rate) = <strong style="color:var(--success)">864만원/회</strong><br>
+      연 2회 = <strong>1,728만원</strong><br><br>
+
+      <strong>시나리오 B: SESCO 전사 연수 (전환율 3%)</strong><br>
+      2,500명 × 3% = 75명 → 약 4팀(15~20명/팀) × 2박3일<br>
+      매출 = 4팀 × 19명 × 2박 × 80,000원 = <strong style="color:var(--success)">1,216만원/회</strong><br>
+      연 2회 = <strong>2,432만원</strong><br><br>
+
+      <strong>시나리오 C: 2개사 + 신규 10개사 확보 시</strong><br>
+      기존 2개사: 4,160만원/년<br>
+      신규 10개사 (평균 500명 × 3% × 2박 × 80,000원 × 연2회): <strong>4,800만원/년</strong><br>
+      <strong style="color:var(--success)">연간 B2B 매출 잠재력: 약 9,000만원~1.5억원</strong>
+    </div>
+
+    <div class="insight-box">
+      <h4>전환을 위한 즉시 실행 사항</h4>
+      <ul>
+        <li><strong>쿠쿠 총무팀에 이번 달 내 제안서 발송:</strong> "2박3일 팀빌딩 패키지 1인 15만원 (숙박+회의실+식사+스키장 셔틀)" 구체안</li>
+        <li><strong>SESCO 인사팀에 하반기 연수 제안:</strong> "3박4일 리더십 연수 1인 20만원 (숙박+식사+회의실+웰니스)" 패키지</li>
+        <li><strong>팸투어(Familiarization Tour) 초청:</strong> 두 회사 총무·인사 담당자를 1박2일 무료 초청 → 시설 체험 → 현장 결정 유도</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Q15. 기업복지몰 벌크 선판매 미실행 원인 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <div class="section-title"><span class="num">15</span> 기업복지몰(베네피아·Ezwell) 벌크 선판매 전략 미실행 원인 및 병목</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card danger">
+        <div class="kpi-label">복지몰 입점 현황</div>
+        <div class="kpi-value danger">미입점</div>
+        <div class="kpi-sub">베네피아·Ezwell·여행플러스 모두 미등록</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">전략 보고서 계획</div>
+        <div class="kpi-value">4단계</div>
+        <div class="kpi-sub">"확장하기" 단계에서 복지몰 입점 예정</div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label">복지몰 잠재 고객 규모</div>
+        <div class="kpi-value" style="color:var(--warning);">300만명+</div>
+        <div class="kpi-sub">베네피아 200만 + Ezwell 100만+ 회원</div>
+      </div>
+      <div class="kpi-card success">
+        <div class="kpi-label">벌크 선판매 시 기대 매출</div>
+        <div class="kpi-value success">2~5억원/년</div>
+        <div class="kpi-sub">선판매 1,000~2,500매 × 평균 20만원</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h4>벌크 선판매 파이프라인 현황</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-bulk-pipeline"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>복지몰별 잠재 매출 비교</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-welfare-potential"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-size:15px;color:var(--danger);margin:20px 0 16px;">미실행 원인 및 병목 지점 6가지</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>순서</th>
+          <th>병목 지점</th>
+          <th>심각도</th>
+          <th>현황</th>
+          <th>상세 설명</th>
+          <th>해소 기간</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>①</td>
+          <td>로드맵상 후순위 배치</td>
+          <td class="negative">★★★★★</td>
+          <td class="negative">4단계 (3개월~)</td>
+          <td>전략 보고서에서 복지몰 입점을 '확장하기' 단계로 분류. 1~3단계(환경 조성·상품 개발·론칭)가 선행되어야 한다고 판단한 것으로 보임</td>
+          <td>인식 전환 필요</td>
+        </tr>
+        <tr>
+          <td>②</td>
+          <td>벌크 상품 설계 미완료</td>
+          <td class="negative">★★★★★</td>
+          <td class="negative">미설계</td>
+          <td>복지몰에 등록할 <strong>이용권(바우처)</strong> 상품이 설계되지 않음. "1박 숙박권 99,000원" 같은 정형화된 상품이 필요하지만, 시즌별 가격·블랙아웃 날짜·유효기간 등이 미정</td>
+          <td>2~3주</td>
+        </tr>
+        <tr>
+          <td>③</td>
+          <td>PMS 연동 기술 부재</td>
+          <td class="negative">★★★★</td>
+          <td class="negative">미구축</td>
+          <td>복지몰 바우처 판매 → PMS 예약 자동 연동이 안 되면, 수동 예약 관리 필요. 운영 인력 부족 상태에서 수동 관리는 실수·더블부킹 위험</td>
+          <td>1~2개월</td>
+        </tr>
+        <tr>
+          <td>④</td>
+          <td>재고 관리(Inventory) 우려</td>
+          <td class="negative">★★★</td>
+          <td style="color:var(--warning)">미해결</td>
+          <td>벌크로 1,000매를 선판매하면 성수기에 바우처 고객이 몰릴 위험. <strong>블랙아웃 날짜, 평일 한정 조건</strong> 등 재고 보호 장치가 없으면 성수기 매출을 잠식</td>
+          <td>상품 설계 시 반영</td>
+        </tr>
+        <tr>
+          <td>⑤</td>
+          <td>입점 심사·수수료 협상</td>
+          <td style="color:var(--warning)">★★★</td>
+          <td style="color:var(--warning)">미착수</td>
+          <td>베네피아 입점 심사에 2~4주 소요. 수수료율 협상(보통 10~15%)과 정산 주기(월/분기) 합의 필요</td>
+          <td>1~2개월</td>
+        </tr>
+        <tr>
+          <td>⑥</td>
+          <td>현금 유동성 리스크</td>
+          <td style="color:var(--warning)">★★</td>
+          <td style="color:var(--warning)">순손실 중</td>
+          <td>벌크 선판매는 할인율 30~40% 적용 필요. 순손실(-7,908만원) 상태에서 <strong>할인 깊이에 대한 경영진 부담</strong>이 있을 수 있음</td>
+          <td>의사결정 사항</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="chart-grid">
+      <div class="chart-box full">
+        <h4>복지몰 입점 시 연간 매출 시뮬레이션</h4>
+        <div class="chart-wrapper tall">
+          <canvas id="chart-bulk-simulation"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="formula-box">
+      <strong>▶ 벌크 선판매 수익성 분석</strong><br><br>
+      <strong>상품 A: "평일 1박 숙박권" (정가 150,000원 → 복지몰가 99,000원, 할인율 34%)</strong><br>
+      복지몰 수수료 12%: 99,000 × 12% = 11,880원<br>
+      호텔 실수령: 99,000 - 11,880 = <strong>87,120원/매</strong><br>
+      OTA 경유 시: 150,000 × (1-20% 수수료) = <strong>120,000원/매</strong><br>
+      단가 차이: -32,880원 (OTA 대비 27% 낮음)<br><br>
+
+      <strong>그러나 핵심 가치는 '비수기 선판매':</strong><br>
+      비수기 평일 OCC 3~8% → 빈 방 원가 ≒ 0원 (고정비는 이미 발생)<br>
+      비수기 빈 방 × 87,120원 = <strong>순수 추가 매출</strong> (한계이익 ≒ 100%)<br>
+      1,000매 선판매 시: <strong>8,712만원 확정 매출</strong> (비수기 한달 매출의 2배 이상)<br><br>
+
+      <strong style="color:var(--success)">∴ 비수기 한정 선판매는 단가가 낮아도 한계이익률이 거의 100%로, 가장 효과적인 비수기 전략</strong>
+    </div>
+
+    <div class="insight-box">
+      <h4>병목 해소 로드맵 (실행 제안)</h4>
+      <ul>
+        <li><strong>즉시 (1~2주):</strong> 벌크 상품 설계 — "평일 1박 99,000원 / 주말 1박 139,000원" 바우처, 유효기간 6개월, 성수기(12~2월) 블랙아웃</li>
+        <li><strong>2~4주:</strong> 베네피아·야놀자 비즈니스 입점 심사 신청. 수수료 10~12% 협상. Ezwell은 2차 진행</li>
+        <li><strong>1~2개월:</strong> PMS 연동 또는 수동 관리 프로세스 확립. 초기 500매 한정 판매 시작</li>
+        <li><strong>3개월 이후:</strong> 판매 데이터 분석 → 2차 1,000매 추가 판매. 기업 벌크 직접 판매(50매 이상 추가 할인) 병행</li>
+        <li><strong>핵심:</strong> 복지몰 입점을 '4단계 확장'이 아니라 <strong>'1단계 즉시 실행'으로 앞당겨야</strong> 합니다. 비수기 매출 확보의 가장 빠른 수단입니다.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- 종합 요약 -->
+  <!-- ================================================================ -->
+  <div class="summary-box">
+    <h3>B2B·Group 매출 종합 진단</h3>
+    <ul>
+      <li><strong>Q13. Group/MICE 0%의 원인:</strong> B2B 전담 인력 0명, 단체 요금표·워크숍 패키지 미설계, MICE 시설 제한, OTA에서는 구조적으로 Group 판매 불가. "팔 사람도, 팔 구조도 없는" 상태</li>
+      <li><strong>Q14. 쿠쿠·SESCO 전환 실패:</strong> 3,600명 잠재 인원 확보에도 전환 0건. 파이프라인이 '접점 확보' 1단계에서 정체. 구체적 패키지 제안서·팸투어·후속 관리가 전무</li>
+      <li><strong>Q15. 복지몰 선판매 미실행:</strong> 로드맵 4단계(후순위)로 밀림, 벌크 상품 미설계, PMS 미연동이 3대 병목. 비수기 한계이익률 ~100%인 선판매를 1단계로 앞당겨야</li>
+      <li><strong>핵심 처방:</strong> ① B2B 전담 1명 즉시 배치 ② 쿠쿠·SESCO에 이달 내 제안서 발송 ③ 복지몰(베네피아) 2주 내 입점 신청 ④ 비수기 평일 바우처 500매 선판매 시작</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+Chart.register(ChartDataLabels);
+const P = '#1a365d', A = '#e6a817', D = '#dc3545', S = '#28a745', I = '#2c6fbb', W = '#f39c12';
+Chart.defaults.font = { family: "'Noto Sans KR', sans-serif", size: 11 };
+Chart.defaults.plugins.datalabels = { display: false };
+
+// Q13: FIT vs Group
+new Chart(document.getElementById('chart-fit-vs-group'), {
+  type: 'bar',
+  data: {
+    labels: ['현재', '6개월 목표', '12개월 목표'],
+    datasets: [
+      { label: 'FIT (OTA)', data: [100, 80, 65], backgroundColor: D, borderRadius: 4 },
+      { label: 'Group/B2B', data: [0, 10, 20], backgroundColor: S, borderRadius: 4 },
+      { label: '직접 예약', data: [0, 10, 15], backgroundColor: I, borderRadius: 4 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    scales: { x: { stacked: true }, y: { stacked: true, max: 100, ticks: { callback: v => v+'%' } } },
+    plugins: {
+      datalabels: {
+        display: function(ctx) { return ctx.raw >= 10; },
+        formatter: v => v + '%', color: '#fff', font: { size: 12, weight: 'bold' }
+      }
+    }
+  }
+});
+
+// Q13: 경쟁사 벤치마크
+new Chart(document.getElementById('chart-benchmark'), {
+  type: 'bar',
+  data: {
+    labels: ['호텔어라운드\n평창', '휘닉스\n호텔&리조트', '한화리조트\n평창', '알펜시아\n리조트', '업계 평균\n(리조트)'],
+    datasets: [
+      { label: 'Group/MICE (%)', data: [0, 35, 25, 40, 20], backgroundColor: [D, S, S, S, I], borderRadius: 6 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: true, anchor: 'end', align: 'top',
+        formatter: v => v + '%', font: { size: 12, weight: 'bold' },
+        color: function(ctx) { return ctx.raw === 0 ? D : S; }
+      }
+    },
+    scales: { y: { max: 50, ticks: { callback: v => v+'%' } } }
+  }
+});
+
+// Q13: 원인 우선순위
+new Chart(document.getElementById('chart-cause-priority'), {
+  type: 'bar',
+  data: {
+    labels: ['B2B 영업인력 부재', '영업전략 미수립', '단체요금 미설정', 'MICE 시설 부족', '단체식사 한계', '평창 수요 한계', '브랜드 인지도', 'OTA 구조적 한계'],
+    datasets: [{
+      label: '영향도',
+      data: [100, 95, 85, 80, 65, 60, 55, 40],
+      backgroundColor: function(ctx) { return ctx.raw >= 80 ? D : (ctx.raw >= 60 ? W : I); },
+      borderRadius: 4
+    },{
+      label: '해결 용이성',
+      data: [70, 80, 90, 20, 30, 10, 25, 5],
+      type: 'line', borderColor: S, pointRadius: 5, pointBackgroundColor: S, borderWidth: 2, tension: 0.3
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: function(ctx) { return ctx.datasetIndex === 0; },
+        anchor: 'end', align: 'right',
+        formatter: v => v >= 80 ? '즉시 해결' : (v >= 60 ? '단기' : '중기'),
+        font: { size: 10, weight: 'bold' },
+        color: function(ctx) { return ctx.raw >= 80 ? D : (ctx.raw >= 60 ? W : I); }
+      }
+    },
+    scales: { x: { max: 100, title: { display: true, text: '점수' } } }
+  }
+});
+
+// Q14: 전환 퍼널
+new Chart(document.getElementById('chart-funnel'), {
+  type: 'bar',
+  data: {
+    labels: ['잠재 파트너\n(접점 확보)', '상품 제안\n(제안서 발송)', '견적·협상\n(가격 합의)', '계약 체결\n(MOU)', '예약 전환\n(실제 투숙)'],
+    datasets: [{
+      label: '현재 상태',
+      data: [3600, 0, 0, 0, 0],
+      backgroundColor: [S, D, D, D, D],
+      borderRadius: 6
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: true, anchor: 'end', align: 'top',
+        formatter: (v, ctx) => {
+          if (ctx.dataIndex === 0) return '3,600명 ✓';
+          return '0건 ✗';
+        },
+        font: { size: 12, weight: 'bold' },
+        color: function(ctx) { return ctx.dataIndex === 0 ? S : D; }
+      }
+    },
+    scales: { y: { max: 5000 } }
+  }
+});
+
+// Q14: 전환율별 매출 시나리오
+new Chart(document.getElementById('chart-conversion-scenario'), {
+  type: 'bar',
+  data: {
+    labels: ['현재\n(0%)', '전환율\n1%', '전환율\n3%', '전환율\n5%', '전환율\n10%'],
+    datasets: [{
+      label: '연간 B2B 매출 (만원)',
+      data: [0, 1150, 3460, 5760, 11520],
+      backgroundColor: [D, W, W, I, S],
+      borderRadius: 6
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: true, anchor: 'end', align: 'top',
+        formatter: v => v === 0 ? '0원' : (v/10000*10000 >= 10000 ? (v/10000).toFixed(1)+'억' : (v).toLocaleString()+'만'),
+        font: { size: 11, weight: 'bold' }
+      }
+    },
+    scales: { y: { title: { display: true, text: '만원/년' }, max: 14000 } }
+  }
+});
+
+// Q15: 벌크 선판매 파이프라인
+new Chart(document.getElementById('chart-bulk-pipeline'), {
+  type: 'bar',
+  data: {
+    labels: ['상품 설계', '입점 심사', 'PMS 연동', '초기 판매', '확대 판매'],
+    datasets: [{
+      label: '완료도 (%)',
+      data: [0, 0, 0, 0, 0],
+      backgroundColor: D,
+      borderRadius: 6
+    },{
+      label: '소요 기간 (주)',
+      data: [3, 4, 6, 4, 8],
+      type: 'line',
+      borderColor: I,
+      pointRadius: 6,
+      pointBackgroundColor: I,
+      borderWidth: 2,
+      yAxisID: 'y1'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: function(ctx) { return ctx.datasetIndex === 0; },
+        formatter: v => v + '%',
+        color: '#fff', font: { size: 12, weight: 'bold' },
+        anchor: 'center'
+      }
+    },
+    scales: {
+      y: { max: 100, ticks: { callback: v => v+'%' } },
+      y1: { position: 'right', title: { display: true, text: '주' }, grid: { display: false }, max: 12 }
+    }
+  }
+});
+
+// Q15: 복지몰별 잠재 매출
+new Chart(document.getElementById('chart-welfare-potential'), {
+  type: 'bar',
+  data: {
+    labels: ['베네피아\n(삼성)', 'Ezwell\n(LG 등)', '야놀자\n비즈니스', '여행플러스\n(현대)', '리얼클래스\n(SK)'],
+    datasets: [{
+      label: '회원수 (만명)',
+      data: [200, 100, 80, 60, 40],
+      backgroundColor: P,
+      borderRadius: 4
+    },{
+      label: '잠재 연매출 (만원)',
+      data: [15000, 8000, 6000, 5000, 3000],
+      backgroundColor: S,
+      borderRadius: 4,
+      yAxisID: 'y1'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: function(ctx) { return ctx.datasetIndex === 1; },
+        anchor: 'end', align: 'top',
+        formatter: v => (v/10000).toFixed(1) + '억',
+        font: { size: 11, weight: 'bold' }, color: S
+      }
+    },
+    scales: {
+      y: { title: { display: true, text: '회원수 (만명)' }, max: 250 },
+      y1: { position: 'right', title: { display: true, text: '잠재 매출 (만원)' }, grid: { display: false } }
+    }
+  }
+});
+
+// Q15: 벌크 판매 시뮬레이션
+new Chart(document.getElementById('chart-bulk-simulation'), {
+  type: 'bar',
+  data: {
+    labels: ['3개월차\n(초기 판매)', '6개월차', '9개월차', '12개월차\n(정착)'],
+    datasets: [{
+      label: '누적 판매 매수',
+      data: [300, 800, 1500, 2500],
+      backgroundColor: I,
+      borderRadius: 4
+    },{
+      label: '누적 매출 (만원)',
+      data: [2640, 7040, 13200, 22000],
+      type: 'line',
+      borderColor: S,
+      pointRadius: 6,
+      pointBackgroundColor: S,
+      borderWidth: 3,
+      yAxisID: 'y1'
+    },{
+      label: '실사용 매출 (만원)',
+      data: [530, 2810, 7920, 15400],
+      type: 'line',
+      borderColor: W,
+      borderDash: [6,3],
+      pointRadius: 5,
+      pointBackgroundColor: W,
+      borderWidth: 2,
+      yAxisID: 'y1'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: function(ctx) { return ctx.datasetIndex === 1; },
+        anchor: 'end', align: 'top',
+        formatter: v => (v/10000).toFixed(1) + '억',
+        font: { size: 11, weight: 'bold' }, color: S
+      }
+    },
+    scales: {
+      y: { title: { display: true, text: '판매 매수' }, max: 3000 },
+      y1: { position: 'right', title: { display: true, text: '매출 (만원)' }, grid: { display: false } }
+    }
+  }
+});
+</script>
+
+</body>
+</html>

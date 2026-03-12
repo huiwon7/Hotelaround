@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>호텔어라운드 평창 | 3. OTA 의존도 및 유통 구조 분석</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap');
+
+  :root {
+    --primary: #1a365d;
+    --primary-light: #2d5a9e;
+    --accent: #e6a817;
+    --bg: #f0f2f5;
+    --card: #ffffff;
+    --text: #2c2c2c;
+    --text-light: #6b6b6b;
+    --border: #e2e8f0;
+    --success: #28a745;
+    --danger: #dc3545;
+    --info: #2c6fbb;
+    --warning: #f39c12;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 14px;
+  }
+
+  header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: #fff;
+    padding: 32px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  header h1 { font-size: 22px; font-weight: 700; }
+  header .subtitle { font-size: 13px; opacity: 0.8; margin-top: 4px; }
+  .date-badge {
+    background: rgba(255,255,255,0.15);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+  .section {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .section-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title .num {
+    background: var(--primary);
+    color: #fff;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .kpi-card {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 20px;
+    border-left: 4px solid var(--primary);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: all 0.2s;
+  }
+  .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+  .kpi-card.danger { border-left-color: var(--danger); }
+  .kpi-card.success { border-left-color: var(--success); }
+  .kpi-card.warning { border-left-color: var(--warning); }
+  .kpi-card.accent { border-left-color: var(--accent); }
+  .kpi-label { font-size: 12px; color: var(--text-light); margin-bottom: 4px; }
+  .kpi-value { font-size: 24px; font-weight: 800; }
+  .kpi-value.danger { color: var(--danger); }
+  .kpi-value.success { color: var(--success); }
+  .kpi-sub { font-size: 11px; color: var(--text-light); margin-top: 4px; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+  th {
+    background: var(--primary);
+    color: #fff;
+    padding: 10px 12px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 12px;
+  }
+  td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    text-align: right;
+  }
+  td:first-child { text-align: left; font-weight: 500; }
+  tr:hover { background: #f7fafc; }
+  tr.total-row { background: #f0f4f8; font-weight: 700; }
+  tr.total-row td { border-top: 2px solid var(--primary); }
+  .negative { color: var(--danger); font-weight: 600; }
+  .positive { color: var(--success); font-weight: 600; }
+
+  .chart-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+  .chart-box {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .chart-box.full { grid-column: 1 / -1; }
+  .chart-box h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 16px;
+  }
+  .chart-wrapper { height: 320px; position: relative; }
+  .chart-wrapper.tall { height: 380px; }
+
+  .insight-box {
+    background: linear-gradient(135deg, #e8f4fd 0%, #f0fdf4 100%);
+    border: 1px solid #bee3f8;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-top: 20px;
+  }
+  .insight-box h4 { font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+  .insight-box ul { padding-left: 20px; }
+  .insight-box li { font-size: 13px; line-height: 1.8; color: #2d3748; }
+
+  .alert-box {
+    background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+    border: 1px solid #feb2b2;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-top: 20px;
+  }
+  .alert-box h4 { font-size: 14px; font-weight: 700; color: var(--danger); margin-bottom: 10px; }
+  .alert-box ul { padding-left: 20px; }
+  .alert-box li { font-size: 13px; line-height: 1.8; color: #742a2a; }
+
+  .formula-box {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-size: 13px;
+    color: var(--primary);
+    line-height: 2;
+  }
+
+  .callout {
+    background: #fffbeb;
+    border: 1px solid #fbbf24;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .callout h4 { font-size: 14px; font-weight: 700; color: #92400e; margin-bottom: 8px; }
+  .callout p { font-size: 13px; color: #78350f; line-height: 1.7; }
+
+  .barrier-card {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 16px;
+    align-items: start;
+    padding: 16px;
+    margin-bottom: 12px;
+    background: #f8fafc;
+    border-radius: 10px;
+    border-left: 4px solid var(--danger);
+  }
+  .barrier-card.medium { border-left-color: var(--warning); }
+  .barrier-card.low { border-left-color: var(--info); }
+  .barrier-num {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--danger);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+  }
+  .barrier-card.medium .barrier-num { background: var(--warning); }
+  .barrier-card.low .barrier-num { background: var(--info); }
+  .barrier-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .barrier-desc { font-size: 12px; color: var(--text-light); line-height: 1.6; }
+
+  .summary-box {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: #fff;
+    border-radius: 12px;
+    padding: 32px;
+    margin-top: 24px;
+  }
+  .summary-box h3 { font-size: 18px; margin-bottom: 16px; }
+  .summary-box ul { padding-left: 20px; }
+  .summary-box li { font-size: 14px; line-height: 2; opacity: 0.95; }
+
+  .flow-chart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+  }
+  .flow-step {
+    background: var(--primary);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    min-width: 120px;
+  }
+  .flow-step.danger { background: var(--danger); }
+  .flow-step.warning { background: var(--warning); }
+  .flow-step.success { background: var(--success); }
+  .flow-arrow { font-size: 20px; color: var(--text-light); }
+
+  @media (max-width: 768px) {
+    header { flex-direction: column; text-align: center; gap: 12px; padding: 24px 16px; }
+    .container { padding: 16px; }
+    .chart-grid { grid-template-columns: 1fr; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .flow-chart { flex-direction: column; }
+    .flow-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>호텔어라운드 평창 — OTA 의존도 및 유통 구조 분석</h1>
+    <div class="subtitle">문제점 정의 3/7 | 수수료 유출 구조와 채널 다변화 진단</div>
+  </div>
+  <div class="date-badge">분석 기준: 2025.10 ~ 2026.03.01</div>
+</header>
+
+<div class="container">
+
+  <!-- ================================================================ -->
+  <!-- Q10. 월별 OTA 수수료 유출액 추정 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <div class="section-title"><span class="num">10</span> 월별 OTA 수수료 유출액 추정</div>
+
+    <!-- 매출 대비 수수료 흐름 -->
+    <div class="flow-chart">
+      <div class="flow-step">객실매출 발생<br><strong>16.9억원</strong></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step warning">OTA 수수료<br><strong>15~25%</strong></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step danger">수수료 유출<br><strong>2.9~4.2억원</strong></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">실수령 매출<br><strong>12.7~14.0억원</strong></div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card danger">
+        <div class="kpi-label">10~12월 수수료 실적 (확정)</div>
+        <div class="kpi-value danger">1.61억원</div>
+        <div class="kpi-sub">지급수수료 1.53억 + 판매수수료 0.09억</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-label">12월 수수료 / 12월 객실매출</div>
+        <div class="kpi-value danger">36.3%</div>
+        <div class="kpi-sub">135,585,639원 / 373,096,290원</div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label">11월~2월 수수료 추정</div>
+        <div class="kpi-value" style="color:var(--warning);">4.2억원</div>
+        <div class="kpi-sub">월별 매출 × 추정 수수료율</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">연간 수수료 유출 추정</div>
+        <div class="kpi-value">5.0~6.5억원</div>
+        <div class="kpi-sub">OTA 의존 지속 시 연간 추정</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box full">
+        <h4>월별 객실매출 vs OTA 수수료 유출 추정</h4>
+        <div class="chart-wrapper tall">
+          <canvas id="chart-monthly-commission"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>월</th>
+          <th>객실매출 (VAT포함)</th>
+          <th>지급수수료 (실적/추정)</th>
+          <th>판매수수료 (실적/추정)</th>
+          <th>수수료 합계</th>
+          <th>수수료율</th>
+          <th>실수령 매출</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>10월</td>
+          <td>0원</td>
+          <td>1,410,000</td>
+          <td>0</td>
+          <td>1,410,000</td>
+          <td>-</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td>11월</td>
+          <td>48,277,123</td>
+          <td>24,401,080</td>
+          <td>19,218</td>
+          <td class="negative">24,420,298</td>
+          <td class="negative">50.6%*</td>
+          <td>23,856,825</td>
+        </tr>
+        <tr>
+          <td>12월</td>
+          <td>373,096,290</td>
+          <td>127,002,223</td>
+          <td>8,583,416</td>
+          <td class="negative">135,585,639</td>
+          <td class="negative">36.3%*</td>
+          <td>237,510,651</td>
+        </tr>
+        <tr style="background:#fff8f0;">
+          <td>1월 (추정)</td>
+          <td>618,813,926</td>
+          <td style="color:var(--warning)">~130,000,000</td>
+          <td style="color:var(--warning)">~14,000,000</td>
+          <td style="color:var(--warning)">~144,000,000</td>
+          <td>~23.3%</td>
+          <td>~474,814,000</td>
+        </tr>
+        <tr style="background:#fff8f0;">
+          <td>2월 (추정)</td>
+          <td>652,373,336</td>
+          <td style="color:var(--warning)">~137,000,000</td>
+          <td style="color:var(--warning)">~15,000,000</td>
+          <td style="color:var(--warning)">~152,000,000</td>
+          <td>~23.3%</td>
+          <td>~500,373,000</td>
+        </tr>
+        <tr class="total-row">
+          <td>누적 합계</td>
+          <td>1,692,560,675</td>
+          <td class="negative">~420,000,000</td>
+          <td class="negative">~38,000,000</td>
+          <td class="negative">~457,000,000</td>
+          <td class="negative">~27.0%</td>
+          <td>~1,236,000,000</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <h4>* 11월 수수료율 50.6%에 대한 해석</h4>
+      <p>11월 지급수수료 2,440만원은 OTA 수수료만이 아니라, <strong>개관 준비 과정의 PMS 세팅비, OTA 초기 등록비, 채널매니저 설정비 등 일회성 비용</strong>이 포함된 것으로 추정됩니다. 11월 객실매출이 4,828만원에 불과했으므로, 순수 OTA 수수료는 약 700~900만원(15~18%)이고 나머지는 초기 셋업 비용입니다.</p>
+    </div>
+
+    <div class="formula-box">
+      <strong>▶ 12월 수수료 구조 분석 (확정 데이터)</strong><br>
+      12월 객실매출: 373,096,290원<br>
+      12월 지급수수료: 127,002,223원 (매출의 <strong style="color:#dc3545">34.0%</strong>)<br>
+      12월 판매수수료: 8,583,416원 (매출의 2.3%)<br>
+      <strong style="color:#dc3545">12월 총 수수료: 135,585,639원 → 매출의 36.3%가 수수료로 유출</strong><br><br>
+      <strong>※ 주의:</strong> 지급수수료에는 OTA 수수료 외에 PMS 이용료, 카드결제 수수료, 채널매니저 비용 등이 포함됩니다.<br>
+      순수 OTA 커미션만 분리 시: 약 20~25% 수준으로 추정 (나머지 10~15%는 기타 수수료)
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h4>12월 수수료 구성 추정 분해</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-commission-breakdown"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>수수료율 월별 추이</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-commission-rate"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-box">
+      <h4>수수료 유출의 심각성</h4>
+      <ul>
+        <li><strong>10~12월 3개월간 1.61억원 확정 유출:</strong> 같은 기간 순손실(-7,908만원)의 2배가 수수료로 빠져나갔습니다.</li>
+        <li><strong>연간 5~6.5억원 유출 전망:</strong> 현재 구조를 유지하면 연 매출의 25~30%가 수수료로 유출됩니다.</li>
+        <li><strong>직접 예약 30% 달성 시:</strong> 연간 약 1.5~2억원 수수료 절감 → 현재 순손실 완전 해소 가능</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Q11. 직접 예약 비중 확대의 현실적 장애 요인 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <div class="section-title"><span class="num">11</span> 직접 예약 비중 10~15% 확대의 현실적 장애 요인</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card danger">
+        <div class="kpi-label">현재 직접 예약 비중 (추정)</div>
+        <div class="kpi-value danger">5~10%</div>
+        <div class="kpi-sub">전화·워크인·지인 소개 중심</div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label">목표 직접 예약 비중</div>
+        <div class="kpi-value" style="color:var(--warning);">30~40%</div>
+        <div class="kpi-sub">업계 우수 호텔 벤치마크</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">직접 예약 1%p 증가 시 절감</div>
+        <div class="kpi-value">500만원/월</div>
+        <div class="kpi-sub">OTA 수수료 20% 기준</div>
+      </div>
+      <div class="kpi-card success">
+        <div class="kpi-label">직접 예약 30% 달성 시 연간 절감</div>
+        <div class="kpi-value success">1.5~2억원</div>
+        <div class="kpi-sub">현재 순손실 완전 상쇄 규모</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:15px;color:var(--primary);margin-bottom:16px;">장애 요인 상세 분석</h3>
+
+    <div class="barrier-card">
+      <div class="barrier-num">1</div>
+      <div>
+        <div class="barrier-title">자사 예약 시스템 부재 (치명적)</div>
+        <div class="barrier-desc">
+          호텔어라운드 평창은 <strong>자사 웹사이트에 실시간 예약 엔진이 없습니다.</strong> 고객이 직접 예약하려 해도 전화 외에 방법이 없으며, 이는 MZ세대 고객의 90%를 잃는 구조입니다. 예약 엔진 도입 비용은 월 30~50만원이지만, 부재로 인한 손실은 월 수천만원입니다.
+        </div>
+      </div>
+    </div>
+
+    <div class="barrier-card">
+      <div class="barrier-num">2</div>
+      <div>
+        <div class="barrier-title">브랜드 인지도 부족 (치명적)</div>
+        <div class="barrier-desc">
+          <strong>개관 5개월 미만의 신규 호텔</strong>로, 네이버·구글 검색 시 노출이 낮습니다. 소비자가 "평창 호텔"을 검색하면 OTA가 상위 노출되고, 호텔어라운드 자체 사이트는 검색 결과 하위에 묻힙니다. SEO·콘텐츠 마케팅 기반 구축에 최소 6~12개월이 필요합니다.
+        </div>
+      </div>
+    </div>
+
+    <div class="barrier-card">
+      <div class="barrier-num">3</div>
+      <div>
+        <div class="barrier-title">OTA 가격 동등성 조항 (Rate Parity) (구조적)</div>
+        <div class="barrier-desc">
+          대부분의 OTA 계약에는 <strong>가격 동등성 조항</strong>이 포함되어 있어, 자사 채널에서 더 낮은 가격을 제시하기 어렵습니다. 직접 예약의 가격 이점을 만들기 위해서는 "비회원가 동일 + 회원 전용 혜택"이라는 우회 전략이 필요합니다.
+        </div>
+      </div>
+    </div>
+
+    <div class="barrier-card medium">
+      <div class="barrier-num">4</div>
+      <div>
+        <div class="barrier-title">마케팅 예산 부족 (현실적)</div>
+        <div class="barrier-desc">
+          10~12월 광고선전비 1,164만원(월평균 388만원)으로, <strong>직접 예약 유도를 위한 디지털 마케팅 예산이 절대 부족</strong>합니다. 네이버 키워드 광고, 인스타그램, 구글 호텔 광고 등 직접 예약 유도 채널에 월 최소 200~300만원 추가 투자가 필요합니다.
+        </div>
+      </div>
+    </div>
+
+    <div class="barrier-card medium">
+      <div class="barrier-num">5</div>
+      <div>
+        <div class="barrier-title">재방문 유도 시스템 부재 (운영적)</div>
+        <div class="barrier-desc">
+          투숙객 데이터를 수집·활용하는 <strong>CRM(고객관계관리) 시스템이 없습니다.</strong> 투숙 후 감사 이메일, 재방문 할인 쿠폰, 시즌 프로모션 안내 등을 보내지 않으면, 재방문 고객도 다시 OTA를 통해 예약합니다.
+        </div>
+      </div>
+    </div>
+
+    <div class="barrier-card medium">
+      <div class="barrier-num">6</div>
+      <div>
+        <div class="barrier-title">리뷰·평판 초기 단계 (시간적)</div>
+        <div class="barrier-desc">
+          OTA 리뷰 수가 절대적으로 부족합니다. <strong>리뷰 100개 미만의 호텔은 OTA 알고리즘에서도 불이익</strong>을 받으며, 직접 예약 유도의 근거가 되는 '사회적 증거'도 부족합니다. 리뷰 200개 이상 확보에 최소 6~8개월 소요됩니다.
+        </div>
+      </div>
+    </div>
+
+    <div class="barrier-card low">
+      <div class="barrier-num">7</div>
+      <div>
+        <div class="barrier-title">전담 인력 부재 (조직적)</div>
+        <div class="barrier-desc">
+          <strong>레벤유 매니저(Revenue Manager) 또는 디지털 마케팅 전담자가 없습니다.</strong> OTA 관리, 가격 전략, 채널 다변화, SNS 운영을 겸임하는 구조로는 직접 예약 비중을 체계적으로 높이기 어렵습니다.
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h4>장애 요인별 해결 난이도 vs 임팩트</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-barrier-matrix"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>직접 예약 비중 확대 로드맵 (12개월)</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-direct-roadmap"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <h4>단계별 해결 전략</h4>
+      <ul>
+        <li><strong>즉시 (1~2개월):</strong> 자사 예약 엔진 도입 (월 30~50만원), 네이버 플레이스 최적화, 체크아웃 시 직접 예약 안내 카드 배포</li>
+        <li><strong>단기 (3~6개월):</strong> 회원 전용 혜택 프로그램, CRM 구축, 인스타그램·네이버 블로그 콘텐츠 운영, 구글 호텔 광고 집행</li>
+        <li><strong>중기 (6~12개월):</strong> 리뷰 200개 이상 확보, SEO 최적화, 워케이션 자사 전용 패키지, 기업 직접 영업 채널 구축</li>
+        <li><strong>목표:</strong> 12개월 후 직접 예약 비중 5% → 25~30%, 연간 수수료 1.5억원 절감</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- Q12. OTA 채널별 매출 구성 및 의존도 편중 -->
+  <!-- ================================================================ -->
+  <div class="section">
+    <div class="section-title"><span class="num">12</span> OTA 채널별 매출 구성 및 의존도 편중 진단</div>
+
+    <div class="callout">
+      <h4>데이터 한계 안내</h4>
+      <p>현재 대시보드에 OTA 채널별 상세 매출 데이터가 포함되어 있지 않습니다. 아래 분석은 <strong>지급수수료·판매수수료 구조, 업계 평균, 평창 지역 특성</strong>을 기반으로 한 추정 분석입니다. 정확한 채널별 분석을 위해 PMS 또는 채널매니저 데이터 확인이 필요합니다.</p>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card danger">
+        <div class="kpi-label">OTA 의존도 (추정)</div>
+        <div class="kpi-value danger">85~90%</div>
+        <div class="kpi-sub">Group 0%, 직접 예약 5~10%</div>
+      </div>
+      <div class="kpi-card warning">
+        <div class="kpi-label">주요 OTA 수수료 범위</div>
+        <div class="kpi-value" style="color:var(--warning);">15~25%</div>
+        <div class="kpi-sub">채널별 차이 큼</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">채널 다변화 지수</div>
+        <div class="kpi-value">매우 낮음</div>
+        <div class="kpi-sub">2~3개 OTA에 매출 80% 이상 집중 추정</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="kpi-label">채널 리스크 등급</div>
+        <div class="kpi-value danger">Critical</div>
+        <div class="kpi-sub">특정 OTA 정책 변경 시 매출 급감 위험</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h4>채널별 매출 비중 추정 (전체)</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-channel-mix"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>OTA별 수수료율 비교</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-ota-commission"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>채널</th>
+          <th>매출 비중 (추정)</th>
+          <th>수수료율</th>
+          <th>월 수수료 추정 (1월 기준)</th>
+          <th>주요 고객층</th>
+          <th>리스크</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#edf2f7;">
+          <td colspan="6" style="text-align:center;font-weight:700;color:var(--primary);">국내 OTA (추정 비중 50~60%)</td>
+        </tr>
+        <tr>
+          <td>야놀자 (Yanolja)</td>
+          <td>25~30%</td>
+          <td class="negative">18~22%</td>
+          <td class="negative">2,800~4,100만원</td>
+          <td>국내 레저·커플</td>
+          <td class="negative">높음 - 수수료 인상 추세</td>
+        </tr>
+        <tr>
+          <td>여기어때</td>
+          <td>15~20%</td>
+          <td class="negative">15~20%</td>
+          <td class="negative">1,400~2,500만원</td>
+          <td>국내 가족·단체</td>
+          <td style="color:var(--warning)">중간</td>
+        </tr>
+        <tr>
+          <td>네이버 예약</td>
+          <td>5~8%</td>
+          <td>3~5%</td>
+          <td>90~250만원</td>
+          <td>국내 전연령</td>
+          <td class="positive">낮음 - 수수료 최저</td>
+        </tr>
+        <tr style="background:#edf2f7;">
+          <td colspan="6" style="text-align:center;font-weight:700;color:var(--primary);">글로벌 OTA (추정 비중 25~35%)</td>
+        </tr>
+        <tr>
+          <td>Booking.com</td>
+          <td>10~15%</td>
+          <td class="negative">15~18%</td>
+          <td class="negative">930~1,670만원</td>
+          <td>해외 FIT</td>
+          <td style="color:var(--warning)">중간</td>
+        </tr>
+        <tr>
+          <td>Agoda</td>
+          <td>8~12%</td>
+          <td class="negative">18~25%</td>
+          <td class="negative">890~1,860만원</td>
+          <td>동남아·해외</td>
+          <td class="negative">높음 - 수수료 최고</td>
+        </tr>
+        <tr>
+          <td>Trip.com</td>
+          <td>5~8%</td>
+          <td class="negative">15~20%</td>
+          <td class="negative">460~990만원</td>
+          <td>중화권</td>
+          <td style="color:var(--warning)">중간</td>
+        </tr>
+        <tr>
+          <td>Expedia</td>
+          <td>2~5%</td>
+          <td class="negative">18~22%</td>
+          <td class="negative">220~680만원</td>
+          <td>미주·유럽</td>
+          <td style="color:var(--warning)">중간</td>
+        </tr>
+        <tr style="background:#edf2f7;">
+          <td colspan="6" style="text-align:center;font-weight:700;color:var(--primary);">직접 채널 (추정 비중 5~10%)</td>
+        </tr>
+        <tr>
+          <td>전화 예약</td>
+          <td>3~5%</td>
+          <td class="positive">0%</td>
+          <td class="positive">0원</td>
+          <td>재방문·단골</td>
+          <td class="positive">없음</td>
+        </tr>
+        <tr>
+          <td>워크인</td>
+          <td>1~3%</td>
+          <td class="positive">0%</td>
+          <td class="positive">0원</td>
+          <td>현장 방문</td>
+          <td class="positive">없음</td>
+        </tr>
+        <tr>
+          <td>자사 웹 예약</td>
+          <td class="negative">0%</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+          <td class="negative">시스템 부재</td>
+        </tr>
+        <tr class="total-row">
+          <td>합계</td>
+          <td>100%</td>
+          <td>평균 ~20%</td>
+          <td class="negative">~1.2억원/월</td>
+          <td>-</td>
+          <td>-</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="chart-grid">
+      <div class="chart-box full">
+        <h4>채널별 매출 기여 vs 수수료 부담 비교</h4>
+        <div class="chart-wrapper tall">
+          <canvas id="chart-channel-efficiency"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>편중 문제</th>
+          <th>현상</th>
+          <th>리스크</th>
+          <th>개선 방향</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>① 야놀자 과의존</td>
+          <td>추정 매출의 25~30%가 야놀자</td>
+          <td class="negative">수수료 인상 시 즉시 수익성 악화</td>
+          <td>네이버 예약(수수료 3~5%) 비중 확대</td>
+        </tr>
+        <tr>
+          <td>② 국내 OTA 편중</td>
+          <td>국내 OTA 비중 50~60%</td>
+          <td class="negative">해외 고객(고단가) 유치 미흡</td>
+          <td>Booking.com 콘텐츠 최적화, Trip.com 프로모션</td>
+        </tr>
+        <tr>
+          <td>③ Agoda 고수수료</td>
+          <td>수수료 18~25%로 최고 수준</td>
+          <td class="negative">매출 대비 실수령 최저</td>
+          <td>Agoda 비중 축소, 고수수료 채널 효율 모니터링</td>
+        </tr>
+        <tr>
+          <td>④ 직접 채널 부재</td>
+          <td>자사 웹 예약 0%</td>
+          <td class="negative">수수료 절감 수단 전무</td>
+          <td>예약 엔진 도입, SNS·블로그 유입 구축</td>
+        </tr>
+        <tr>
+          <td>⑤ Group 채널 0%</td>
+          <td>기업·단체 예약 전무</td>
+          <td class="negative">고단가·대량 판매 기회 상실</td>
+          <td>기업 영업 전담, MICE 플랫폼 등록</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h4>현재 채널 구조 vs 목표 채널 구조</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-channel-target"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>채널 최적화 시 수수료 절감 효과</h4>
+        <div class="chart-wrapper">
+          <canvas id="chart-savings"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-box">
+      <h4>채널 편중의 3대 리스크</h4>
+      <ul>
+        <li><strong>수수료 인질 효과:</strong> 야놀자·Agoda 등 주요 OTA가 수수료를 2~3%p만 올려도 연간 1,500~2,500만원 추가 유출. 협상력이 전무합니다.</li>
+        <li><strong>알고리즘 종속:</strong> OTA 검색 알고리즘 변경 시 노출 순위 급락 → 매출 즉시 감소. 자사 채널이 없으면 대응 불가합니다.</li>
+        <li><strong>고객 데이터 비소유:</strong> OTA를 통한 예약은 고객 연락처·선호도 데이터를 OTA가 보유. 재방문 마케팅, CRM이 원천 차단됩니다.</li>
+      </ul>
+    </div>
+
+    <div class="insight-box">
+      <h4>채널 다변화 액션 플랜</h4>
+      <ul>
+        <li><strong>네이버 예약 강화 (수수료 3~5%):</strong> 네이버 플레이스 최적화, 블로그 체험단, 스마트스토어 연동. 비중 5% → 15%로 확대</li>
+        <li><strong>자사 웹 예약 구축:</strong> 예약 엔진 도입 + "직접 예약 시 5% 할인" 또는 "레이트체크아웃 무료" 등 혜택 제공</li>
+        <li><strong>기업 직접 영업:</strong> 서울·수도권 기업 대상 워케이션·세미나 패키지 제안. Group 비중 0% → 10~15%</li>
+        <li><strong>Agoda 비중 축소:</strong> 고수수료 채널은 비수기 한정 활용, 성수기에는 저수수료 채널·직접 예약 집중</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- 종합 요약 -->
+  <!-- ================================================================ -->
+  <div class="summary-box">
+    <h3>OTA 의존도 및 유통 구조 종합 진단</h3>
+    <ul>
+      <li><strong>Q10. 수수료 유출:</strong> 10~12월 확정 1.61억원, 11월~2월 추정 4.2억원. 12월 기준 매출의 36.3%가 수수료로 유출 (순수 OTA 커미션 20~25% + 기타 수수료 10~15%)</li>
+      <li><strong>Q11. 직접 예약 장애 7가지:</strong> 자사 예약 시스템 부재(치명), 브랜드 인지도 부족(치명), Rate Parity(구조적), 마케팅 예산 부족, CRM 부재, 리뷰 부족, 전담 인력 부재</li>
+      <li><strong>Q12. 채널 편중:</strong> 야놀자 25~30%, 여기어때 15~20%로 국내 OTA 2곳에 40~50% 의존 추정. 자사 웹 예약 0%, Group 0%로 수수료 절감·고단가 수요 확보 수단이 전무</li>
+      <li><strong>핵심 처방:</strong> ① 자사 예약 엔진 즉시 도입 ② 네이버 예약(저수수료) 비중 3배 확대 ③ 기업 직접 영업으로 Group 10% 달성 → 연간 1.5~2억원 수수료 절감</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+Chart.register(ChartDataLabels);
+
+const PRIMARY = '#1a365d';
+const ACCENT = '#e6a817';
+const DANGER = '#dc3545';
+const SUCCESS = '#28a745';
+const INFO = '#2c6fbb';
+const WARNING = '#f39c12';
+
+Chart.defaults.font = { family: "'Noto Sans KR', sans-serif", size: 11 };
+Chart.defaults.plugins.datalabels = { display: false };
+
+// Q10: 월별 객실매출 vs 수수료
+new Chart(document.getElementById('chart-monthly-commission'), {
+  type: 'bar',
+  data: {
+    labels: ['10월', '11월', '12월', '1월 (추정)', '2월 (추정)'],
+    datasets: [{
+      label: '객실매출 (백만원)',
+      data: [0, 48, 373, 619, 652],
+      backgroundColor: PRIMARY,
+      borderRadius: 6
+    },{
+      label: '수수료 유출 (백만원)',
+      data: [1.4, 24.4, 135.6, 144, 152],
+      backgroundColor: DANGER,
+      borderRadius: 6
+    },{
+      label: '수수료율 (%)',
+      data: [null, 50.6, 36.3, 23.3, 23.3],
+      type: 'line',
+      borderColor: WARNING,
+      backgroundColor: WARNING,
+      pointRadius: 6,
+      pointBackgroundColor: WARNING,
+      borderWidth: 3,
+      tension: 0.3,
+      yAxisID: 'y1'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: function(ctx) { return ctx.datasetIndex <= 1 && ctx.raw > 5; },
+        anchor: 'end', align: 'top',
+        formatter: function(v) { return v >= 100 ? (v/100).toFixed(1)+'억' : v+'M'; },
+        font: { size: 10, weight: 'bold' },
+        color: function(ctx) { return ctx.datasetIndex === 0 ? PRIMARY : DANGER; }
+      }
+    },
+    scales: {
+      y: { title: { display: true, text: '백만원' }, max: 750 },
+      y1: { position: 'right', title: { display: true, text: '수수료율(%)' }, grid: { display: false }, max: 60, ticks: { callback: v => v+'%' } }
+    }
+  }
+});
+
+// Q10: 12월 수수료 구성 분해
+new Chart(document.getElementById('chart-commission-breakdown'), {
+  type: 'doughnut',
+  data: {
+    labels: ['OTA 커미션 (~75M)', 'PMS/채널매니저 (~15M)', '카드결제 수수료 (~12M)', '초기 셋업비 (~25M)', '판매수수료 (8.6M)'],
+    datasets: [{
+      data: [75, 15, 12, 25, 8.6],
+      backgroundColor: [DANGER, WARNING, INFO, '#94a3b8', '#5dade2'],
+      borderWidth: 2, borderColor: '#fff'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { size: 10 } } },
+      datalabels: {
+        display: true,
+        formatter: (v) => v.toFixed(1) + 'M',
+        color: '#fff', font: { size: 12, weight: 'bold' }
+      }
+    }
+  }
+});
+
+// Q10: 수수료율 추이
+new Chart(document.getElementById('chart-commission-rate'), {
+  type: 'line',
+  data: {
+    labels: ['11월', '12월', '1월(추정)', '2월(추정)', '안정화 목표'],
+    datasets: [{
+      label: '전체 수수료율',
+      data: [50.6, 36.3, 23.3, 23.3, 18],
+      borderColor: DANGER,
+      backgroundColor: 'rgba(220,53,69,0.1)',
+      fill: true,
+      tension: 0.4,
+      pointRadius: 6,
+      pointBackgroundColor: DANGER,
+      borderWidth: 3
+    },{
+      label: '순수 OTA 커미션 추정',
+      data: [15, 20, 21, 21, 15],
+      borderColor: WARNING,
+      borderDash: [6,3],
+      tension: 0.4,
+      pointRadius: 5,
+      pointBackgroundColor: WARNING,
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: true,
+        formatter: v => v + '%',
+        font: { size: 11, weight: 'bold' },
+        color: function(ctx) { return ctx.datasetIndex === 0 ? DANGER : WARNING; },
+        anchor: 'end', align: 'top'
+      }
+    },
+    scales: {
+      y: { title: { display: true, text: '수수료율 (%)' }, max: 60, ticks: { callback: v => v+'%' } }
+    }
+  }
+});
+
+// Q11: 장애요인 난이도 vs 임팩트
+new Chart(document.getElementById('chart-barrier-matrix'), {
+  type: 'bubble',
+  data: {
+    datasets: [
+      { label: '예약 시스템 부재', data: [{x:2, y:95, r:18}], backgroundColor: DANGER },
+      { label: '브랜드 인지도', data: [{x:8, y:85, r:16}], backgroundColor: DANGER },
+      { label: 'Rate Parity', data: [{x:7, y:50, r:12}], backgroundColor: WARNING },
+      { label: '마케팅 예산', data: [{x:4, y:60, r:14}], backgroundColor: WARNING },
+      { label: 'CRM 부재', data: [{x:3, y:55, r:12}], backgroundColor: WARNING },
+      { label: '리뷰 부족', data: [{x:9, y:40, r:10}], backgroundColor: INFO },
+      { label: '전담 인력', data: [{x:6, y:45, r:11}], backgroundColor: INFO }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { size: 10 } } },
+      datalabels: { display: false }
+    },
+    scales: {
+      x: { title: { display: true, text: '해결 난이도 (높을수록 어려움)' }, min: 0, max: 10 },
+      y: { title: { display: true, text: '매출 임팩트 (높을수록 큼)' }, min: 0, max: 100 }
+    }
+  }
+});
+
+// Q11: 직접 예약 로드맵
+new Chart(document.getElementById('chart-direct-roadmap'), {
+  type: 'bar',
+  data: {
+    labels: ['현재', '3개월 후', '6개월 후', '9개월 후', '12개월 후'],
+    datasets: [{
+      label: '직접 예약 비중 (%)',
+      data: [5, 10, 18, 24, 30],
+      backgroundColor: [DANGER, WARNING, WARNING, INFO, SUCCESS],
+      borderRadius: 6
+    },{
+      label: '누적 수수료 절감 (만원)',
+      data: [0, 450, 1800, 4200, 8000],
+      type: 'line',
+      borderColor: SUCCESS,
+      backgroundColor: SUCCESS,
+      pointRadius: 6,
+      pointBackgroundColor: SUCCESS,
+      borderWidth: 3,
+      yAxisID: 'y1'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: function(ctx) { return ctx.datasetIndex === 0; },
+        anchor: 'end', align: 'top',
+        formatter: v => v + '%',
+        font: { size: 12, weight: 'bold' }
+      }
+    },
+    scales: {
+      y: { title: { display: true, text: '직접 예약 비중 (%)' }, max: 40, ticks: { callback: v => v+'%' } },
+      y1: { position: 'right', title: { display: true, text: '누적 절감 (만원)' }, grid: { display: false } }
+    }
+  }
+});
+
+// Q12: 채널별 매출 비중
+new Chart(document.getElementById('chart-channel-mix'), {
+  type: 'doughnut',
+  data: {
+    labels: ['야놀자 (27%)', '여기어때 (17%)', 'Booking (12%)', 'Agoda (10%)', 'Trip.com (7%)', 'Expedia (4%)', '네이버 (7%)', '직접 (6%)', '기타 (10%)'],
+    datasets: [{
+      data: [27, 17, 12, 10, 7, 4, 7, 6, 10],
+      backgroundColor: ['#e74c3c','#e67e22','#3498db','#9b59b6','#1abc9c','#34495e','#2ecc71', SUCCESS, '#94a3b8'],
+      borderWidth: 2, borderColor: '#fff'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'right', labels: { font: { size: 10 } } },
+      datalabels: {
+        display: function(ctx) { return ctx.raw >= 10; },
+        formatter: v => v + '%',
+        color: '#fff', font: { size: 12, weight: 'bold' }
+      }
+    }
+  }
+});
+
+// Q12: OTA별 수수료율
+new Chart(document.getElementById('chart-ota-commission'), {
+  type: 'bar',
+  data: {
+    labels: ['Agoda', 'Expedia', '야놀자', '여기어때', 'Booking', 'Trip.com', '네이버', '직접예약'],
+    datasets: [{
+      label: '수수료율 (%)',
+      data: [22, 20, 20, 18, 17, 17, 4, 0],
+      backgroundColor: function(ctx) {
+        const v = ctx.raw;
+        return v >= 20 ? DANGER : (v >= 15 ? WARNING : (v > 0 ? INFO : SUCCESS));
+      },
+      borderRadius: 6
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: true, anchor: 'end', align: 'right',
+        formatter: v => v + '%',
+        font: { size: 12, weight: 'bold' },
+        color: function(ctx) { return ctx.raw >= 15 ? DANGER : SUCCESS; }
+      }
+    },
+    scales: {
+      x: { max: 30, ticks: { callback: v => v+'%' } }
+    }
+  }
+});
+
+// Q12: 채널 효율성
+new Chart(document.getElementById('chart-channel-efficiency'), {
+  type: 'bar',
+  data: {
+    labels: ['야놀자', '여기어때', 'Booking', 'Agoda', 'Trip.com', 'Expedia', '네이버', '직접'],
+    datasets: [{
+      label: '매출 기여 (%)',
+      data: [27, 17, 12, 10, 7, 4, 7, 6],
+      backgroundColor: INFO,
+      borderRadius: 4
+    },{
+      label: '수수료 부담 (%)',
+      data: [20, 18, 17, 22, 17, 20, 4, 0],
+      backgroundColor: DANGER,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: true, anchor: 'end', align: 'top',
+        formatter: v => v + '%',
+        font: { size: 10, weight: 'bold' }
+      }
+    },
+    scales: {
+      y: { max: 35, ticks: { callback: v => v+'%' } }
+    }
+  }
+});
+
+// Q12: 현재 vs 목표 채널 구조
+new Chart(document.getElementById('chart-channel-target'), {
+  type: 'bar',
+  data: {
+    labels: ['국내 OTA', '글로벌 OTA', '네이버', '직접 예약', 'Group/기업'],
+    datasets: [{
+      label: '현재 비중',
+      data: [55, 28, 7, 6, 0],
+      backgroundColor: DANGER,
+      borderRadius: 4
+    },{
+      label: '12개월 후 목표',
+      data: [30, 20, 15, 25, 10],
+      backgroundColor: SUCCESS,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: true, anchor: 'end', align: 'top',
+        formatter: v => v + '%',
+        font: { size: 11, weight: 'bold' }
+      }
+    },
+    scales: {
+      y: { max: 70, ticks: { callback: v => v+'%' } }
+    }
+  }
+});
+
+// Q12: 수수료 절감 효과
+new Chart(document.getElementById('chart-savings'), {
+  type: 'bar',
+  data: {
+    labels: ['현재\n(평균 수수료 ~20%)', '네이버 확대\n(15→15%)', '직접 예약 25%\n달성 시', 'Group 10%\n달성 시', '종합 최적화'],
+    datasets: [{
+      label: '연간 수수료 (억원)',
+      data: [5.5, 4.8, 3.8, 3.4, 2.8],
+      backgroundColor: [DANGER, WARNING, WARNING, INFO, SUCCESS],
+      borderRadius: 6
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      datalabels: {
+        display: true, anchor: 'end', align: 'top',
+        formatter: v => v.toFixed(1) + '억',
+        font: { size: 12, weight: 'bold' }
+      }
+    },
+    scales: {
+      y: { title: { display: true, text: '억원' }, max: 7 }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
