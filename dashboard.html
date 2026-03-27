@@ -128,7 +128,6 @@
             align-items: center;
             gap: 8px;
         }
-        .chart-title .icon { font-size: 20px; }
         .chart-wrapper { position: relative; height: 320px; }
         .chart-wrapper.tall { height: 400px; }
 
@@ -160,6 +159,8 @@
         .data-table tr.total-row td { border-top: 2px solid var(--primary); }
         .data-table .negative { color: var(--danger); }
         .data-table .positive { color: var(--success); }
+        .data-table .section-header { background: #f7fafc; }
+        .data-table .section-header td { font-weight: 700; color: var(--primary); font-size: 13px; }
 
         /* Insight Box */
         .insight-box {
@@ -173,59 +174,6 @@
         .insight-box ul { padding-left: 20px; }
         .insight-box li { font-size: 13px; margin-bottom: 6px; color: var(--text); }
 
-        /* Daily Report Section */
-        .daily-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        .daily-card {
-            background: var(--card);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-        }
-        .daily-card .label { font-size: 12px; color: var(--text-light); font-weight: 600; }
-        .daily-card .value { font-size: 22px; font-weight: 800; margin: 8px 0; color: var(--primary); }
-        .daily-card .sub { font-size: 11px; color: var(--text-light); }
-
-        /* Comparison Section */
-        .compare-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-        .compare-card {
-            background: var(--card);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-        }
-        .compare-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
-        .compare-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border);
-            font-size: 13px;
-        }
-        .compare-item:last-child { border-bottom: none; }
-
-        .progress-bar {
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 6px;
-        }
-        .progress-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.5s ease;
-        }
-
         .section-title {
             font-size: 18px;
             font-weight: 700;
@@ -235,88 +183,22 @@
             display: inline-block;
         }
 
-        /* Target Achievement */
-        .target-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        .target-card {
-            background: var(--card);
+        /* Note box */
+        .note-box {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
             border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-        }
-        .target-label { font-size: 12px; color: var(--text-light); font-weight: 600; margin-bottom: 8px; }
-        .target-values { display: flex; align-items: baseline; gap: 6px; margin-bottom: 10px; }
-        .target-actual { font-size: 22px; font-weight: 800; }
-        .target-goal { font-size: 13px; color: var(--text-light); }
-        .target-pct { font-size: 12px; color: var(--text-light); margin-top: 8px; display: flex; align-items: center; gap: 8px; }
-        .target-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-        .target-badge.over { background: #d4edda; color: #155724; }
-        .target-badge.under { background: #fff3cd; color: #856404; }
-        .target-badge.critical { background: #f8d7da; color: #721c24; }
-
-        /* Risk Cards */
-        .risk-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 16px;
+            padding: 16px 20px;
             margin-bottom: 24px;
-        }
-        .risk-card {
-            background: var(--card);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border-left: 4px solid var(--danger);
-        }
-        .risk-card.warning { border-left-color: var(--accent); }
-        .risk-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
-        .risk-card p { font-size: 13px; color: var(--text-light); line-height: 1.6; }
-
-        /* House Use Bar */
-        .room-stack {
-            display: flex;
-            height: 32px;
-            border-radius: 8px;
-            overflow: hidden;
-            margin: 8px 0;
-        }
-        .room-stack span {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 700;
-            color: white;
-        }
-        .room-legend {
-            display: flex;
-            gap: 16px;
             font-size: 12px;
-            color: var(--text-light);
-            margin-top: 6px;
+            color: #92400e;
+            line-height: 1.8;
         }
-        .room-legend i {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 2px;
-            margin-right: 4px;
-            vertical-align: middle;
-        }
+        .note-box strong { color: #78350f; }
 
         @media (max-width: 768px) {
-            .chart-grid, .compare-grid, .daily-grid, .risk-grid { grid-template-columns: 1fr; }
-            .kpi-grid, .target-grid { grid-template-columns: repeat(2, 1fr); }
+            .chart-grid { grid-template-columns: 1fr; }
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
             .header { flex-direction: column; gap: 12px; text-align: center; }
             .container { padding: 16px; }
         }
@@ -327,9 +209,9 @@
 <div class="header">
     <div>
         <h1>HOTEL AROUND PYEONGCHANG</h1>
-        <div class="subtitle">호텔어라운드 평창 운영 현황 대시보드</div>
+        <div class="subtitle">호텔어라운드 평창 손익 대시보드 (AZMT 운영)</div>
     </div>
-    <div class="date-badge">데이터 기준: 2025년 10월 ~ 2026년 3월 18일</div>
+    <div class="date-badge">데이터 기준: 2025년 10월 ~ 2026년 2월 (5개월)</div>
 </div>
 
 <div class="container">
@@ -338,157 +220,76 @@
         <button class="tab-btn active" onclick="switchTab('overview')">종합 현황</button>
         <button class="tab-btn" onclick="switchTab('revenue')">매출 분석</button>
         <button class="tab-btn" onclick="switchTab('expense')">비용 분석</button>
-        <button class="tab-btn" onclick="switchTab('rooms')">객실 운영</button>
-        <button class="tab-btn" onclick="switchTab('fnb')">F&B 분석</button>
         <button class="tab-btn" onclick="switchTab('pl')">손익계산서</button>
+        <button class="tab-btn" onclick="switchTab('summary')">경영 요약</button>
     </div>
 
     <!-- ==================== TAB 1: 종합 현황 ==================== -->
     <div id="tab-overview" class="tab-content active">
         <div class="kpi-grid">
             <div class="kpi-card success">
-                <div class="kpi-label">누적 객실매출 (11월~3월)</div>
-                <div class="kpi-value positive">17.60억</div>
-                <div class="kpi-sub">1,759,962,836원 (VAT포함)</div>
-            </div>
-            <div class="kpi-card success">
-                <div class="kpi-label">2월 객실매출 (최고)</div>
-                <div class="kpi-value positive">6.52억</div>
-                <div class="kpi-sub">652,437,262원 / OCC 54.2%</div>
-            </div>
-            <div class="kpi-card accent">
-                <div class="kpi-label">3월 현황 (~18일)</div>
-                <div class="kpi-value">0.67억</div>
-                <div class="kpi-sub">67,338,235원 / OCC 7.0%</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">누적 F&B매출 (12월~3월)</div>
-                <div class="kpi-value">2.25억</div>
-                <div class="kpi-sub">225,010,944원</div>
+                <div class="kpi-label">총 수익 (5개월)</div>
+                <div class="kpi-value positive">18.41억</div>
+                <div class="kpi-sub">1,841,140,010원</div>
             </div>
             <div class="kpi-card danger">
-                <div class="kpi-label">10~12월 순손실</div>
-                <div class="kpi-value negative">-0.79억</div>
-                <div class="kpi-sub">-79,082,217원 (비용 5.4억 > 매출 4.19억)</div>
+                <div class="kpi-label">총 비용 (5개월)</div>
+                <div class="kpi-value">16.70억</div>
+                <div class="kpi-sub">1,670,164,523원</div>
+            </div>
+            <div class="kpi-card success">
+                <div class="kpi-label">누적 순손익</div>
+                <div class="kpi-value positive">+1.71억</div>
+                <div class="kpi-sub">170,975,487원 (흑자 전환)</div>
+            </div>
+            <div class="kpi-card accent">
+                <div class="kpi-label">비용율</div>
+                <div class="kpi-value">90.7%</div>
+                <div class="kpi-sub">비용/수익 비율</div>
+            </div>
+            <div class="kpi-card success">
+                <div class="kpi-label">객실매출 (누적)</div>
+                <div class="kpi-value positive">15.39억</div>
+                <div class="kpi-sub">1,538,691,453원 (83.6%)</div>
             </div>
             <div class="kpi-card">
-                <div class="kpi-label">누적 판매 객실수</div>
-                <div class="kpi-value">14,712실</div>
-                <div class="kpi-sub">11월~3월(~18일) 합산</div>
+                <div class="kpi-label">식음료매출 (누적)</div>
+                <div class="kpi-value">1.91억</div>
+                <div class="kpi-sub">191,005,790원 (10.4%)</div>
             </div>
         </div>
 
         <div class="insight-box">
             <h3>핵심 인사이트</h3>
             <ul>
-                <li><strong>누적 객실매출 17.60억:</strong> 11월(4,828만) → 12월(3.73억) → 1월(6.19억) → 2월(6.52억) → 3월(0.67억, ~18일) 지속 성장</li>
-                <li><strong>2월 역대 최고 실적:</strong> 객실 5,264실, OCC 54.2%, 매출 6.52억 달성 — 1월 대비 매출 +5.4%, OCC +1.3%p</li>
-                <li><strong>F&B 매출 성장:</strong> 12월 4,973만 → 1월 8,800만(+77%) → 2월 8,168만 → 3월 560만(~18일), 누적 2.25억</li>
-                <li><strong>비용 구조 (10~12월):</strong> 비용 5.4억 > 매출 4.19억, 순손실 7,900만 — 지급수수료(28.3%), 소모품비(15.9%), 전력비(13.6%)</li>
-                <li><strong>객실 판매 2배 성장:</strong> 전 운영사 동기 7,580실 → AZMT 14,712실 달성 (11월~3/18 누적)</li>
-                <li><strong>2월 실적 확정:</strong> 5,264실(OCC 54.2%), ADR 124,403원 — 전월(1월) 대비 OCC·매출 모두 상승</li>
+                <li><strong>5개월 누적 흑자 달성:</strong> 총 수익 18.41억 vs 총 비용 16.70억, 순이익 1.71억원 실현</li>
+                <li><strong>1월부터 월간 흑자 전환:</strong> 10월(-1.18억) → 11월(-0.38억) → 12월(-0.23억) → <strong style="color:var(--success);">1월(+1.19억)</strong> → <strong style="color:var(--success);">2월(+2.32억)</strong></li>
+                <li><strong>2월 최고 수익 달성:</strong> 수익 6.97억, 비용 4.65억, 순이익 2.32억 (비용율 66.7%)</li>
+                <li><strong>객실매출 83.6%:</strong> 핵심 수익원으로 15.39억 달성, 식음료매출 1.91억(10.4%) 보조</li>
+                <li><strong>비용 구조 개선 추세:</strong> 비용율 10월 ∞ → 11월 145.3% → 12월 105.8% → 1월 82.0% → 2월 66.7%</li>
+                <li><strong>주요 비용 항목:</strong> 외주용역비(시설·HK) 39.5%, 에너지비 14.9%, 인건비 11.2%</li>
             </ul>
         </div>
 
-        <h3 class="section-title">AZMT 경영 목표 대비 달성률 (2월 기준, VAT제외)</h3>
-        <div class="target-grid">
-            <div class="target-card">
-                <div class="target-label">월 매출</div>
-                <div class="target-values">
-                    <span class="target-actual" style="color:var(--accent)">5.93억</span>
-                    <span class="target-goal">/ 6.82억</span>
-                </div>
-                <div class="progress-bar"><div class="progress-fill" style="width:86.9%;background:var(--accent)"></div></div>
-                <div class="target-pct">86.9% 달성 <span class="target-badge under">미달</span></div>
-            </div>
-            <div class="target-card">
-                <div class="target-label">OCC (점유율)</div>
-                <div class="target-values">
-                    <span class="target-actual" style="color:var(--success)">54.2%</span>
-                    <span class="target-goal">/ 35.0%</span>
-                </div>
-                <div class="progress-bar"><div class="progress-fill" style="width:100%;background:var(--success)"></div></div>
-                <div class="target-pct">154.9% 달성 <span class="target-badge over">초과 달성</span></div>
-            </div>
-            <div class="target-card">
-                <div class="target-label">ADR (평균 객실 단가)</div>
-                <div class="target-values">
-                    <span class="target-actual" style="color:var(--accent)">113,094원</span>
-                    <span class="target-goal">/ 113,712원</span>
-                </div>
-                <div class="progress-bar"><div class="progress-fill" style="width:99.5%;background:var(--accent)"></div></div>
-                <div class="target-pct">99.5% 달성 <span class="target-badge under">미달</span></div>
-            </div>
-            <div class="target-card">
-                <div class="target-label">RevPAR</div>
-                <div class="target-values">
-                    <span class="target-actual" style="color:var(--success)">61,297원</span>
-                    <span class="target-goal">/ 39,799원</span>
-                </div>
-                <div class="progress-bar"><div class="progress-fill" style="width:100%;background:var(--success)"></div></div>
-                <div class="target-pct">154.0% 달성 <span class="target-badge over">초과 달성</span></div>
-            </div>
-            <div class="target-card">
-                <div class="target-label">Group 비율</div>
-                <div class="target-values">
-                    <span class="target-actual" style="color:var(--danger)">0%</span>
-                    <span class="target-goal">/ 20%</span>
-                </div>
-                <div class="progress-bar"><div class="progress-fill" style="width:0%;background:var(--danger)"></div></div>
-                <div class="target-pct">0% 달성 <span class="target-badge critical">심각 미달</span></div>
-            </div>
-        </div>
-
         <div class="chart-grid">
             <div class="chart-card">
-                <div class="chart-title">AZMT 목표 대비 달성률 (%)</div>
-                <div class="chart-wrapper"><canvas id="targetAchChart"></canvas></div>
-            </div>
-            <div class="chart-card">
-                <div class="chart-title">1월 vs 2월 주요 KPI 비교</div>
-                <div class="chart-wrapper"><canvas id="monthCompareChart"></canvas></div>
-            </div>
-        </div>
-
-        <h3 class="section-title">구조적 리스크 분석</h3>
-        <div class="risk-grid">
-            <div class="risk-card warning">
-                <h4>ADR 하락 리스크</h4>
-                <p>2월 ADR 113,094원 → 목표(113,712원) 대비 <strong>0.5% 미달</strong>. 1월(101,125원) 대비 +11.8% 상승하며 목표 근접. 객단가 개선 추세.</p>
-            </div>
-            <div class="risk-card">
-                <h4>주말 매출 편중 (금~토 58%)</h4>
-                <p>금~토 매출이 전체의 약 <strong>58%</strong> 차지. 수요일 ADR이 토요일의 약 48% 수준. 주중 수요 창출 및 패키지 개발 시급.</p>
-            </div>
-            <div class="risk-card">
-                <h4>Group/MICE 매출 전무</h4>
-                <p>Group 매출 <strong>0원</strong> (목표 20%). B2B, MICE, 단체 유치가 전혀 이루어지지 않음. 즉각적인 세일즈 전략 수립 필요.</p>
-            </div>
-            <div class="risk-card warning">
-                <h4>객실 가용성 제한 (House Use 28%)</h4>
-                <p>전체 518실 중 House Use 평균 <strong>146실(28%)</strong>. 실제 판매 가능 객실 약 340~350실. 비가용 객실 원인 분석 및 가용 확대 검토 필요.</p>
-            </div>
-        </div>
-
-        <div class="chart-grid">
-            <div class="chart-card">
-                <div class="chart-title">월별 매출 추이 (VAT 포함)</div>
-                <div class="chart-wrapper"><canvas id="monthlyRevChart"></canvas></div>
-            </div>
-            <div class="chart-card">
-                <div class="chart-title">매출 vs 비용 (10~12월)</div>
+                <div class="chart-title">월별 수익 vs 비용 추이</div>
                 <div class="chart-wrapper"><canvas id="revVsExpChart"></canvas></div>
             </div>
+            <div class="chart-card">
+                <div class="chart-title">월별 순손익 추이</div>
+                <div class="chart-wrapper"><canvas id="netPLChart"></canvas></div>
+            </div>
         </div>
 
         <div class="chart-grid">
             <div class="chart-card">
-                <div class="chart-title">누적 매출 구성 비율 (11월~3월)</div>
+                <div class="chart-title">누적 수익 구성 비율</div>
                 <div class="chart-wrapper"><canvas id="revBreakdownChart"></canvas></div>
             </div>
             <div class="chart-card">
-                <div class="chart-title">월별 객실수 & 점유율 (OCC%)</div>
-                <div class="chart-wrapper"><canvas id="occTrendChart"></canvas></div>
+                <div class="chart-title">월별 비용율 추이</div>
+                <div class="chart-wrapper"><canvas id="costRatioChart"></canvas></div>
             </div>
         </div>
     </div>
@@ -497,117 +298,150 @@
     <div id="tab-revenue" class="tab-content">
         <div class="kpi-grid">
             <div class="kpi-card success">
-                <div class="kpi-label">누적 객실매출 (11월~3월)</div>
-                <div class="kpi-value positive">17.60억</div>
-                <div class="kpi-sub">1,759,962,836원 (VAT포함)</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">2월 객실매출</div>
-                <div class="kpi-value">6.52억</div>
-                <div class="kpi-sub">652,437,262원 (최고 실적)</div>
+                <div class="kpi-label">객실매출 (누적)</div>
+                <div class="kpi-value positive">15.39억</div>
+                <div class="kpi-sub">1,538,691,453원 (83.6%)</div>
             </div>
             <div class="kpi-card accent">
-                <div class="kpi-label">누적 F&B매출 (12~3월)</div>
-                <div class="kpi-value">2.25억</div>
-                <div class="kpi-sub">49,726,474 + 88,002,370 + 81,678,600 + 5,603,500</div>
+                <div class="kpi-label">식음료매출 (누적)</div>
+                <div class="kpi-value">1.91억</div>
+                <div class="kpi-sub">191,005,790원 (10.4%)</div>
             </div>
             <div class="kpi-card">
-                <div class="kpi-label">장기기숙사+관리비 (12월)</div>
-                <div class="kpi-value">2,709만</div>
-                <div class="kpi-sub">26,880,000 + 206,182원</div>
+                <div class="kpi-label">장기기숙사수입</div>
+                <div class="kpi-value">0.55억</div>
+                <div class="kpi-sub">55,104,000원 (3.0%)</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">잡이익 (쿠쿠·세스코 등)</div>
+                <div class="kpi-value">0.48억</div>
+                <div class="kpi-sub">47,507,903원 (2.6%)</div>
             </div>
         </div>
 
-        <div class="chart-grid">
+        <div class="chart-grid single">
             <div class="chart-card full">
-                <div class="chart-title">월별 매출 상세 내역</div>
+                <div class="chart-title">월별 매출 상세 내역 (항목별 누적)</div>
                 <div class="chart-wrapper tall"><canvas id="monthlyRevDetailChart"></canvas></div>
             </div>
         </div>
 
         <div class="chart-grid">
             <div class="chart-card">
-                <div class="chart-title">월별 ADR (평균 객실 단가) 추이</div>
-                <div class="chart-wrapper"><canvas id="adrChart"></canvas></div>
+                <div class="chart-title">수익 항목별 비중</div>
+                <div class="chart-wrapper"><canvas id="revPieChart"></canvas></div>
             </div>
             <div class="chart-card">
-                <div class="chart-title">객실 매출 vs 부대 매출 비중</div>
-                <div class="chart-wrapper"><canvas id="roomVsOtherChart"></canvas></div>
+                <div class="chart-title">객실매출 월별 추이</div>
+                <div class="chart-wrapper"><canvas id="roomRevTrendChart"></canvas></div>
             </div>
         </div>
 
         <div class="chart-card" style="margin-bottom:24px;">
-            <div class="chart-title">월별 매출 상세 (단위: 원, VAT포함 기준)</div>
+            <div class="chart-title">월별 수익 상세 (단위: 원)</div>
             <div style="overflow-x:auto;">
                 <table class="data-table">
                     <thead>
                         <tr>
                             <th style="text-align:left;">구분</th>
-                            <th>10월</th>
-                            <th>11월</th>
-                            <th>12월</th>
-                            <th style="background:#1e6b3a;">1월</th>
-                            <th style="background:#1e6b3a;">2월</th>
-                            <th style="background:#1e6b3a;">3월(~18일)</th>
-                            <th>누적 합계</th>
+                            <th>25년 10월</th>
+                            <th>25년 11월</th>
+                            <th>25년 12월</th>
+                            <th>26년 1월</th>
+                            <th>26년 2월</th>
+                            <th>합계</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>객실매출</td>
-                            <td>0</td>
-                            <td>48,277,123</td>
-                            <td>373,096,290</td>
-                            <td style="background:#f0fff4;"><strong>618,813,926</strong></td>
-                            <td style="background:#f0fff4;"><strong>652,437,262</strong></td>
-                            <td style="background:#f0fff4;"><strong>67,338,235</strong></td>
-                            <td><strong>1,759,962,836</strong></td>
+                            <td>-</td>
+                            <td>43,888,290</td>
+                            <td>339,178,421</td>
+                            <td>562,558,073</td>
+                            <td>593,066,669</td>
+                            <td><strong>1,538,691,453</strong></td>
                         </tr>
                         <tr>
-                            <td>F&B매출</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>49,726,474</td>
-                            <td style="background:#f0fff4;"><strong>88,002,370</strong></td>
-                            <td style="background:#f0fff4;"><strong>81,678,600</strong></td>
-                            <td style="background:#f0fff4;"><strong>5,603,500</strong></td>
-                            <td><strong>225,010,944</strong></td>
+                            <td>식음료매출</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>26,463,580</td>
+                            <td>73,206,365</td>
+                            <td>88,216,010</td>
+                            <td><strong>187,885,955</strong></td>
+                        </tr>
+                        <tr>
+                            <td>기타영업부서매출</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>181,818</td>
+                            <td>272,727</td>
+                            <td><strong>454,545</strong></td>
+                        </tr>
+                        <tr>
+                            <td>용역매출</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>6,567,440</td>
+                            <td>887,908</td>
+                            <td>-</td>
+                            <td><strong>7,455,348</strong></td>
                         </tr>
                         <tr>
                             <td>장기기숙사수입</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>26,880,000</td>
-                            <td style="background:#f0fff4;">-</td>
-                            <td style="background:#f0fff4;">-</td>
-                            <td style="background:#f0fff4;">-</td>
-                            <td><strong>26,880,000</strong></td>
+                            <td>-</td>
+                            <td>13,440,000</td>
+                            <td>13,440,000</td>
+                            <td>13,440,000</td>
+                            <td>13,440,000</td>
+                            <td><strong>53,760,000</strong></td>
                         </tr>
                         <tr>
                             <td>관리비수입</td>
-                            <td>0</td>
-                            <td>0</td>
+                            <td>-</td>
+                            <td>-</td>
                             <td>206,182</td>
-                            <td style="background:#f0fff4;">-</td>
-                            <td style="background:#f0fff4;">-</td>
-                            <td style="background:#f0fff4;">-</td>
-                            <td><strong>206,182</strong></td>
+                            <td>250,440</td>
+                            <td>456,470</td>
+                            <td><strong>913,092</strong></td>
+                        </tr>
+                        <tr>
+                            <td>이자수익</td>
+                            <td>-</td>
+                            <td>120</td>
+                            <td>2,740</td>
+                            <td>2,005</td>
+                            <td>3,014</td>
+                            <td><strong>7,879</strong></td>
+                        </tr>
+                        <tr>
+                            <td>잡이익</td>
+                            <td>-</td>
+                            <td>27,000,000</td>
+                            <td>14,507,903</td>
+                            <td>6,000,000</td>
+                            <td>-</td>
+                            <td><strong>47,507,903</strong></td>
                         </tr>
                         <tr class="total-row">
-                            <td>합계</td>
+                            <td>총 수익 합계</td>
                             <td>0</td>
-                            <td>48,277,123</td>
-                            <td>449,908,946</td>
-                            <td style="background:#e6ffed;"><strong>706,816,296</strong></td>
-                            <td style="background:#e6ffed;"><strong>734,115,862</strong></td>
-                            <td style="background:#e6ffed;"><strong>72,941,735</strong></td>
-                            <td><strong>2,012,059,962</strong></td>
+                            <td>84,328,410</td>
+                            <td>400,366,266</td>
+                            <td>656,526,609</td>
+                            <td>695,454,890</td>
+                            <td><strong>1,836,676,175</strong></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div style="font-size:12px;color:var(--text-light);margin-top:8px;">
-                * 객실매출: 질의답변서 기준 (VAT포함) | F&B: 매장별 결제 집계 기준 | 1~3월 기숙사·관리비: ERP 마감 전 미확정
+            <div class="note-box" style="margin-top:12px;">
+                <strong>주석:</strong><br>
+                &#8226; 25년 10월은 개업 준비기간으로 수익 없음<br>
+                &#8226; 26년 2월 식음료매출·기타영업부서매출·용역매출·관리비수입은 POS/회계시스템 자료 미수령분 포함 가능<br>
+                &#8226; 장기기숙사수입: 휘닉스중앙평창 정기 수익 (월 1,344만원)
             </div>
         </div>
     </div>
@@ -616,35 +450,35 @@
     <div id="tab-expense" class="tab-content">
         <div class="kpi-grid">
             <div class="kpi-card danger">
-                <div class="kpi-label">총 비용 (10~12월)</div>
-                <div class="kpi-value">5.40억</div>
-                <div class="kpi-sub">539,784,612원</div>
+                <div class="kpi-label">총 비용 (5개월)</div>
+                <div class="kpi-value">16.70억</div>
+                <div class="kpi-sub">1,670,164,523원</div>
             </div>
             <div class="kpi-card danger">
-                <div class="kpi-label">인건비 합계</div>
-                <div class="kpi-value">1.15억</div>
-                <div class="kpi-sub">114,709,323원 (21.3%)</div>
+                <div class="kpi-label">외주용역비 합계</div>
+                <div class="kpi-value">7.58억</div>
+                <div class="kpi-sub">757,851,202원 (45.4%)</div>
             </div>
             <div class="kpi-card accent">
-                <div class="kpi-label">운영비 합계</div>
-                <div class="kpi-value">4.25억</div>
-                <div class="kpi-sub">425,075,289원 (78.7%)</div>
+                <div class="kpi-label">에너지비 합계</div>
+                <div class="kpi-value">2.49억</div>
+                <div class="kpi-sub">249,332,018원 (14.9%)</div>
             </div>
             <div class="kpi-card">
-                <div class="kpi-label">비용 대비 매출 비율</div>
-                <div class="kpi-value negative">77.7%</div>
-                <div class="kpi-sub">매출/비용 = 0.777</div>
+                <div class="kpi-label">인건비 합계</div>
+                <div class="kpi-value">1.87억</div>
+                <div class="kpi-sub">187,433,679원 (11.2%)</div>
             </div>
         </div>
 
         <div class="chart-grid">
             <div class="chart-card">
-                <div class="chart-title">비용 항목 TOP 10</div>
-                <div class="chart-wrapper tall"><canvas id="expTop10Chart"></canvas></div>
-            </div>
-            <div class="chart-card">
                 <div class="chart-title">비용 카테고리별 구성</div>
                 <div class="chart-wrapper tall"><canvas id="expCategoryChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">비용 항목 TOP 10</div>
+                <div class="chart-wrapper tall"><canvas id="expTop10Chart"></canvas></div>
             </div>
         </div>
 
@@ -657,14 +491,16 @@
 
         <div class="chart-card" style="margin-bottom:24px;">
             <div class="chart-title">비용 전체 내역 (단위: 원)</div>
-            <div style="overflow-x:auto; max-height:500px;">
+            <div style="overflow-x:auto; max-height:600px;">
                 <table class="data-table" id="expenseTable">
                     <thead>
                         <tr>
                             <th style="text-align:left;">계정과목</th>
-                            <th>10월</th>
-                            <th>11월</th>
-                            <th>12월</th>
+                            <th>25년 10월</th>
+                            <th>25년 11월</th>
+                            <th>25년 12월</th>
+                            <th>26년 1월</th>
+                            <th>26년 2월</th>
                             <th>합계</th>
                             <th>비율</th>
                         </tr>
@@ -675,276 +511,28 @@
         </div>
     </div>
 
-    <!-- ==================== TAB 4: 객실 운영 ==================== -->
-    <div id="tab-rooms" class="tab-content">
-        <h3 class="section-title">월별 객실 운영 지표</h3>
-        <div class="kpi-grid">
-            <div class="kpi-card success">
-                <div class="kpi-label">2월 매출 (최고)</div>
-                <div class="kpi-value positive">6.52억</div>
-                <div class="kpi-sub">652,437,262원 (VAT포함) / 5,264실</div>
-            </div>
-            <div class="kpi-card success">
-                <div class="kpi-label">2월 OCC (최고)</div>
-                <div class="kpi-value positive">54.2%</div>
-                <div class="kpi-sub">목표 35% 대비 155% 달성</div>
-            </div>
-            <div class="kpi-card accent">
-                <div class="kpi-label">2월 RevPAR</div>
-                <div class="kpi-value">61,297원</div>
-                <div class="kpi-sub">목표 39,799원 대비 154% <span class="target-badge over">초과</span></div>
-            </div>
-            <div class="kpi-card accent">
-                <div class="kpi-label">2월 ADR (VAT제외)</div>
-                <div class="kpi-value">113,094원</div>
-                <div class="kpi-sub">목표 113,712원 대비 99.5% <span class="target-badge under">미달</span></div>
-            </div>
-            <div class="kpi-card danger">
-                <div class="kpi-label">FIT / Group 비율</div>
-                <div class="kpi-value negative">100% / 0%</div>
-                <div class="kpi-sub">Group 목표 20% <span class="target-badge critical">심각 미달</span></div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">3월 현재 (~18일)</div>
-                <div class="kpi-value">0.67억</div>
-                <div class="kpi-sub">752실 / OCC 7.0%</div>
-            </div>
-        </div>
-
-        <h3 class="section-title">객실 가용성 분석 (1월 기준)</h3>
-        <div class="chart-card" style="margin-bottom:24px;">
-            <div style="padding:4px 0;">
-                <div style="font-size:13px;font-weight:600;margin-bottom:12px;">전체 518실 중 일평균 객실 배분 현황</div>
-                <div class="room-stack">
-                    <span style="width:34.6%;background:var(--primary);">판매 179실</span>
-                    <span style="width:28.2%;background:var(--danger);">House Use 146실</span>
-                    <span style="width:37.2%;background:#cbd5e0;color:#4a5568;">미판매 193실</span>
-                </div>
-                <div class="room-legend">
-                    <span><i style="background:var(--primary)"></i> 판매 객실 (34.6%)</span>
-                    <span><i style="background:var(--danger)"></i> House Use (28.2%) — 비가용</span>
-                    <span><i style="background:#cbd5e0"></i> 미판매 (37.2%) — 판매 기회</span>
-                </div>
-                <div style="font-size:12px;color:var(--text-light);margin-top:12px;line-height:1.6;">
-                    * House Use 146실은 직원숙소, 시설관리, 비가동 객실 등으로 추정. 실제 판매 가능 객실은 약 <strong>340~350실</strong> 수준.<br>
-                    * OCC 52.9%는 가용 객실(~340실) 기준. 전체 518실 기준 실질 판매율은 34.6%.
-                </div>
-            </div>
-        </div>
-
-        <div class="chart-grid">
-            <div class="chart-card">
-                <div class="chart-title">월별 객실 운영 현황 (매출·ADR·OCC)</div>
-                <div class="chart-wrapper tall"><canvas id="roomOpsChart"></canvas></div>
-            </div>
-            <div class="chart-card">
-                <div class="chart-title">월별 RevPAR 추이 (VAT제외)</div>
-                <div class="chart-wrapper tall"><canvas id="revparChart"></canvas></div>
-            </div>
-        </div>
-
-        <div class="chart-card" style="margin-bottom:24px;">
-            <div class="chart-title">객실 운영 상세 데이터</div>
-            <div style="overflow-x:auto;">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th style="text-align:left;">월</th>
-                            <th>판매 객실</th>
-                            <th>ADR (VAT포함)</th>
-                            <th>OCC (%)</th>
-                            <th>RevPAR (VAT제외)</th>
-                            <th>객실매출 (VAT포함)</th>
-                            <th>비고</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>2025년 11월</td><td>453</td><td>106,572</td><td>3.7%</td><td>3,143</td><td>48,277,123</td><td>운영 준비기</td></tr>
-                        <tr><td>2025년 12월</td><td>2,680</td><td>139,215</td><td>23.8%</td><td>21,386</td><td>373,096,290</td><td>본격 운영</td></tr>
-                        <tr><td>2026년 1월</td><td>5,563</td><td>111,237</td><td>52.9%</td><td>53,485</td><td>618,813,926</td><td>성수기</td></tr>
-                        <tr style="background:#f0fff4;"><td>2026년 2월</td><td>5,264</td><td>124,403</td><td>54.2%</td><td><strong>61,297</strong></td><td>652,437,262</td><td>최고 실적</td></tr>
-                        <tr><td>2026년 3월 (~18일)</td><td>752</td><td>89,546</td><td>7.0%</td><td>5,825</td><td>67,338,235</td><td>비수기</td></tr>
-                        <tr class="total-row"><td colspan="7" style="text-align:left;">AZMT 목표: ADR 113,712원 / OCC 35% / RevPAR 39,799원 / Group 비율 20%</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <h3 class="section-title">금일 운영 현황 (2026.03.18)</h3>
-        <div class="daily-grid">
-            <div class="daily-card">
-                <div class="label">TODAY 판매 객실</div>
-                <div class="value">11실</div>
-                <div class="sub">OCC 3.20% / ADR ₩51,173</div>
-                <div class="sub">REV ₩562,902</div>
-            </div>
-            <div class="daily-card">
-                <div class="label">TOMORROW 예상</div>
-                <div class="value">6실</div>
-                <div class="sub">OCC 1.70% / ADR ₩55,103</div>
-                <div class="sub">REV ₩330,619</div>
-            </div>
-            <div class="daily-card">
-                <div class="label">3월 누적</div>
-                <div class="value">752실</div>
-                <div class="sub">OCC 7.0% / ADR ₩89,546</div>
-                <div class="sub">REV ₩67,338,235</div>
-            </div>
-        </div>
-
-        <div class="insight-box">
-            <h3>전 운영사 대비 성과 비교 (동기간 12~2월)</h3>
-            <ul>
-                <li><strong>바로네트웍스 (24.12~25.2):</strong> 총 7,580실 판매 (12월 2,101 + 1월 3,453 + 2월 2,026)</li>
-                <li><strong>AZMT (25.12~26.2):</strong> 총 13,507실 달성 (12월 2,680 + 1월 5,563 + 2월 5,264) → <strong style="color:var(--success);">+78% 성장</strong></li>
-                <li>2월 객실 판매: 2,026실 → 5,264실 (+160% 증가) / 2월 OCC 54.2% 역대 최고</li>
-            </ul>
-        </div>
-
-        <div class="insight-box">
-            <h3>구조적 이슈 및 개선 과제</h3>
-            <ul>
-                <li><strong>ADR vs 물량 트레이드오프:</strong> 12월→1월 OCC +29.1%p 상승했으나 ADR은 139,427→101,125원으로 27.5% 하락. 물량 확보와 단가 유지 전략 병행 필요.</li>
-                <li><strong>주말 편중:</strong> 금~토 매출이 전체의 약 58%. 수요일 ADR이 토요일의 약 48% 수준. 주중 패키지, 비즈니스/워케이션 프로모션 개발 필요.</li>
-                <li><strong>Group/MICE 부재:</strong> 100% FIT 의존 구조. Group 목표 20% 대비 0% 달성. OTA 수수료 절감 및 안정적 물량 확보를 위한 B2B 채널 개발 시급.</li>
-                <li><strong>House Use 최적화:</strong> 518실 중 146실(28%)이 비가용. 가동률 개선 시 추가 매출 잠재력 상당.</li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- ==================== TAB 5: F&B 분석 ==================== -->
-    <div id="tab-fnb" class="tab-content">
-        <div class="kpi-grid">
-            <div class="kpi-card">
-                <div class="kpi-label">12월 F&B 총 매출</div>
-                <div class="kpi-value">4,973만</div>
-                <div class="kpi-sub">49,726,474원</div>
-            </div>
-            <div class="kpi-card success">
-                <div class="kpi-label">1월 F&B 총 매출</div>
-                <div class="kpi-value positive">8,800만</div>
-                <div class="kpi-sub">88,002,370원 (+77%)</div>
-            </div>
-            <div class="kpi-card accent">
-                <div class="kpi-label">2월 F&B 총 매출</div>
-                <div class="kpi-value">8,168만</div>
-                <div class="kpi-sub">81,678,600원</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">3월 F&B 누적 (~18일)</div>
-                <div class="kpi-value">560만</div>
-                <div class="kpi-sub">5,603,500원</div>
-            </div>
-        </div>
-
-        <div class="chart-grid">
-            <div class="chart-card">
-                <div class="chart-title">12월 F&B 매출 구성</div>
-                <div class="chart-wrapper"><canvas id="fnbDec"></canvas></div>
-            </div>
-            <div class="chart-card">
-                <div class="chart-title">1월 F&B 매출 구성</div>
-                <div class="chart-wrapper"><canvas id="fnbJan"></canvas></div>
-            </div>
-        </div>
-
-        <div class="chart-card" style="margin-bottom:24px;">
-            <div class="chart-title">F&B 매장별 상세 (12월 vs 1월)</div>
-            <div style="overflow-x:auto;">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th style="text-align:left;">매장명</th>
-                            <th>12월 손님수</th>
-                            <th>12월 매출</th>
-                            <th>12월 객단가</th>
-                            <th>1월 손님수</th>
-                            <th>1월 매출</th>
-                            <th>1월 객단가</th>
-                            <th>증감률</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>프론트</td>
-                            <td>261</td><td>33,874,074</td><td>129,786</td>
-                            <td>545</td><td>46,968,220</td><td>86,180</td>
-                            <td class="positive">+38.7%</td>
-                        </tr>
-                        <tr>
-                            <td>룸서비스</td>
-                            <td>394</td><td>7,264,200</td><td>18,437</td>
-                            <td>712</td><td>23,162,400</td><td>32,531</td>
-                            <td class="positive">+218.8%</td>
-                        </tr>
-                        <tr>
-                            <td>레스토랑</td>
-                            <td>196</td><td>8,588,200</td><td>43,817</td>
-                            <td>361</td><td>16,909,400</td><td>46,840</td>
-                            <td class="positive">+96.9%</td>
-                        </tr>
-                        <tr>
-                            <td>밀키샵</td>
-                            <td>-</td><td>-</td><td>-</td>
-                            <td>38</td><td>962,350</td><td>25,325</td>
-                            <td class="positive">신규</td>
-                        </tr>
-                        <tr class="total-row">
-                            <td>합계</td>
-                            <td>851</td><td>49,726,474</td><td>-</td>
-                            <td>1,656</td><td>88,002,370</td><td>-</td>
-                            <td class="positive">+77.0%</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="chart-grid">
-            <div class="chart-card">
-                <div class="chart-title">F&B 매장별 매출 비교 (12월 vs 1월)</div>
-                <div class="chart-wrapper"><canvas id="fnbCompareChart"></canvas></div>
-            </div>
-            <div class="chart-card">
-                <div class="chart-title">월별 F&B 총 매출 추이</div>
-                <div class="chart-wrapper"><canvas id="fnbMonthlyTotal"></canvas></div>
-            </div>
-        </div>
-
-        <div class="insight-box">
-            <h3>3월 F&B 현황 (3/18 기준, 일매출보고서)</h3>
-            <ul>
-                <li><strong>조식 누적:</strong> ₩1,726,000</li>
-                <li><strong>룸서비스 누적:</strong> ₩1,478,700</li>
-                <li><strong>예약조식 누적:</strong> ₩2,398,800</li>
-                <li><strong>F&B 누적 월매출:</strong> <strong>₩5,603,500</strong></li>
-                <li><strong>2월 F&B 확정:</strong> 81,678,600원 (1월 88,002,370원 대비 -7.2%)</li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- ==================== TAB 6: 손익계산서 ==================== -->
+    <!-- ==================== TAB 4: 손익계산서 ==================== -->
     <div id="tab-pl" class="tab-content">
         <div class="kpi-grid">
             <div class="kpi-card success">
-                <div class="kpi-label">총 수익</div>
-                <div class="kpi-value positive">4.61억</div>
-                <div class="kpi-sub">매출 419,192,517 + 영업외 41,510,778</div>
+                <div class="kpi-label">총 수익 (5개월)</div>
+                <div class="kpi-value positive">18.41억</div>
+                <div class="kpi-sub">1,841,140,010원</div>
             </div>
             <div class="kpi-card danger">
-                <div class="kpi-label">총 비용</div>
-                <div class="kpi-value">5.40억</div>
-                <div class="kpi-sub">539,784,612 + 잡손실 900</div>
+                <div class="kpi-label">총 비용 (5개월)</div>
+                <div class="kpi-value">16.70억</div>
+                <div class="kpi-sub">1,670,164,523원</div>
             </div>
-            <div class="kpi-card danger">
-                <div class="kpi-label">당기순손실</div>
-                <div class="kpi-value negative">-7,908만</div>
-                <div class="kpi-sub">-79,082,217원</div>
+            <div class="kpi-card success">
+                <div class="kpi-label">누적 순이익</div>
+                <div class="kpi-value positive">+1.71억</div>
+                <div class="kpi-sub">170,975,487원</div>
             </div>
             <div class="kpi-card accent">
-                <div class="kpi-label">영업이익률</div>
-                <div class="kpi-value negative">-28.8%</div>
-                <div class="kpi-sub">(매출-비용)/매출</div>
+                <div class="kpi-label">누적 비용율</div>
+                <div class="kpi-value">90.7%</div>
+                <div class="kpi-sub">2월 단월 기준 66.7%</div>
             </div>
         </div>
 
@@ -954,13 +542,70 @@
                 <div class="chart-wrapper tall"><canvas id="waterfallChart"></canvas></div>
             </div>
             <div class="chart-card">
-                <div class="chart-title">비용 대비 매출 커버리지</div>
-                <div class="chart-wrapper tall"><canvas id="coverageChart"></canvas></div>
+                <div class="chart-title">월별 수익·비용·순손익 추이</div>
+                <div class="chart-wrapper tall"><canvas id="plTrendChart"></canvas></div>
             </div>
         </div>
 
         <div class="chart-card" style="margin-bottom:24px;">
-            <div class="chart-title">손익계산서 (2025년 10~12월 합산)</div>
+            <div class="chart-title">월별 손익계산서 (2025.10 ~ 2026.02)</div>
+            <div style="overflow-x:auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left;">구분</th>
+                            <th>25년 10월<br>(개업준비)</th>
+                            <th>25년 11월</th>
+                            <th>25년 12월</th>
+                            <th>26년 1월</th>
+                            <th>26년 2월</th>
+                            <th>합계</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background:#f0fff4;">
+                            <td>총 수익</td>
+                            <td>0</td>
+                            <td>84,328,410</td>
+                            <td>400,366,266</td>
+                            <td>659,646,444</td>
+                            <td>696,798,890</td>
+                            <td><strong>1,841,140,010</strong></td>
+                        </tr>
+                        <tr style="background:#fff5f5;">
+                            <td>총 비용</td>
+                            <td>118,343,146</td>
+                            <td>122,492,967</td>
+                            <td>423,628,150</td>
+                            <td>540,996,982</td>
+                            <td>464,703,278</td>
+                            <td><strong>1,670,164,523</strong></td>
+                        </tr>
+                        <tr class="total-row">
+                            <td>순손익</td>
+                            <td class="negative">-118,343,146</td>
+                            <td class="negative">-38,164,557</td>
+                            <td class="negative">-23,261,884</td>
+                            <td class="positive">+118,649,462</td>
+                            <td class="positive">+232,095,612</td>
+                            <td class="positive"><strong>+170,975,487</strong></td>
+                        </tr>
+                        <tr>
+                            <td>비용율</td>
+                            <td>-</td>
+                            <td>145.3%</td>
+                            <td>105.8%</td>
+                            <td>82.0%</td>
+                            <td>66.7%</td>
+                            <td><strong>90.7%</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="chart-card" style="margin-bottom:24px;">
+            <div class="chart-title">손익계산서 상세 (5개월 합산)</div>
             <div style="overflow-x:auto;">
                 <table class="data-table">
                     <thead>
@@ -972,27 +617,193 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr style="background:#f0fff4;"><td><strong>매출</strong></td><td>객실매출</td><td style="text-align:right;">383,066,711</td><td></td></tr>
-                        <tr style="background:#f0fff4;"><td></td><td>식료매출</td><td style="text-align:right;">9,039,624</td><td></td></tr>
-                        <tr style="background:#f0fff4;"><td></td><td>장기기숙사수입</td><td style="text-align:right;">26,880,000</td><td></td></tr>
-                        <tr style="background:#f0fff4;"><td></td><td>관리비수입</td><td style="text-align:right;">206,182</td><td style="text-align:right;font-weight:700;">419,192,517</td></tr>
+                        <tr style="background:#f0fff4;"><td><strong>매출</strong></td><td>객실매출</td><td style="text-align:right;">1,538,691,453</td><td></td></tr>
+                        <tr style="background:#f0fff4;"><td></td><td>식음료매출</td><td style="text-align:right;">187,885,955</td><td></td></tr>
+                        <tr style="background:#f0fff4;"><td></td><td>기타영업부서매출</td><td style="text-align:right;">454,545</td><td></td></tr>
+                        <tr style="background:#f0fff4;"><td></td><td>용역매출</td><td style="text-align:right;">7,455,348</td><td></td></tr>
+                        <tr style="background:#f0fff4;"><td></td><td>장기기숙사수입</td><td style="text-align:right;">53,760,000</td><td></td></tr>
+                        <tr style="background:#f0fff4;"><td></td><td>관리비수입</td><td style="text-align:right;">913,092</td><td style="text-align:right;font-weight:700;">1,789,160,393</td></tr>
+                        <tr><td colspan="4" style="height:6px;background:var(--bg);"></td></tr>
+                        <tr style="background:#ebf8ff;"><td><strong>영업외수익</strong></td><td>이자수익</td><td style="text-align:right;">7,879</td><td></td></tr>
+                        <tr style="background:#ebf8ff;"><td></td><td>잡이익</td><td style="text-align:right;">47,507,903</td><td style="text-align:right;font-weight:700;">47,515,782</td></tr>
+                        <tr><td colspan="4" style="height:6px;background:var(--bg);"></td></tr>
+                        <tr style="background:#f0fff4;" class="total-row"><td colspan="2"><strong>총 수익 합계</strong></td><td></td><td style="text-align:right;font-size:15px;"><strong>1,836,676,175</strong></td></tr>
+                        <tr><td colspan="4" style="height:6px;background:var(--bg);"></td></tr>
+                        <tr style="background:#fff5f5;"><td><strong>비용</strong></td><td>인건비 (급여+수당+잡급)</td><td style="text-align:right;">187,433,679</td><td></td></tr>
+                        <tr style="background:#fff5f5;"><td></td><td>복리후생비</td><td style="text-align:right;">32,527,322</td><td></td></tr>
+                        <tr style="background:#fff5f5;"><td></td><td>에너지비 (전력+가스+수도)</td><td style="text-align:right;">249,332,018</td><td></td></tr>
+                        <tr style="background:#fff5f5;"><td></td><td>외주용역비 (시설·HK·식음·세탁 등)</td><td style="text-align:right;">757,851,202</td><td></td></tr>
+                        <tr style="background:#fff5f5;"><td></td><td>소모품비 (일반+객실+위생)</td><td style="text-align:right;">148,680,071</td><td></td></tr>
+                        <tr style="background:#fff5f5;"><td></td><td>지급수수료 (프로그램·카드·FDK·기타)</td><td style="text-align:right;">53,597,069</td><td></td></tr>
+                        <tr style="background:#fff5f5;"><td></td><td>지급임차료 (렌탈)</td><td style="text-align:right;">41,700,569</td><td></td></tr>
+                        <tr style="background:#fff5f5;"><td></td><td>보험료 (건물·차량·고용·산재·기타)</td><td style="text-align:right;">22,380,419</td><td></td></tr>
+                        <tr style="background:#fff5f5;"><td></td><td>판매수수료</td><td style="text-align:right;">12,905,974</td><td></td></tr>
+                        <tr style="background:#fff5f5;"><td></td><td>기타 비용</td><td style="text-align:right;">163,756,200</td><td style="text-align:right;font-weight:700;">1,670,164,523</td></tr>
                         <tr><td colspan="4" style="height:8px;background:var(--bg);"></td></tr>
-                        <tr style="background:#fff5f5;"><td><strong>비용</strong></td><td>인건비 (급여+수당+일용)</td><td style="text-align:right;">68,552,897</td><td></td></tr>
-                        <tr style="background:#fff5f5;"><td></td><td>복리후생비</td><td style="text-align:right;">46,156,426</td><td></td></tr>
-                        <tr style="background:#fff5f5;"><td></td><td>시설운영비 (전력+수도+건물 등)</td><td style="text-align:right;">91,601,317</td><td></td></tr>
-                        <tr style="background:#fff5f5;"><td></td><td>수수료 (지급+판매)</td><td style="text-align:right;">161,415,937</td><td></td></tr>
-                        <tr style="background:#fff5f5;"><td></td><td>소모품+객실용품</td><td style="text-align:right;">116,027,021</td><td></td></tr>
-                        <tr style="background:#fff5f5;"><td></td><td>기타 비용</td><td style="text-align:right;">56,031,014</td><td style="text-align:right;font-weight:700;">539,784,612</td></tr>
-                        <tr><td colspan="4" style="height:8px;background:var(--bg);"></td></tr>
-                        <tr style="background:#ebf8ff;"><td><strong>영업외수익</strong></td><td>이자수익 + 잡이익</td><td style="text-align:right;">41,510,778</td><td style="text-align:right;font-weight:700;">41,510,778</td></tr>
-                        <tr style="background:#ebf8ff;"><td><strong>영업외비용</strong></td><td>잡손실</td><td style="text-align:right;">900</td><td style="text-align:right;font-weight:700;">900</td></tr>
                         <tr class="total-row">
-                            <td colspan="3" style="text-align:right;font-size:16px;"><strong>당기순손실</strong></td>
-                            <td style="text-align:right;font-size:16px;color:var(--danger);"><strong>-79,082,217</strong></td>
+                            <td colspan="3" style="text-align:right;font-size:16px;"><strong>당기 순이익</strong></td>
+                            <td style="text-align:right;font-size:16px;color:var(--success);"><strong>+170,975,487</strong></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+        </div>
+
+        <div class="note-box">
+            <strong>【주석】</strong><br>
+            1. 25년 10월은 호텔 개업 준비기간으로 수익 없음. 은행 출금 거래 기준 비용만 계상 (개업비 성격).<br>
+            2. 25년 11월 직원급여에는 10월 귀속 급여(8,825,268원) 포함 (회계 시스템 기준).<br>
+            3. 26년 2월 식음료매출·기타영업부서매출·용역매출·관리비수입은 POS/회계시스템 자료 미수령분 있어 별도 확보 필요.<br>
+            4. 26년 2월 전력비는 청구서 미도착으로 미계상. 확인 후 추가 필요.<br>
+            5. 검증: 수익 합계 + 제외 입금 = 전체 입금 총액 일치 (은행 원장 대조 완료).
+        </div>
+    </div>
+
+    <!-- ==================== TAB 5: 경영 요약 ==================== -->
+    <div id="tab-summary" class="tab-content">
+        <h3 class="section-title">AZMT 경영 성과 요약 (2025.10 ~ 2026.02, 5개월)</h3>
+
+        <div class="kpi-grid">
+            <div class="kpi-card success">
+                <div class="kpi-label">2월 순이익 (최고)</div>
+                <div class="kpi-value positive">+2.32억</div>
+                <div class="kpi-sub">비용율 66.7% — 가장 효율적 월</div>
+            </div>
+            <div class="kpi-card success">
+                <div class="kpi-label">1월 순이익</div>
+                <div class="kpi-value positive">+1.19억</div>
+                <div class="kpi-sub">비용율 82.0% — 첫 흑자 전환</div>
+            </div>
+            <div class="kpi-card danger">
+                <div class="kpi-label">10~12월 누적 손실</div>
+                <div class="kpi-value negative">-1.80억</div>
+                <div class="kpi-sub">개업준비+운영안정화 기간</div>
+            </div>
+            <div class="kpi-card accent">
+                <div class="kpi-label">손실 회수율</div>
+                <div class="kpi-value">195%</div>
+                <div class="kpi-sub">1~2월 이익(3.51억)이 초기 손실(1.80억) 초과</div>
+            </div>
+        </div>
+
+        <div class="chart-grid">
+            <div class="chart-card">
+                <div class="chart-title">월별 손익 누적 추이</div>
+                <div class="chart-wrapper"><canvas id="cumPLChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">핵심 수익·비용 항목 비중</div>
+                <div class="chart-wrapper"><canvas id="keyMetricsChart"></canvas></div>
+            </div>
+        </div>
+
+        <div class="chart-card" style="margin-bottom:24px;">
+            <div class="chart-title">5개월 경영 요약표</div>
+            <div style="overflow-x:auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left;">월</th>
+                            <th>수익 합계</th>
+                            <th>비용 합계</th>
+                            <th>순손익</th>
+                            <th>비용율</th>
+                            <th>누적 순손익</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>25년 10월 (개업준비)</td>
+                            <td>0</td>
+                            <td>118,343,146</td>
+                            <td class="negative">-118,343,146</td>
+                            <td>-</td>
+                            <td class="negative">-118,343,146</td>
+                        </tr>
+                        <tr>
+                            <td>25년 11월</td>
+                            <td>84,328,410</td>
+                            <td>122,492,967</td>
+                            <td class="negative">-38,164,557</td>
+                            <td>145.3%</td>
+                            <td class="negative">-156,507,703</td>
+                        </tr>
+                        <tr>
+                            <td>25년 12월</td>
+                            <td>400,366,266</td>
+                            <td>423,628,150</td>
+                            <td class="negative">-23,261,884</td>
+                            <td>105.8%</td>
+                            <td class="negative">-179,769,587</td>
+                        </tr>
+                        <tr style="background:#f0fff4;">
+                            <td>26년 1월</td>
+                            <td>659,646,444</td>
+                            <td>540,996,982</td>
+                            <td class="positive"><strong>+118,649,462</strong></td>
+                            <td>82.0%</td>
+                            <td class="negative">-61,120,125</td>
+                        </tr>
+                        <tr style="background:#f0fff4;">
+                            <td>26년 2월</td>
+                            <td>696,798,890</td>
+                            <td>464,703,278</td>
+                            <td class="positive"><strong>+232,095,612</strong></td>
+                            <td>66.7%</td>
+                            <td class="positive"><strong>+170,975,487</strong></td>
+                        </tr>
+                        <tr class="total-row">
+                            <td>합계</td>
+                            <td><strong>1,841,140,010</strong></td>
+                            <td><strong>1,670,164,523</strong></td>
+                            <td class="positive"><strong>+170,975,487</strong></td>
+                            <td><strong>90.7%</strong></td>
+                            <td class="positive"><strong>+170,975,487</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="chart-card" style="margin-bottom:24px;">
+            <div class="chart-title">핵심 지표 요약 (주요 수익·비용 항목)</div>
+            <div style="overflow-x:auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left;">지표명</th>
+                            <th>금액 (원)</th>
+                            <th>비중</th>
+                            <th style="text-align:left;">비고</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="section-header"><td colspan="4">── 수익 부문 ──</td></tr>
+                        <tr><td>객실매출 (OTA·카드·현장)</td><td>1,538,691,453</td><td>83.6%</td><td style="text-align:left;">은행입금 기준 주요 수익원</td></tr>
+                        <tr><td>식음료매출</td><td>191,005,790</td><td>10.4%</td><td style="text-align:left;">12~2월 계상</td></tr>
+                        <tr><td>장기기숙사수입</td><td>55,104,000</td><td>3.0%</td><td style="text-align:left;">휘닉스중앙평창 정기 수익</td></tr>
+                        <tr><td>잡이익 (쿠쿠·세스코 등)</td><td>47,507,903</td><td>2.6%</td><td style="text-align:left;">쿠쿠홈시스·세스코 지원금</td></tr>
+                        <tr class="section-header"><td colspan="4">── 비용 부문 ──</td></tr>
+                        <tr><td>외주용역비 (시설·건물)</td><td>396,484,148</td><td>23.7%</td><td style="text-align:left;">프로에이콤·제이에이치·더화이트 등</td></tr>
+                        <tr><td>외주용역비 (하우스키핑)</td><td>263,680,436</td><td>15.8%</td><td style="text-align:left;">에이치투오솔·길서플라이 등</td></tr>
+                        <tr><td>수도광열비 (가스+수도)</td><td>199,109,277</td><td>11.9%</td><td style="text-align:left;">가스 159M + 수도 40M</td></tr>
+                        <tr><td>인건비 (급여+수당+잡급)</td><td>187,433,679</td><td>11.2%</td><td style="text-align:left;">직원급여·제수당·잡급 합계</td></tr>
+                        <tr><td>지급임차료 (렌탈)</td><td>41,700,569</td><td>2.5%</td><td style="text-align:left;">쿠쿠렌탈 포함</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="insight-box">
+            <h3>경영 성과 총평</h3>
+            <ul>
+                <li><strong>V자 회복 달성:</strong> 개업 초기 3개월 연속 적자(-1.80억)에서 1월 흑자 전환, 2월 최고 이익(+2.32억) 기록으로 누적 순이익 +1.71억 달성</li>
+                <li><strong>매출 성장세 가속:</strong> 11월 0.84억 → 12월 4.00억(+375%) → 1월 6.60억(+65%) → 2월 6.97억(+5.6%)</li>
+                <li><strong>비용 효율 개선:</strong> 비용율 145.3%(11월) → 66.7%(2월)로 급격한 효율화. 특히 2월은 비용 4.65억으로 전월(5.41억) 대비 14% 절감</li>
+                <li><strong>외주비 구조 과제:</strong> 외주용역비가 전체 비용의 45.4% 차지 — 시설건물관리(23.7%), 하우스키핑(15.8%) 비중이 높아 내재화 또는 재협상 검토 필요</li>
+                <li><strong>에너지비 관리:</strong> 가스비(159M) + 수도비(40M) = 약 2억원, 동절기 특성 감안하나 절감 방안 모색 필요</li>
+                <li><strong>2월 전력비 미반영:</strong> 청구서 미도착으로 미계상, 반영 시 2월 순이익 하향 조정 예상</li>
+            </ul>
         </div>
     </div>
 </div>
@@ -1023,155 +834,157 @@ function switchTab(tabId) {
 // ==============================
 // 데이터 정의
 // ==============================
-const monthlyRev = {
-    labels: ['25년 11월', '25년 12월', '26년 1월', '26년 2월', '26년 3월(~18일)'],
-    roomRev: [48277123, 373096290, 618813926, 652437262, 67338235],
-    occ: [3.7, 23.8, 52.9, 54.2, 7.0],
-    adr: [106572, 139215, 111237, 124403, 89546],
-    rooms: [453, 2680, 5563, 5264, 752]
-};
+const months = ['25년 10월', '25년 11월', '25년 12월', '26년 1월', '26년 2월'];
+const monthsShort = ['10월', '11월', '12월', '1월', '2월'];
 
+// 월별 수익 (Sheet 2 기준)
+const revByMonth = [0, 84328410, 400366266, 659646444, 696798890];
+const expByMonth = [118343146, 122492967, 423628150, 540996982, 464703278];
+const netPL = [-118343146, -38164557, -23261884, 118649462, 232095612];
+const costRatio = [null, 145.3, 105.8, 82.0, 66.7];
+
+// 월별 수익 항목 (Sheet 1 기준)
+const roomRev = [0, 43888290, 339178421, 562558073, 593066669];
+const fnbRev = [0, 0, 26463580, 73206365, 88216010];
+const dormRev = [0, 13440000, 13440000, 13440000, 13440000];
+const otherRev = [0, 27000240, 21284325, 7321171, 732211]; // 기타(용역+관리비+이자+잡이익 등)
+
+// 비용 상세 데이터
 const expenseData = [
-    {name: '직원급여', oct: 8825268, nov: 17719444, dec: 23797041, total: 50341753},
-    {name: '제수당', oct: 0, nov: 1626389, dec: 3451755, total: 5078144},
-    {name: '임급(일용)', oct: 0, nov: 4500000, dec: 8633000, total: 13133000},
-    {name: '복리후생비', oct: 1012000, nov: 5292550, dec: 39851876, total: 46156426},
-    {name: '여비교통비', oct: 486098, nov: 0, dec: 257155, total: 743253},
-    {name: '통신비', oct: 0, nov: 140625, dec: 3337001, total: 3477626},
-    {name: '수도광열비', oct: 0, nov: 0, dec: 3291400, total: 3291400},
-    {name: '전력비', oct: 0, nov: 21011732, dec: 52334871, total: 73346603},
-    {name: '세금과공과금', oct: 0, nov: 0, dec: 664060, total: 664060},
-    {name: '지급임차료', oct: 0, nov: 376841, dec: 10540269, total: 10917110},
-    {name: '보험료', oct: 5367280, nov: 5098230, dec: 2429330, total: 12894840},
-    {name: '차량유지비', oct: 0, nov: 40000, dec: 334534, total: 374534},
-    {name: '운반비', oct: 0, nov: 0, dec: 40000, total: 40000},
-    {name: '교육훈련비', oct: 0, nov: 0, dec: 154000, total: 154000},
-    {name: '도서인쇄비', oct: 0, nov: 78680, dec: 7217036, total: 7295716},
-    {name: '소모품비', oct: 0, nov: 17311277, dec: 68472931, total: 85784208},
-    {name: '지급수수료', oct: 1410000, nov: 24401080, dec: 127002223, total: 152813303},
-    {name: '광고선전비', oct: 54546, nov: 8909, dec: 11580000, total: 11643455},
-    {name: '판매촉진비', oct: 0, nov: 0, dec: 160000, total: 160000},
-    {name: '건물관리비', oct: 0, nov: 4822980, dec: 9490334, total: 14313314},
-    {name: '판매수수료', oct: 0, nov: 19218, dec: 8583416, total: 8602634},
-    {name: '잡비', oct: 0, nov: 1461600, dec: 2753280, total: 4214880},
-    {name: '객실관리비', oct: 0, nov: 0, dec: 8921530, total: 8921530},
-    {name: '객실소모품비', oct: 0, nov: 5099545, dec: 16221738, total: 21321283},
-    {name: '기타수리비', oct: 0, nov: 0, dec: 4101540, total: 4101540}
+    {cat:'인건비', name:'직원급여', m:[8825268,26544712,23797041,40660634,39161521], total:138989176},
+    {cat:'인건비', name:'제수당', m:[0,1626389,3451755,9820457,9039051], total:23937652},
+    {cat:'인건비', name:'잡급', m:[2948598,1500000,8633000,5677432,5747821], total:24506851},
+    {cat:'복리후생비', name:'복리후생비(식대)', m:[0,6790648,9600969,4581365,554700], total:21527682},
+    {cat:'복리후생비', name:'복리후생비(유니폼)', m:[0,0,207000,0,409600], total:616600},
+    {cat:'복리후생비', name:'복리후생비(직원식당)', m:[0,0,1137300,630100,660100], total:2427500},
+    {cat:'복리후생비', name:'복리후생비(건강보험)', m:[0,1181780,1536760,2880350,2356650], total:7955540},
+    {cat:'일반관리비', name:'여비교통(출장)', m:[0,0,86600,2751500,0], total:2838100},
+    {cat:'일반관리비', name:'통신비', m:[0,140625,3337001,2362862,2848400], total:8688888},
+    {cat:'소모품비', name:'소모품비(일반)', m:[0,19683549,74771946,18367051,3278220], total:116100766},
+    {cat:'소모품비', name:'소모품비(객실·위생)', m:[0,0,7195450,16875500,42900], total:24113850},
+    {cat:'소모품비', name:'객실소모품비', m:[0,2727273,3010909,2727273,0], total:8465455},
+    {cat:'일반관리비', name:'세금과공과금', m:[0,0,1328120,863540,5442540], total:7634200},
+    {cat:'일반관리비', name:'지급임차료(렌탈)', m:[0,376841,10540269,13768479,17014980], total:41700569},
+    {cat:'일반관리비', name:'수선비', m:[0,0,4101540,2468000,328900], total:6898440},
+    {cat:'보험료', name:'보험료(건물)', m:[5367280,5387280,1048390,0,0], total:11802950},
+    {cat:'보험료', name:'보험료(차량)', m:[0,0,1380940,0,1186910], total:2567850},
+    {cat:'보험료', name:'보험료(고용)', m:[0,302480,393340,669702,547938], total:1913460},
+    {cat:'보험료', name:'보험료(산재)', m:[0,135760,176540,336121,275008], total:923429},
+    {cat:'보험료', name:'보험료(기타)', m:[0,5078230,0,0,94500], total:5172730},
+    {cat:'일반관리비', name:'차량유지비', m:[0,40000,334534,325275,245529], total:945338},
+    {cat:'일반관리비', name:'교육훈련비', m:[0,0,154000,66000,0], total:220000},
+    {cat:'일반관리비', name:'도서인쇄비', m:[0,78680,18797036,494326,0], total:19370042},
+    {cat:'일반관리비', name:'광고선전비', m:[0,0,0,3560000,2420000], total:5980000},
+    {cat:'에너지비', name:'전력비', m:[0,0,19217852,31004889,0], total:50222741},
+    {cat:'에너지비', name:'수도광열비(가스)', m:[0,17049007,38102549,49438991,54382890], total:158973437},
+    {cat:'에너지비', name:'수도광열비(수도)', m:[0,3291400,7528780,18396750,10918910], total:40135840},
+    {cat:'지급수수료', name:'지급수수료(프로그램)', m:[0,1490000,4379091,1470000,1639000], total:8978091},
+    {cat:'지급수수료', name:'지급수수료(카드)', m:[0,0,879906,1769446,0], total:2649352},
+    {cat:'지급수수료', name:'지급수수료(FDK)', m:[0,19218,2015976,3463737,33000], total:5531931},
+    {cat:'지급수수료', name:'지급수수료(기타)', m:[1202000,2978455,20926000,11253592,77000], total:36437047},
+    {cat:'외주용역비', name:'외주용역비(방역·위생)', m:[0,2652980,4920334,4635228,4867200], total:17075742},
+    {cat:'외주용역비', name:'외주용역비(식음매장)', m:[0,0,28486272,70000000,3000000], total:101486272},
+    {cat:'외주용역비', name:'외주용역비(하우스키핑)', m:[0,0,77287000,129144090,57249346], total:263680436},
+    {cat:'외주용역비', name:'외주용역비(시설·건물)', m:[100000000,22576080,25596590,54291479,194019999], total:396484148},
+    {cat:'외주용역비', name:'외주용역비(기타)', m:[0,1000000,2260000,4272454,6794070], total:14326524},
+    {cat:'외주용역비', name:'외주용역비(세탁)', m:[0,0,8921530,26557830,14000000], total:49479360},
+    {cat:'외주용역비', name:'외주용역비(바로네트웍스)', m:[0,0,0,0,30240476], total:30240476},
+    {cat:'외주용역비', name:'외주용역비(오수처리)', m:[0,1461600,2753280,5853600,5250240], total:15318720},
+    {cat:'판매관련비', name:'판매촉진비', m:[0,0,160000,52273,0], total:212273},
+    {cat:'판매관련비', name:'판매수수료', m:[0,0,6567440,2096609,4241925], total:12905974}
 ];
 
-const totalExpense = 539784612;
+const totalExpense = 1670164523;
 
 // ==============================
-// AZMT 목표 달성률 차트
+// TAB 1: 종합 현황 차트
 // ==============================
-new Chart(document.getElementById('targetAchChart'), {
+
+// 수익 vs 비용 차트
+new Chart(document.getElementById('revVsExpChart'), {
     type: 'bar',
     data: {
-        labels: ['월매출', 'OCC', 'ADR', 'RevPAR', 'Group'],
+        labels: months,
         datasets: [
-            {
-                label: '12월 달성률',
-                data: [50.3, 65.7, 122.6, 53.7, 0],
-                backgroundColor: colors.lightBlue,
-                borderRadius: 4
-            },
-            {
-                label: '2월 달성률',
-                data: [86.9, 154.9, 99.5, 154.0, 0],
-                backgroundColor: colors.blue,
-                borderRadius: 4
-            },
-            {
-                label: '목표 (100%)',
-                data: [100, 100, 100, 100, 100],
-                type: 'line',
-                borderColor: colors.red,
-                borderWidth: 2,
-                borderDash: [6,4],
-                pointRadius: 0,
-                fill: false,
-                indexAxis: 'y'
-            }
+            { label: '수익', data: revByMonth, backgroundColor: colors.green, borderRadius: 6 },
+            { label: '비용', data: expByMonth, backgroundColor: colors.red, borderRadius: 6 }
         ]
     },
     options: {
         responsive: true, maintainAspectRatio: false,
-        indexAxis: 'y',
+        plugins: { tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + fmt(ctx.raw) + '원' } } },
+        scales: { y: { ticks: { callback: v => (v/100000000).toFixed(1) + '억' }, grid: { color: '#f0f0f0' } } }
+    }
+});
+
+// 순손익 추이 차트
+new Chart(document.getElementById('netPLChart'), {
+    type: 'bar',
+    data: {
+        labels: months,
+        datasets: [{
+            label: '순손익',
+            data: netPL,
+            backgroundColor: netPL.map(v => v >= 0 ? colors.green : colors.red),
+            borderRadius: 6
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
         plugins: {
-            tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.raw + '%' } }
+            legend: { display: false },
+            tooltip: { callbacks: { label: ctx => (ctx.raw >= 0 ? '+' : '') + fmt(ctx.raw) + '원' } }
         },
         scales: {
-            x: {
-                max: 160,
-                ticks: { callback: v => v + '%' },
+            y: {
+                ticks: { callback: v => (v/100000000).toFixed(1) + '억' },
                 grid: { color: '#f0f0f0' }
             }
         }
     }
 });
 
-// ==============================
-// 12월 vs 1월 KPI 비교 차트
-// ==============================
-new Chart(document.getElementById('monthCompareChart'), {
-    type: 'bar',
+// 수익 구성 도넛 차트
+new Chart(document.getElementById('revBreakdownChart'), {
+    type: 'doughnut',
     data: {
-        labels: ['매출(억,VAT제외)', 'ADR(만원)', 'RevPAR(만원)', 'OCC(%)'],
-        datasets: [
-            {
-                label: '1월',
-                data: [5.63, 10.11, 5.35, 52.9],
-                backgroundColor: colors.lightBlue,
-                borderRadius: 4
-            },
-            {
-                label: '2월',
-                data: [5.93, 11.31, 6.13, 54.2],
-                backgroundColor: colors.blue,
-                borderRadius: 4
-            },
-            {
-                label: 'AZMT 목표',
-                data: [6.82, 11.37, 3.98, 35.0],
-                backgroundColor: 'transparent',
-                borderColor: colors.red,
-                borderWidth: 2,
-                borderDash: [5,5],
-                type: 'line',
-                pointStyle: 'rectRot',
-                pointRadius: 6,
-                pointBackgroundColor: colors.red
-            }
-        ]
+        labels: ['객실매출', '식음료매출', '장기기숙사수입', '잡이익', '기타(용역·관리비·이자)'],
+        datasets: [{
+            data: [1538691453, 187885955, 53760000, 47507903, 8830864],
+            backgroundColor: [colors.blue, colors.orange, colors.teal, colors.purple, colors.gray],
+            borderWidth: 2, borderColor: '#fff'
+        }]
     },
     options: {
         responsive: true, maintainAspectRatio: false,
         plugins: {
-            tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.raw } }
-        },
-        scales: { y: { grid: { color: '#f0f0f0' } } }
+            legend: { position: 'bottom', labels: { padding: 12, font: { size: 11 } } },
+            tooltip: { callbacks: { label: ctx => ctx.label + ': ' + fmt(ctx.raw) + '원 (' + ((ctx.raw/1836676175)*100).toFixed(1) + '%)' } }
+        }
     }
 });
 
-// ==============================
-// RevPAR 추이 차트
-// ==============================
-new Chart(document.getElementById('revparChart'), {
-    type: 'bar',
+// 비용율 추이 차트
+new Chart(document.getElementById('costRatioChart'), {
+    type: 'line',
     data: {
-        labels: ['25년 11월', '25년 12월', '26년 1월', '26년 2월', '26년 3월(~18일)'],
+        labels: ['25년 11월', '25년 12월', '26년 1월', '26년 2월'],
         datasets: [
             {
-                label: 'RevPAR (원)',
-                data: [3143, 21386, 53485, 61297, 5825],
-                backgroundColor: [colors.blue, colors.blue, colors.green, colors.blue, colors.blue],
-                borderRadius: 6
+                label: '비용율 (%)',
+                data: [145.3, 105.8, 82.0, 66.7],
+                borderColor: colors.red,
+                backgroundColor: 'rgba(229,62,62,0.1)',
+                fill: true,
+                pointBackgroundColor: colors.red,
+                pointRadius: 6,
+                borderWidth: 3,
+                tension: 0.3
             },
             {
-                label: 'AZMT 목표 (39,799원)',
-                data: [39799, 39799, 39799, 39799, 39799],
-                type: 'line',
-                borderColor: colors.red,
+                label: '손익분기 (100%)',
+                data: [100, 100, 100, 100],
+                borderColor: colors.gray,
                 borderWidth: 2,
                 borderDash: [6,4],
                 pointRadius: 0,
@@ -1181,12 +994,11 @@ new Chart(document.getElementById('revparChart'), {
     },
     options: {
         responsive: true, maintainAspectRatio: false,
-        plugins: {
-            tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ₩' + fmt(ctx.raw) } }
-        },
+        plugins: { tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.raw + '%' } } },
         scales: {
             y: {
-                ticks: { callback: v => (v/10000).toFixed(1) + '만' },
+                min: 50, max: 160,
+                ticks: { callback: v => v + '%' },
                 grid: { color: '#f0f0f0' }
             }
         }
@@ -1194,148 +1006,19 @@ new Chart(document.getElementById('revparChart'), {
 });
 
 // ==============================
-// 차트 1: 월별 매출 추이
+// TAB 2: 매출 분석 차트
 // ==============================
-new Chart(document.getElementById('monthlyRevChart'), {
-    type: 'bar',
-    data: {
-        labels: ['25년 11월', '25년 12월', '26년 1월', '26년 2월', '26년 3월(~18일)'],
-        datasets: [
-            {
-                label: '객실매출 (VAT포함)',
-                data: [48277123, 373096290, 618813926, 652437262, 67338235],
-                backgroundColor: colors.blue,
-                borderRadius: 6
-            },
-            {
-                label: 'F&B매출',
-                data: [0, 49726474, 88002370, 81678600, 5603500],
-                backgroundColor: colors.orange,
-                borderRadius: 6
-            }
-        ]
-    },
-    options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: {
-            tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + fmt(ctx.raw) + '원' } }
-        },
-        scales: {
-            x: { stacked: true },
-            y: {
-                stacked: true,
-                ticks: { callback: v => (v/100000000).toFixed(1) + '억' },
-                grid: { color: '#f0f0f0' }
-            }
-        }
-    }
-});
 
-// ==============================
-// 차트 2: 매출 vs 비용
-// ==============================
-new Chart(document.getElementById('revVsExpChart'), {
-    type: 'bar',
-    data: {
-        labels: ['10월', '11월', '12월'],
-        datasets: [
-            {
-                label: '매출',
-                data: [0, 43888290, 375304227],
-                backgroundColor: colors.green,
-                borderRadius: 6
-            },
-            {
-                label: '비용',
-                data: [17155192, 109015100, 413614320],
-                backgroundColor: colors.red,
-                borderRadius: 6
-            }
-        ]
-    },
-    options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + fmt(ctx.raw) + '원' } } },
-        scales: {
-            y: {
-                ticks: { callback: v => (v/100000000).toFixed(1) + '억' },
-                grid: { color: '#f0f0f0' }
-            }
-        }
-    }
-});
-
-// ==============================
-// 차트 3: 매출 구성
-// ==============================
-const totalRevAll = 2012059962;
-new Chart(document.getElementById('revBreakdownChart'), {
-    type: 'doughnut',
-    data: {
-        labels: ['객실매출', 'F&B매출', '장기기숙사수입', '관리비수입'],
-        datasets: [{
-            data: [1759962836, 225010944, 26880000, 206182],
-            backgroundColor: [colors.blue, colors.orange, colors.teal, colors.gray],
-            borderWidth: 2, borderColor: '#fff'
-        }]
-    },
-    options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: {
-            legend: { position: 'bottom', labels: { padding: 16, font: { size: 12 } } },
-            tooltip: { callbacks: { label: ctx => ctx.label + ': ' + fmt(ctx.raw) + '원 (' + ((ctx.raw/totalRevAll)*100).toFixed(1) + '%)' } }
-        }
-    }
-});
-
-// ==============================
-// 차트 4: OCC% 트렌드
-// ==============================
-new Chart(document.getElementById('occTrendChart'), {
-    type: 'bar',
-    data: {
-        labels: monthlyRev.labels,
-        datasets: [
-            {
-                label: '판매 객실수',
-                data: monthlyRev.rooms,
-                backgroundColor: colors.lightBlue,
-                borderRadius: 6,
-                yAxisID: 'y'
-            },
-            {
-                label: 'OCC (%)',
-                data: monthlyRev.occ,
-                type: 'line',
-                borderColor: colors.red,
-                backgroundColor: 'transparent',
-                pointBackgroundColor: colors.red,
-                pointRadius: 5,
-                borderWidth: 2,
-                yAxisID: 'y1'
-            }
-        ]
-    },
-    options: {
-        responsive: true, maintainAspectRatio: false,
-        scales: {
-            y: { position: 'left', title: { display: true, text: '객실수' }, grid: { color: '#f0f0f0' } },
-            y1: { position: 'right', title: { display: true, text: 'OCC%' }, min: 0, max: 60, grid: { display: false } }
-        }
-    }
-});
-
-// ==============================
-// 차트 5: 월별 매출 상세 (1월, 2월 포함)
-// ==============================
+// 월별 매출 상세 (누적 막대)
 new Chart(document.getElementById('monthlyRevDetailChart'), {
     type: 'bar',
     data: {
-        labels: ['10월', '11월', '12월', '1월', '2월', '3월(~18일)'],
+        labels: months,
         datasets: [
-            { label: '객실매출(VAT포함)', data: [0, 48277123, 373096290, 618813926, 652437262, 67338235], backgroundColor: colors.blue, borderRadius: 4 },
-            { label: 'F&B매출', data: [0, 0, 49726474, 88002370, 81678600, 5603500], backgroundColor: colors.orange, borderRadius: 4 },
-            { label: '장기기숙사+관리비', data: [0, 0, 27086182, 0, 0, 0], backgroundColor: colors.teal, borderRadius: 4 }
+            { label: '객실매출', data: roomRev, backgroundColor: colors.blue, borderRadius: 4 },
+            { label: '식음료매출', data: fnbRev, backgroundColor: colors.orange, borderRadius: 4 },
+            { label: '장기기숙사수입', data: dormRev, backgroundColor: colors.teal, borderRadius: 4 },
+            { label: '기타(용역·관리비·잡이익 등)', data: [0, 27000240, 21284325, 7321171, 732211], backgroundColor: colors.purple, borderRadius: 4 }
         ]
     },
     options: {
@@ -1348,56 +1031,76 @@ new Chart(document.getElementById('monthlyRevDetailChart'), {
     }
 });
 
-// ==============================
-// 차트 6: ADR 추이
-// ==============================
-new Chart(document.getElementById('adrChart'), {
-    type: 'line',
-    data: {
-        labels: monthlyRev.labels,
-        datasets: [{
-            label: 'ADR (원)',
-            data: monthlyRev.adr,
-            borderColor: colors.purple,
-            backgroundColor: 'rgba(128,90,213,0.1)',
-            fill: true,
-            pointBackgroundColor: colors.purple,
-            pointRadius: 6,
-            borderWidth: 3,
-            tension: 0.3
-        }]
-    },
-    options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { tooltip: { callbacks: { label: ctx => '₩' + fmt(ctx.raw) } } },
-        scales: { y: { ticks: { callback: v => '₩' + fmt(v) } } }
-    }
-});
-
-// ==============================
-// 차트 7: 객실 vs 부대매출
-// ==============================
-new Chart(document.getElementById('roomVsOtherChart'), {
+// 수익 항목별 비중 파이차트
+new Chart(document.getElementById('revPieChart'), {
     type: 'pie',
     data: {
-        labels: ['객실매출', 'F&B매출', '장기기숙사', '관리비'],
+        labels: ['객실매출 83.6%', '식음료 10.2%', '기숙사 2.9%', '잡이익 2.6%', '기타 0.7%'],
         datasets: [{
-            data: [89.2, 9.2, 1.6, 0.01],
-            backgroundColor: [colors.blue, colors.orange, colors.teal, colors.gray]
+            data: [83.6, 10.2, 2.9, 2.6, 0.7],
+            backgroundColor: [colors.blue, colors.orange, colors.teal, colors.purple, colors.gray]
         }]
     },
     options: {
         responsive: true, maintainAspectRatio: false,
         plugins: {
             legend: { position: 'bottom' },
-            tooltip: { callbacks: { label: ctx => ctx.label + ': ' + ctx.raw + '%' } }
+            tooltip: { callbacks: { label: ctx => ctx.label } }
         }
     }
 });
 
+// 객실매출 월별 추이
+new Chart(document.getElementById('roomRevTrendChart'), {
+    type: 'bar',
+    data: {
+        labels: ['25년 11월', '25년 12월', '26년 1월', '26년 2월'],
+        datasets: [{
+            label: '객실매출',
+            data: [43888290, 339178421, 562558073, 593066669],
+            backgroundColor: [colors.lightBlue, colors.blue, colors.green, colors.green],
+            borderRadius: 6
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: ctx => fmt(ctx.raw) + '원' } }
+        },
+        scales: { y: { ticks: { callback: v => (v/100000000).toFixed(1) + '억' }, grid: { color: '#f0f0f0' } } }
+    }
+});
+
 // ==============================
-// 차트 8: 비용 TOP 10
+// TAB 3: 비용 분석 차트
 // ==============================
+
+// 비용 카테고리 도넛
+const catTotals = {};
+expenseData.forEach(e => {
+    catTotals[e.cat] = (catTotals[e.cat] || 0) + e.total;
+});
+new Chart(document.getElementById('expCategoryChart'), {
+    type: 'doughnut',
+    data: {
+        labels: Object.keys(catTotals),
+        datasets: [{
+            data: Object.values(catTotals),
+            backgroundColor: [colors.red, colors.orange, colors.blue, colors.teal, colors.yellow, colors.green, colors.purple, colors.pink, colors.gray],
+            borderWidth: 2, borderColor: '#fff'
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+            legend: { position: 'right', labels: { font: { size: 11 }, padding: 8 } },
+            tooltip: { callbacks: { label: ctx => ctx.label + ': ' + fmt(ctx.raw) + '원 (' + ((ctx.raw/totalExpense)*100).toFixed(1) + '%)' } }
+        }
+    }
+});
+
+// 비용 TOP 10
 const sortedExp = [...expenseData].sort((a,b) => b.total - a.total).slice(0, 10);
 new Chart(document.getElementById('expTop10Chart'), {
     type: 'bar',
@@ -1420,61 +1123,21 @@ new Chart(document.getElementById('expTop10Chart'), {
             legend: { display: false },
             tooltip: { callbacks: { label: ctx => fmt(ctx.raw) + '원 (' + ((ctx.raw/totalExpense)*100).toFixed(1) + '%)' } }
         },
-        scales: { x: { ticks: { callback: v => (v/10000).toFixed(0) + '만' } } }
+        scales: { x: { ticks: { callback: v => (v/100000000).toFixed(1) + '억' } } }
     }
 });
 
-// ==============================
-// 차트 9: 비용 카테고리 도넛
-// ==============================
-const categories = {
-    '인건비': 50341753 + 5078144 + 13133000,
-    '복리후생비': 46156426,
-    '지급수수료': 152813303,
-    '판매수수료': 8602634,
-    '전력비': 73346603,
-    '소모품비': 85784208,
-    '객실소모품비': 21321283,
-    '건물관리비': 14313314,
-    '보험료': 12894840,
-    '광고선전비': 11643455,
-    '기타': 43749406
-};
-new Chart(document.getElementById('expCategoryChart'), {
-    type: 'doughnut',
-    data: {
-        labels: Object.keys(categories),
-        datasets: [{
-            data: Object.values(categories),
-            backgroundColor: [
-                colors.red, colors.orange, colors.blue, colors.lightBlue, colors.yellow,
-                colors.teal, colors.green, colors.purple, colors.pink, colors.gray, '#cbd5e0'
-            ],
-            borderWidth: 2, borderColor: '#fff'
-        }]
-    },
-    options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: {
-            legend: { position: 'right', labels: { font: { size: 11 }, padding: 8 } },
-            tooltip: { callbacks: { label: ctx => ctx.label + ': ' + fmt(ctx.raw) + '원' } }
-        }
-    }
-});
-
-// ==============================
-// 차트 10: 월별 비용 변동
-// ==============================
+// 월별 주요 비용 변동
 new Chart(document.getElementById('monthlyExpTrendChart'), {
     type: 'bar',
     data: {
-        labels: ['10월', '11월', '12월'],
+        labels: months,
         datasets: [
-            { label: '인건비', data: [8825268, 23845833, 35881796], backgroundColor: colors.red, borderRadius: 4 },
-            { label: '지급수수료', data: [1410000, 24401080, 127002223], backgroundColor: colors.blue, borderRadius: 4 },
-            { label: '전력비', data: [0, 21011732, 52334871], backgroundColor: colors.yellow, borderRadius: 4 },
-            { label: '소모품비', data: [0, 17311277, 68472931], backgroundColor: colors.teal, borderRadius: 4 },
-            { label: '복리후생비', data: [1012000, 5292550, 39851876], backgroundColor: colors.orange, borderRadius: 4 }
+            { label: '외주용역비', data: [100000000,27690660,150225006,294754681,315421331], backgroundColor: colors.red, borderRadius: 4 },
+            { label: '에너지비', data: [0,20340407,64849181,98840630,65301800], backgroundColor: colors.yellow, borderRadius: 4 },
+            { label: '인건비', data: [11773866,29671101,35881796,56158523,53948393], backgroundColor: colors.blue, borderRadius: 4 },
+            { label: '소모품비', data: [0,22410822,84978305,37969824,3321120], backgroundColor: colors.teal, borderRadius: 4 },
+            { label: '지급수수료', data: [1202000,4487673,28200973,17956775,1749000], backgroundColor: colors.orange, borderRadius: 4 }
         ]
     },
     options: {
@@ -1487,172 +1150,45 @@ new Chart(document.getElementById('monthlyExpTrendChart'), {
     }
 });
 
-// ==============================
 // 비용 테이블 동적 생성
-// ==============================
 const expTbody = document.querySelector('#expenseTable tbody');
+let currentCat = '';
 expenseData.forEach(e => {
+    if (e.cat !== currentCat) {
+        currentCat = e.cat;
+        const catRow = document.createElement('tr');
+        catRow.className = 'section-header';
+        catRow.innerHTML = '<td colspan="8">[' + currentCat + ']</td>';
+        expTbody.appendChild(catRow);
+    }
     const pct = ((e.total / totalExpense) * 100).toFixed(1);
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${e.name}</td><td>${fmt(e.oct)}</td><td>${fmt(e.nov)}</td><td>${fmt(e.dec)}</td><td><strong>${fmt(e.total)}</strong></td><td>${pct}%</td>`;
+    tr.innerHTML = '<td>' + e.name + '</td>' + e.m.map(v => '<td>' + (v ? fmt(v) : '-') + '</td>').join('') + '<td><strong>' + fmt(e.total) + '</strong></td><td>' + pct + '%</td>';
     expTbody.appendChild(tr);
 });
 const totalRow = document.createElement('tr');
 totalRow.className = 'total-row';
-const octTotal = expenseData.reduce((s,e) => s+e.oct, 0);
-const novTotal = expenseData.reduce((s,e) => s+e.nov, 0);
-const decTotal = expenseData.reduce((s,e) => s+e.dec, 0);
-totalRow.innerHTML = `<td>합계</td><td>${fmt(octTotal)}</td><td>${fmt(novTotal)}</td><td>${fmt(decTotal)}</td><td><strong>${fmt(totalExpense)}</strong></td><td>100%</td>`;
+const mTotals = [0,1,2,3,4].map(i => expenseData.reduce((s,e) => s + e.m[i], 0));
+totalRow.innerHTML = '<td>합계</td>' + mTotals.map(v => '<td>' + fmt(v) + '</td>').join('') + '<td><strong>' + fmt(totalExpense) + '</strong></td><td>100%</td>';
 expTbody.appendChild(totalRow);
 
 // ==============================
-// 객실 운영 차트
+// TAB 4: 손익계산서 차트
 // ==============================
-new Chart(document.getElementById('roomOpsChart'), {
-    type: 'bar',
-    data: {
-        labels: monthlyRev.labels,
-        datasets: [
-            {
-                label: '매출 (억원)',
-                data: monthlyRev.roomRev.map(v => v/100000000),
-                backgroundColor: colors.blue,
-                borderRadius: 6,
-                yAxisID: 'y'
-            },
-            {
-                label: 'ADR (만원)',
-                data: monthlyRev.adr.map(v => v/10000),
-                type: 'line',
-                borderColor: colors.purple,
-                pointBackgroundColor: colors.purple,
-                pointRadius: 5,
-                borderWidth: 2,
-                yAxisID: 'y1'
-            },
-            {
-                label: 'OCC (%)',
-                data: monthlyRev.occ,
-                type: 'line',
-                borderColor: colors.red,
-                pointBackgroundColor: colors.red,
-                pointRadius: 5,
-                borderWidth: 2,
-                borderDash: [5,5],
-                yAxisID: 'y1'
-            }
-        ]
-    },
-    options: {
-        responsive: true, maintainAspectRatio: false,
-        scales: {
-            y: { position: 'left', title: { display: true, text: '매출 (억원)' } },
-            y1: { position: 'right', title: { display: true, text: 'ADR(만원) / OCC(%)' }, grid: { display: false } }
-        }
-    }
-});
 
-// ==============================
-// F&B 차트
-// ==============================
-new Chart(document.getElementById('fnbDec'), {
-    type: 'doughnut',
-    data: {
-        labels: ['프론트', '룸서비스', '레스토랑'],
-        datasets: [{
-            data: [33874074, 7264200, 8588200],
-            backgroundColor: [colors.blue, colors.orange, colors.teal],
-            borderWidth: 2, borderColor: '#fff'
-        }]
-    },
-    options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: {
-            legend: { position: 'bottom' },
-            tooltip: { callbacks: { label: ctx => ctx.label + ': ' + fmt(ctx.raw) + '원' } }
-        }
-    }
-});
-
-new Chart(document.getElementById('fnbJan'), {
-    type: 'doughnut',
-    data: {
-        labels: ['프론트', '룸서비스', '레스토랑', '밀키샵'],
-        datasets: [{
-            data: [46968220, 23162400, 16909400, 962350],
-            backgroundColor: [colors.blue, colors.orange, colors.teal, colors.pink],
-            borderWidth: 2, borderColor: '#fff'
-        }]
-    },
-    options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: {
-            legend: { position: 'bottom' },
-            tooltip: { callbacks: { label: ctx => ctx.label + ': ' + fmt(ctx.raw) + '원' } }
-        }
-    }
-});
-
-new Chart(document.getElementById('fnbCompareChart'), {
-    type: 'bar',
-    data: {
-        labels: ['프론트', '룸서비스', '레스토랑', '밀키샵'],
-        datasets: [
-            { label: '12월', data: [33874074, 7264200, 8588200, 0], backgroundColor: colors.lightBlue, borderRadius: 4 },
-            { label: '1월', data: [46968220, 23162400, 16909400, 962350], backgroundColor: colors.blue, borderRadius: 4 }
-        ]
-    },
-    options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + fmt(ctx.raw) + '원' } } },
-        scales: { y: { ticks: { callback: v => (v/10000).toFixed(0) + '만' } } }
-    }
-});
-
-// ==============================
-// F&B 월별 총 매출 추이 차트
-// ==============================
-new Chart(document.getElementById('fnbMonthlyTotal'), {
-    type: 'bar',
-    data: {
-        labels: ['25년 12월', '26년 1월', '26년 2월', '26년 3월(~18일)'],
-        datasets: [{
-            label: 'F&B 총 매출',
-            data: [49726474, 88002370, 81678600, 5603500],
-            backgroundColor: [colors.lightBlue, colors.blue, colors.orange, colors.gray],
-            borderRadius: 6
-        }]
-    },
-    options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false },
-            tooltip: { callbacks: { label: ctx => fmt(ctx.raw) + '원' } }
-        },
-        scales: {
-            y: {
-                ticks: { callback: v => (v/10000).toFixed(0) + '만' },
-                grid: { color: '#f0f0f0' }
-            }
-        }
-    }
-});
-
-// ==============================
-// 손익 Waterfall 차트
-// ==============================
+// Waterfall 차트
 new Chart(document.getElementById('waterfallChart'), {
     type: 'bar',
     data: {
-        labels: ['매출', '비용', '영업손실', '영업외수익', '순손실'],
+        labels: ['영업수익', '영업외수익', '총수익', '총비용', '순이익'],
         datasets: [{
             label: '금액',
-            data: [419192517, -539784612, -120592095, 41510778, -79082217],
+            data: [1789160393, 47515782, 1836676175, -1670164523, 170975487],
             backgroundColor: ctx => {
-                const v = ctx.raw;
-                if (ctx.dataIndex === 0 || ctx.dataIndex === 3) return colors.green;
-                if (ctx.dataIndex === 1) return colors.red;
-                return colors.orange;
+                const idx = ctx.dataIndex;
+                if (idx <= 2) return colors.green;
+                if (idx === 3) return colors.red;
+                return colors.blue;
             },
             borderRadius: 6
         }]
@@ -1661,34 +1197,99 @@ new Chart(document.getElementById('waterfallChart'), {
         responsive: true, maintainAspectRatio: false,
         plugins: {
             legend: { display: false },
-            tooltip: { callbacks: { label: ctx => fmt(ctx.raw) + '원' } }
+            tooltip: { callbacks: { label: ctx => fmt(Math.abs(ctx.raw)) + '원' } }
         },
         scales: { y: { ticks: { callback: v => (v/100000000).toFixed(1) + '억' } } }
     }
 });
 
-// ==============================
-// 비용 커버리지 게이지
-// ==============================
-new Chart(document.getElementById('coverageChart'), {
+// 월별 P&L 추이
+new Chart(document.getElementById('plTrendChart'), {
     type: 'bar',
     data: {
-        labels: ['매출로 비용 충당률', '영업외수익 포함 충당률'],
+        labels: months,
+        datasets: [
+            { label: '수익', data: revByMonth, backgroundColor: colors.lightGreen, borderRadius: 4 },
+            { label: '비용', data: expByMonth.map(v => -v), backgroundColor: colors.lightRed, borderRadius: 4 },
+            {
+                label: '순손익',
+                data: netPL,
+                type: 'line',
+                borderColor: colors.darkBlue,
+                backgroundColor: 'transparent',
+                pointBackgroundColor: netPL.map(v => v >= 0 ? colors.green : colors.red),
+                pointRadius: 6,
+                borderWidth: 3
+            }
+        ]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + fmt(ctx.raw) + '원' } } },
+        scales: { y: { ticks: { callback: v => (v/100000000).toFixed(1) + '억' }, grid: { color: '#f0f0f0' } } }
+    }
+});
+
+// ==============================
+// TAB 5: 경영 요약 차트
+// ==============================
+
+// 누적 순손익 차트
+const cumPL = [];
+netPL.reduce((acc, val, i) => { cumPL.push(acc + val); return acc + val; }, 0);
+new Chart(document.getElementById('cumPLChart'), {
+    type: 'line',
+    data: {
+        labels: months,
+        datasets: [
+            {
+                label: '누적 순손익',
+                data: cumPL,
+                borderColor: colors.blue,
+                backgroundColor: cumPL.map(v => v >= 0 ? 'rgba(56,161,105,0.2)' : 'rgba(229,62,62,0.2)'),
+                fill: true,
+                pointBackgroundColor: cumPL.map(v => v >= 0 ? colors.green : colors.red),
+                pointRadius: 7,
+                borderWidth: 3,
+                tension: 0.3
+            },
+            {
+                label: '손익분기 (0원)',
+                data: [0, 0, 0, 0, 0],
+                borderColor: colors.gray,
+                borderWidth: 2,
+                borderDash: [6,4],
+                pointRadius: 0,
+                fill: false
+            }
+        ]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { tooltip: { callbacks: { label: ctx => (ctx.raw >= 0 ? '+' : '') + fmt(ctx.raw) + '원' } } },
+        scales: { y: { ticks: { callback: v => (v/100000000).toFixed(1) + '억' }, grid: { color: '#f0f0f0' } } }
+    }
+});
+
+// 핵심 수익·비용 항목 비교
+new Chart(document.getElementById('keyMetricsChart'), {
+    type: 'bar',
+    data: {
+        labels: ['객실매출', '식음료매출', '외주용역비\n(시설)', '외주용역비\n(HK)', '에너지비', '인건비'],
         datasets: [{
-            label: '충당률 (%)',
-            data: [77.7, 85.3],
-            backgroundColor: [colors.orange, colors.blue],
+            label: '금액',
+            data: [1538691453, 191005790, 396484148, 263680436, 249332018, 187433679],
+            backgroundColor: [colors.green, colors.lightGreen, colors.red, colors.lightRed, colors.orange, colors.yellow],
             borderRadius: 6
         }]
     },
     options: {
         responsive: true, maintainAspectRatio: false,
-        indexAxis: 'y',
         plugins: {
             legend: { display: false },
-            tooltip: { callbacks: { label: ctx => ctx.raw + '%' } }
+            tooltip: { callbacks: { label: ctx => fmt(ctx.raw) + '원' } }
         },
-        scales: { x: { max: 100, ticks: { callback: v => v + '%' } } }
+        scales: { y: { ticks: { callback: v => (v/100000000).toFixed(1) + '억' }, grid: { color: '#f0f0f0' } } }
     }
 });
 </script>
