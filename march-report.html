@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>호텔어라운드 평창 — 2026년 3월 매출 현황</title>
+    <style>
+        @page { size: A4; margin: 20mm 18mm; }
+        body {
+            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+            color: #1a1a1a;
+            line-height: 1.7;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 30px;
+            background: #fff;
+        }
+        .header-bar {
+            background: linear-gradient(135deg, #1a365d, #2d5a9e);
+            color: white;
+            padding: 24px 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .header-bar h1 { font-size: 20px; margin: 0 0 4px; }
+        .header-bar .sub { font-size: 13px; opacity: 0.85; }
+        .header-bar .date { font-size: 12px; opacity: 0.7; margin-top: 8px; }
+        h2 {
+            font-size: 16px;
+            color: #1a365d;
+            border-bottom: 2px solid #1a365d;
+            padding-bottom: 6px;
+            margin: 28px 0 14px;
+        }
+        h3 {
+            font-size: 14px;
+            color: #2d5a9e;
+            margin: 20px 0 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12.5px;
+            margin: 12px 0 18px;
+        }
+        th {
+            background: #1a365d;
+            color: white;
+            padding: 8px 10px;
+            text-align: right;
+            font-weight: 600;
+        }
+        th:first-child { text-align: left; }
+        td {
+            padding: 7px 10px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: right;
+        }
+        td:first-child { text-align: left; font-weight: 600; }
+        tr:hover { background: #f7fafc; }
+        .negative { color: #dc3545; font-weight: 700; }
+        .highlight-row { background: #fff8e6; }
+        .insight-box {
+            background: #f0f7ff;
+            border-left: 4px solid #2d5a9e;
+            padding: 14px 18px;
+            margin: 12px 0;
+            font-size: 13px;
+            border-radius: 0 6px 6px 0;
+        }
+        .insight-box strong { color: #1a365d; }
+        .action-table td:first-child {
+            text-align: center;
+            font-weight: 700;
+            color: #1a365d;
+            width: 60px;
+        }
+        .quote {
+            background: linear-gradient(135deg, #f0f4ff, #e8f0fe);
+            border-left: 4px solid #1a365d;
+            padding: 16px 20px;
+            margin: 24px 0;
+            font-style: italic;
+            font-size: 14px;
+            border-radius: 0 8px 8px 0;
+        }
+        .quote .author {
+            text-align: right;
+            font-size: 12px;
+            color: #718096;
+            font-style: normal;
+            margin-top: 6px;
+        }
+        .download-bar {
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .download-btn {
+            background: #1a365d;
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Malgun Gothic', sans-serif;
+        }
+        .download-btn:hover { background: #2d5a9e; }
+        @media print { .download-bar { display: none; } }
+    </style>
+</head>
+<body>
+
+<div class="download-bar">
+    <button class="download-btn" onclick="downloadAsDocx()">MS Word (.docx) 다운로드</button>
+</div>
+
+<div id="report-content">
+
+<div class="header-bar">
+    <h1>호텔어라운드 평창 — 2026년 3월 매출 현황</h1>
+    <div class="sub">AZMT 경영진 보고</div>
+    <div class="date">보고 기준: 2026년 3월 1일 ~ 3월 31일 | 작성일: 2026년 4월</div>
+</div>
+
+<h2>1. 3월 핵심 실적</h2>
+<table>
+    <thead>
+        <tr>
+            <th>지표</th>
+            <th>3월 실적</th>
+            <th>2월 실적</th>
+            <th>전월 대비</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>객실매출</td>
+            <td>74,262,748원</td>
+            <td>652,373,336원</td>
+            <td class="negative">-88.6%</td>
+        </tr>
+        <tr>
+            <td>F&B매출</td>
+            <td>6,630,800원</td>
+            <td>81,678,600원</td>
+            <td class="negative">-91.9%</td>
+        </tr>
+        <tr class="highlight-row">
+            <td>총 매출</td>
+            <td><strong>80,893,548원</strong></td>
+            <td><strong>734,051,936원</strong></td>
+            <td class="negative"><strong>-89.0%</strong></td>
+        </tr>
+        <tr>
+            <td>판매 객실</td>
+            <td>863실</td>
+            <td>5,264실</td>
+            <td class="negative">-83.6%</td>
+        </tr>
+        <tr>
+            <td>OCC (점유율)</td>
+            <td>8.0%</td>
+            <td>54.2%</td>
+            <td class="negative">-46.2%p</td>
+        </tr>
+        <tr>
+            <td>ADR (평균단가)</td>
+            <td>86,052원</td>
+            <td>124,403원</td>
+            <td class="negative">-30.8%</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>2. 주요 패턴 분석</h2>
+
+<h3>주차별 매출 추이</h3>
+<table>
+    <thead>
+        <tr><th>주차</th><th>객실수</th><th>매출 비중</th><th>비고</th></tr>
+    </thead>
+    <tbody>
+        <tr class="highlight-row"><td>1주차 (3/1~7)</td><td>469실</td><td>54%</td><td>2월 성수기 잔여 수요</td></tr>
+        <tr><td>2~4주차 (3/8~28)</td><td>335실</td><td>41%</td><td>본격 비수기</td></tr>
+        <tr><td>5주차 (3/29~31)</td><td>59실</td><td>5%</td><td>최저 구간</td></tr>
+    </tbody>
+</table>
+
+<h3>요일별 가동율</h3>
+<table>
+    <thead>
+        <tr><th>구분</th><th>평균 OCC</th><th>평균 ADR</th><th>비고</th></tr>
+    </thead>
+    <tbody>
+        <tr class="highlight-row"><td>토요일</td><td>13.2%</td><td>92,831원</td><td>유일한 두 자릿수</td></tr>
+        <tr><td>금요일</td><td>7.9%</td><td>70,155원</td><td></td></tr>
+        <tr><td>주중 (월~목)</td><td>5.1%</td><td>57,340원</td><td>심각한 저가동</td></tr>
+    </tbody>
+</table>
+
+<div class="insight-box">
+    <strong>참고:</strong> 3월 1일(211실, 62.4%) 제외 시 실질 월간 OCC는 약 <strong>4.2%</strong>
+</div>
+
+<h2>3. 경영 인사이트</h2>
+
+<div class="insight-box">
+    <strong>1) 비수기 매출 급락은 구조적</strong><br>
+    3월 매출이 2월 대비 89% 감소 — 스키 시즌 종료 후 수요 기반 소멸. 4~5월도 유사한 수준 예상, 비수기 전략 수립이 시급.
+</div>
+
+<div class="insight-box">
+    <strong>2) 3/1 쏠림 현상 — 월 매출의 34%가 하루에 집중</strong><br>
+    3월 1일 단 하루 매출 2,780만원 (월 전체의 37%). 이를 제외하면 나머지 30일 평균 일매출 <strong>155만원</strong> 수준.
+</div>
+
+<div class="insight-box">
+    <strong>3) 주중 가동율 5% — 사실상 공실 상태</strong><br>
+    월~목 평균 17실/일, ADR도 57,340원으로 최저. 주중 특화 패키지(워케이션, 장기체류, 단체연수) 필요.
+</div>
+
+<div class="insight-box">
+    <strong>4) ADR 하락 심각 — 단가 방어 실패</strong><br>
+    2월 124,403원 → 3월 86,052원 (-30.8%). 비수기 할인 경쟁 진입, 최저가 방어선 설정 필요.
+</div>
+
+<div class="insight-box">
+    <strong>5) F&B 매출 92% 감소 — 투숙객 연동 구조의 한계</strong><br>
+    일평균 F&B 21만원, 객실 투숙객 외 외부 고객 유입 전무. 지역 연계 F&B 프로모션 또는 외부 수요 창출 방안 필요.
+</div>
+
+<h2>4. 제안 액션</h2>
+<table class="action-table">
+    <thead>
+        <tr><th>우선순위</th><th>액션</th><th>기대 효과</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>1</td><td>비수기 주중 패키지 출시 (워케이션/장기체류)</td><td>주중 OCC 5% → 15% 목표</td></tr>
+        <tr><td>2</td><td>OTA 비수기 특가 + 최저가 방어선(7만원) 설정</td><td>ADR 하락 방지</td></tr>
+        <tr><td>3</td><td>Group/MICE 영업 강화 (기업 연수/세미나)</td><td>주중 대량 수요 확보</td></tr>
+        <tr><td>4</td><td>지역 관광 연계 (봄철 트레킹, 목장 체험 등)</td><td>비스키 시즌 집객</td></tr>
+        <tr><td>5</td><td>F&B 외부 고객 유치 (로컬 맛집 포지셔닝)</td><td>F&B 독립 매출 확보</td></tr>
+    </tbody>
+</table>
+
+<div class="quote">
+    "호텔의 컨셉은 성수기가 아니라 비수기에 맞춰 만들어야 한다"
+    <div class="author">— 호시노리조트 호시노 요시하루</div>
+</div>
+
+</div>
+
+<script src="https://unpkg.com/html-docx-js/dist/html-docx.js"></script>
+<script>
+function downloadAsDocx() {
+    const content = document.getElementById('report-content').innerHTML;
+    const docContent = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office'
+              xmlns:w='urn:schemas-microsoft-com:office:word'
+              xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+            <meta charset="utf-8">
+            <style>
+                body { font-family: 'Malgun Gothic', sans-serif; color: #1a1a1a; line-height: 1.7; }
+                table { width: 100%; border-collapse: collapse; font-size: 10pt; margin: 8pt 0 14pt; }
+                th { background: #1a365d; color: white; padding: 6pt 8pt; text-align: right; font-size: 9.5pt; }
+                th:first-child { text-align: left; }
+                td { padding: 5pt 8pt; border-bottom: 1px solid #d0d0d0; text-align: right; font-size: 9.5pt; }
+                td:first-child { text-align: left; font-weight: bold; }
+                .negative { color: #dc3545; font-weight: bold; }
+                .highlight-row { background: #fff8e6; }
+                h2 { font-size: 14pt; color: #1a365d; border-bottom: 2pt solid #1a365d; padding-bottom: 4pt; margin-top: 20pt; }
+                h3 { font-size: 11pt; color: #2d5a9e; margin-top: 14pt; }
+                .header-bar { background: #1a365d; color: white; padding: 16pt 20pt; }
+                .header-bar h1 { font-size: 16pt; color: white; margin: 0; }
+                .header-bar .sub { font-size: 10pt; color: #ccc; }
+                .header-bar .date { font-size: 9pt; color: #aaa; margin-top: 6pt; }
+                .insight-box { background: #f0f7ff; border-left: 3pt solid #2d5a9e; padding: 8pt 12pt; margin: 8pt 0; font-size: 9.5pt; }
+                .insight-box strong { color: #1a365d; }
+                .quote { background: #f0f4ff; border-left: 3pt solid #1a365d; padding: 10pt 14pt; margin: 16pt 0; font-style: italic; font-size: 10.5pt; }
+                .quote .author { text-align: right; font-size: 9pt; color: #718096; font-style: normal; }
+                .action-table td:first-child { text-align: center; width: 50pt; }
+            </style>
+        </head>
+        <body>${content}</body>
+        </html>`;
+
+    const blob = new Blob(['\ufeff' + docContent], { type: 'application/msword' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '호텔어라운드평창_3월_매출현황_경영진보고.doc';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+</script>
+
+</body>
+</html>
